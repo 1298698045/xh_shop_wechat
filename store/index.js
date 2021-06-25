@@ -16,7 +16,9 @@ const store = new Vuex.Store({
 		version: "1.6.0",
 		//当前是否有网络连接
 		networkConnected: true,
-		isOnline: false
+		isOnline: false,
+		userId:1,
+		currenAddress:{}
 	},
 	mutations: {
 		login(state, payload) {
@@ -38,6 +40,9 @@ const store = new Vuex.Store({
 		},
 		setOnline(state, payload) {
 			state.isOnline = state.isOnline
+		},
+		setAddress(state,address){
+			state.currenAddress = address;
 		}
 	},
 	actions: {

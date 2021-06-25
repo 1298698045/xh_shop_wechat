@@ -2,23 +2,27 @@
 	<view class="tui-safe-area">
 		<view class="tui-address">
 			<block v-for="(item,index) in addressList" :key="index">
-				<tui-list-cell padding="0">
-					<view class="tui-address-flex">
-						<view class="tui-address-left">
-							<view class="tui-address-main">
-								<view class="tui-address-name tui-ellipsis">{{item.name}}</view>
-								<view class="tui-address-tel">{{item.phone}}</view>
+				<tui-swipe-action :actions="actions" @click.stop="setDelete(item)">
+					<view slot="content" @click="isAddress?getCheck(item):''">
+						<tui-list-cell padding="0">
+							<view class="tui-address-flex">
+								<view class="tui-address-left">
+									<view class="tui-address-main">
+										<view class="tui-address-name tui-ellipsis">{{item.contactName}}</view>
+										<view class="tui-address-tel">{{item.phoneNumber}}</view>
+									</view>
+									<view class="tui-address-detail">
+										<view class="tui-address-label">{{item.idx==0?'默认':item.idx==1?'家':item.idx==2?'学校':'其他'}}</view>
+										<text>{{item.city+item.address1}}</text>
+									</view>
+								</view>
+								<view class="tui-address-imgbox" @click.stop="getEdit(item)">
+									<image class="tui-address-img" src="/static/images/mall/my/icon_addr_edit.png" />
+								</view>
 							</view>
-							<view class="tui-address-detail">
-								<view class="tui-address-label">{{item.idx==0?'默认':item.idx==1?'家':item.idx==2?'学校':'其他'}}</view>
-								<text>{{item.city+item.address}}</text>
-							</view>
-						</view>
-						<view class="tui-address-imgbox">
-							<image class="tui-address-img" src="/static/images/mall/my/icon_addr_edit.png" />
-						</view>
+						</tui-list-cell>
 					</view>
-				</tui-list-cell>
+				</tui-swipe-action>
 			</block>
 		</view>
 		<!-- 新增地址 -->
@@ -32,21 +36,71 @@
 	export default {
 		data() {
 			return {
-				addressList: []
+				addressList: [],
+				actions: [{
+					name: '删除',
+					color: '#fff',
+					fontsize: 30, //单位rpx
+					width: 70, //单位px
+					background: '#FD3B31'
+				}],
+				isAddress:false
 			}
 		},
 		onLoad: function(options) {
-		
+			if(options.isAddress){
+				this.isAddress = true;
+			}
+		},
+		computed:{
+			currenAddress(){
+				return this.$store.state.currenAddress;
+			}
 		},
 		onShow: function() {
-			let addressList = JSON.parse(wx.getStorageSync('addressList'));
-			// console.log(addressList,'add')
-			this.addressList = addressList;
+			// let addressList = JSON.parse(wx.getStorageSync('addressList'));
+			// // console.log(addressList,'add')
+			// this.addressList = addressList;
+			// this.$http.queryAddress({
+			// 	customerId:1
+			// }).then(res=>{
+			// 	console.log(res);
+			// 	this.addressList = res.returnValue;
+			// })
+			this.getQuery();
 		},
 		methods: {
+			getQuery(){
+				this.$http.queryAddress({
+					customerId:1
+				}).then(res=>{
+					console.log(res);
+					this.addressList = res.returnValue;
+				})
+			},
 			editAddr(index, addressType) {
 				uni.navigateTo({
 					url: "/pages/my/editAddress/editAddress"
+				})
+			},
+			getEdit(item){
+				uni.navigateTo({
+					url: "/pages/my/editAddress/editAddress?params="+JSON.stringify(item)
+				})
+			},
+			setDelete(item){
+				// console.log(item,'===')
+				this.$http.deleteAddress({
+					customerId:1,
+					addressId:item.id
+				}).then(res=>{
+					this.getQuery();
+				})
+			},
+			getCheck(item){
+				this.$store.commit('setAddress',item);
+				uni.navigateBack({
+					delta:1
 				})
 			}
 		}

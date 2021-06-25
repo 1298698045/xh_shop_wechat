@@ -30,14 +30,14 @@
 					 type="text" />
 				</view>
 			</tui-list-cell>
-			<tui-list-cell :hover="false" padding="0">
+		<!-- 	<tui-list-cell :hover="false" padding="0">
 				<view class="tui-line-cell">
 					<view class="tui-cell-title">地址类型</view>
 					<view class="tui-addr-label">
 						<text v-for="(item,index) in lists" :key="index" @click="handleTab(index)" class="tui-label-item" :class="{'tui-label-active':idx==index}">{{item}}</text>
 					</view>
 				</view>
-			</tui-list-cell>
+			</tui-list-cell> -->
 
 			<!-- 默认地址 -->
 			<tui-list-cell :hover="false" padding="0">
@@ -73,10 +73,11 @@
 					idx:1
 				},
 				idx:1,
-				listData:[]
+				listData:[],
+				id:0
 			}
 		},
-		onLoad() {
+		onLoad(options) {
 			this.multiArray = [
 				this.toArr(this.selectList),
 				this.toArr(this.selectList[0].children),
@@ -84,10 +85,28 @@
 			]
 			let addressList = JSON.parse(wx.getStorageSync('addressList'));
 			this.listData = this.listData.concat(addressList)
+			if(options.params){
+				let paramsData = JSON.parse(options.params);
+				console.log('paramsData',paramsData)
+				this.id = paramsData.id;
+				this.setRowData.name = paramsData.contactName;
+				this.setRowData.phone = paramsData.phoneNumber;
+				this.setRowData.address = paramsData.address1;
+				this.setRowData.city = paramsData.city;
+				this.text = paramsData.city;
+				let arr = paramsData.city.split(' ');
+				console.log(this.multiArray[0],this.selectList,arr[0])
+				let provice = this.multiArray[0].findIndex((item)=>item==arr[0]);
+				let city = this.multiArray[1].findIndex((item)=>item==arr[1]);
+				let district = this.multiArray[2].findIndex((item)=>item==arr[2]);
+				this.value = [provice,city,district];
+				console.log(this.value,'===')
+			}
 		},
 		methods: {
 			picker: function(e) {
 				let value = e.detail.value;
+				console.log('value:',value)
 				if (this.selectList.length > 0) {
 					let provice = this.selectList[value[0]].text
 					let city = this.selectList[value[0]].children[value[1]].text
@@ -130,13 +149,41 @@
 				this.setRowData.idx = idx;
 			},
 			handleSaveAddress(){
-				this.listData.push(this.setRowData);
-				let addressData = JSON.stringify(this.listData);
-				uni.setStorageSync('addressList',addressData);
-				console.log(this.setRowData,'---')
-				uni.navigateBack({
-					delta:1
+				let obj = {
+					id:0,
+					customerId:1,
+					address:{
+						email:this.setRowData.email,
+						contactName:this.setRowData.name,
+						city:this.setRowData.city,
+						address1:this.setRowData.address,
+						zipPostalCode:'',
+						phoneNumber:this.setRowData.phone
+					}
+				}
+				obj = JSON.stringify(obj);
+				this.$http.setAddress(
+					{
+						customerId:1,
+						id:this.id,
+						contactName:this.setRowData.name,
+						city:this.setRowData.city,
+						address1:this.setRowData.address,
+						phoneNumber:this.setRowData.phone
+					}
+				).then(res=>{
+					console.log(res);
+					uni.navigateBack({
+						delta:1
+					})
 				})
+				// this.listData.push(this.setRowData);
+				// let addressData = JSON.stringify(this.listData);
+				// uni.setStorageSync('addressList',addressData);
+				// console.log(this.setRowData,'---')
+				// uni.navigateBack({
+				// 	delta:1
+				// })
 			}
 		}
 	}

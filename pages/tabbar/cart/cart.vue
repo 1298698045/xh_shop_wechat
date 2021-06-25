@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- #ifdef MP || H5-->
 		<view class="tui-edit-goods">
-			<view>购物车共<text class="tui-goods-num">2</text>件商品</view>
+			<view>购物车共<text class="tui-goods-num">{{dataList.length}}</text>件商品</view>
 			<view>
 				<tui-button type="gray" :plain="true" shape="circle" width="160rpx" height="60rpx" :size="24" @click="editGoods">{{isEdit?"完成":"编辑商品"}}</tui-button>
 			</view>
@@ -10,11 +10,6 @@
 		<!-- #endif -->
 		<checkbox-group @change="buyChange">
 			<view class="tui-cart-cell  tui-mtop" v-for="(item,index) in dataList" :key="index">
-				<view class="tui-activity" v-if="index%2==0">
-					<view class="tui-bold">满3件享受优惠</view>
-					<view class="tui-buy">去凑单<tui-icon name="arrowright" :size="18" color="#333"></tui-icon>
-					</view>
-				</view>
 				<tui-swipe-action :actions="actions" @click="handlerButton" :params="item">
 					<template v-slot:content>
 						<view class="tui-goods-item">
@@ -24,21 +19,22 @@
 							<image :src="'/static/images/mall/product/'+(index%2==0?'1.jpg':'4.jpg')" class="tui-goods-img" />
 							<view class="tui-goods-info">
 								<view class="tui-goods-title">
-									{{index%2==0?"欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜彩粉嫩透亮修颜霜透亮修颜霜透亮修颜霜":"百雀羚套装女补水保湿护肤品"}}
+									{{item.productIdName}}
 								</view>
-								<view class="tui-goods-model">
+								<!-- 规格 -->
+								<!-- <view class="tui-goods-model">
 									<view class="tui-model-text">{{index%2==0?"440ml;10件;套装":"500ml;2支"}}</view>
 									<tui-icon name="arrowdown" :size="16" color="#333"></tui-icon>
-								</view>
+								</view> -->
 								<view class="tui-price-box">
-									<view class="tui-goods-price">￥{{item.price | getPrice}}</view>
-									<tui-numberbox :value="item.buyNum" :height="36" :width="64" :min="1" :index="index" @change="changeNum"></tui-numberbox>
+									<view class="tui-goods-price">￥{{item.unitPrice}}</view>
+									<tui-numberbox :value="item.quantity" :height="36" :width="64" :min="1" :index="index" @change="changeNum"></tui-numberbox>
 								</view>
 							</view>
 						</view>
 					</template>
 				</tui-swipe-action>
-				<view class="tui-sub-info" v-if="index%2==0">赠品：柔色尽情丝柔口红唇膏1支柔色尽情丝柔口红唇膏1支</view>
+				<!-- <view class="tui-sub-info" v-if="index%2==0">赠品：柔色尽情丝柔口红唇膏1支柔色尽情丝柔口红唇膏1支</view> -->
 			</view>
 		</checkbox-group>
 
@@ -74,13 +70,13 @@
 				</tui-swipe-action>
 			</view>
 		</view>
-
+		
 		<!--猜你喜欢-->
 
-		<tui-divider :size="28" :bold="true" color="#333" width="50%">
+		<!-- <tui-divider :size="28" :bold="true" color="#333" width="50%">
 			<tui-icon name="like" :size="18" color="#e41f19"></tui-icon>
 			<text class="tui-youlike">猜你喜欢</text>
-		</tui-divider>
+		</tui-divider> -->
 		<view class="tui-product-list">
 			<view class="tui-product-container">
 				<block v-for="(item,index) in productList" :key="index" v-if="(index+1)%2!=0">
@@ -121,7 +117,7 @@
 				</block>
 			</view>
 		</view>
-
+		
 		<!--tabbar-->
 		<view class="tui-tabbar">
 			<view class="tui-checkAll">
@@ -200,77 +196,77 @@
 					}
 				],
 				isEdit: false,
-				productList: [{
-						img: 1,
-						name: "欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）",
-						sale: 599,
-						factory: 899,
-						payNum: 2342
-					},
-					{
-						img: 2,
-						name: "德国DMK进口牛奶  欧德堡（Oldenburger）超高温处理全脂纯牛奶1L*12盒",
-						sale: 29,
-						factory: 69,
-						payNum: 999
-					},
-					{
-						img: 3,
-						name: "【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红",
-						sale: 299,
-						factory: 699,
-						payNum: 666
-					},
-					{
-						img: 4,
-						name: "百雀羚套装女补水保湿护肤品",
-						sale: 1599,
-						factory: 2899,
-						payNum: 236
-					},
-					{
-						img: 5,
-						name: "百草味 肉干肉脯 休闲零食 靖江精制猪肉脯200g/袋",
-						sale: 599,
-						factory: 899,
-						payNum: 2399
-					},
-					{
-						img: 6,
-						name: "短袖睡衣女夏季薄款休闲家居服短裤套装女可爱韩版清新学生两件套 短袖粉色长颈鹿 M码75-95斤",
-						sale: 599,
-						factory: 899,
-						payNum: 2399
-					},
-					{
-						img: 1,
-						name: "欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜",
-						sale: 599,
-						factory: 899,
-						payNum: 2342
-					},
-					{
-						img: 2,
-						name: "德国DMK进口牛奶",
-						sale: 29,
-						factory: 69,
-						payNum: 999
-					},
-					{
-						img: 3,
-						name: "【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红",
-						sale: 299,
-						factory: 699,
-						payNum: 666
-					},
-					{
-						img: 4,
-						name: "百雀羚套装女补水保湿护肤品",
-						sale: 1599,
-						factory: 2899,
-						payNum: 236
-					}
-				],
+				// productList: [{
+				// 		img: 1,
+				// 		name: "欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）",
+				// 		sale: 599,
+				// 		factory: 899,
+				// 		payNum: 2342
+				// 	},
+				// 	{
+				// 		img: 2,
+				// 		name: "德国DMK进口牛奶  欧德堡（Oldenburger）超高温处理全脂纯牛奶1L*12盒",
+				// 		sale: 29,
+				// 		factory: 69,
+				// 		payNum: 999
+				// 	},
+				// 	{
+				// 		img: 3,
+				// 		name: "【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红",
+				// 		sale: 299,
+				// 		factory: 699,
+				// 		payNum: 666
+				// 	},
+				// 	{
+				// 		img: 4,
+				// 		name: "百雀羚套装女补水保湿护肤品",
+				// 		sale: 1599,
+				// 		factory: 2899,
+				// 		payNum: 236
+				// 	},
+				// 	{
+				// 		img: 5,
+				// 		name: "百草味 肉干肉脯 休闲零食 靖江精制猪肉脯200g/袋",
+				// 		sale: 599,
+				// 		factory: 899,
+				// 		payNum: 2399
+				// 	},
+				// 	{
+				// 		img: 6,
+				// 		name: "短袖睡衣女夏季薄款休闲家居服短裤套装女可爱韩版清新学生两件套 短袖粉色长颈鹿 M码75-95斤",
+				// 		sale: 599,
+				// 		factory: 899,
+				// 		payNum: 2399
+				// 	},
+				// 	{
+				// 		img: 1,
+				// 		name: "欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜",
+				// 		sale: 599,
+				// 		factory: 899,
+				// 		payNum: 2342
+				// 	},
+				// 	{
+				// 		img: 2,
+				// 		name: "德国DMK进口牛奶",
+				// 		sale: 29,
+				// 		factory: 69,
+				// 		payNum: 999
+				// 	},
+				// 	{
+				// 		img: 3,
+				// 		name: "【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红",
+				// 		sale: 299,
+				// 		factory: 699,
+				// 		payNum: 666
+				// 	},
+				// 	{
+				// 		img: 4,
+				// 		name: "百雀羚套装女补水保湿护肤品",
+				// 		sale: 1599,
+				// 		factory: 2899,
+				// 		payNum: 236
+				// 	}
+				// ],
 				pageIndex: 1,
 				loadding: false,
 				pullUpOn: true
@@ -282,15 +278,29 @@
 				return price.toFixed(2)
 			}
 		},
+		onLoad(options){
+			this.getQuery();
+		},
 		methods: {
+			getQuery(){
+				this.$http.getShoppingCart({}).then((res)=>{
+					console.log(res)
+					this.dataList = res.returnValue;
+					this.dataList.map(item=>{
+						item.selected = true;
+						return item;
+					})
+					this.calcHandle();
+				})   
+			},
 			calcHandle() {
 				let buyNum = 0;
 				let totalPrice = 0;
 				let selectedNum = 0;
 				this.dataList.map((item) => {
 					if (item.selected) {
-						buyNum += item.buyNum;
-						totalPrice += item.price * item.buyNum;
+						buyNum += item.quantity;
+						totalPrice += item.unitPrice * item.quantity;
 						selectedNum++
 					}
 				})
@@ -299,7 +309,7 @@
 				this.totalPrice = totalPrice
 			},
 			changeNum: function(e) {
-				this.dataList[e.index].buyNum = e.value
+				this.dataList[e.index].quantity = e.value
 				setTimeout(() => {
 					this.calcHandle()
 				}, 0)
@@ -368,21 +378,21 @@
 			uni.stopPullDownRefresh()
 		},
 		onReachBottom: function() {
-			if (!this.pullUpOn) return;
-			this.loadding = true;
-			if (this.pageIndex == 4) {
-				this.loadding = false;
-				this.pullUpOn = false
-			} else {
-				let loadData = JSON.parse(JSON.stringify(this.productList));
-				loadData = loadData.splice(0, 10)
-				if (this.pageIndex == 1) {
-					loadData = loadData.reverse();
-				}
-				this.productList = this.productList.concat(loadData);
-				this.pageIndex = this.pageIndex + 1;
-				this.loadding = false
-			}
+			// if (!this.pullUpOn) return;
+			// this.loadding = true;
+			// if (this.pageIndex == 4) {
+			// 	this.loadding = false;
+			// 	this.pullUpOn = false
+			// } else {
+			// 	let loadData = JSON.parse(JSON.stringify(this.productList));
+			// 	loadData = loadData.splice(0, 10)
+			// 	if (this.pageIndex == 1) {
+			// 		loadData = loadData.reverse();
+			// 	}
+			// 	this.productList = this.productList.concat(loadData);
+			// 	this.pageIndex = this.pageIndex + 1;
+			// 	this.loadding = false
+			// }
 		},
 		onNavigationBarButtonTap(e) {
 			this.isEdit = !this.isEdit;

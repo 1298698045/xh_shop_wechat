@@ -14,7 +14,7 @@ export function https(config) {
  }); 
  //设置请求头
  config.header = {
-     'content-type': 'application/json',
+     'content-type': 'application/x-www-form-urlencoded'
  };
  //检查缓存中有没有token
  var token = wx.getStorageSync('token');
@@ -24,6 +24,7 @@ export function https(config) {
  config.url = baseUrl + config.url;   // 请求地址
  let promise = new Promise(function(resolve, reject) {
      uni.request(config).then(res => {
+		 console.log(config,'config')
          wx.hideLoading()      //隐藏loading
          if (res[0]) {
              uni.showToast({

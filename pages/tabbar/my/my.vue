@@ -50,7 +50,7 @@
 				</view>
 				<!-- #endif -->
 			</view>
-			<view class="tui-header-btm" @tap="href(5)">
+			<!-- <view class="tui-header-btm" @tap="href(5)">
 				<view class="tui-btm-item">
 					<view class="tui-btm-num">25</view>
 					<view class="tui-btm-text">收藏夹</view>
@@ -67,7 +67,7 @@
 					<view class="tui-btm-num">44</view>
 					<view class="tui-btm-text">足迹</view>
 				</view>
-			</view>
+			</view> -->
 		</view>
 		<view class="tui-content-box">
 			<view class="tui-box tui-order-box">
@@ -98,7 +98,7 @@
 						</view>
 						<view class="tui-order-text">待收货</view>
 					</view>
-					<view class="tui-order-item" @tap="href(4)">
+					<!-- <view class="tui-order-item" @tap="href(4)">
 						<view class="tui-icon-box">
 							<image src="/static/images/mall/my/icon_pingjia_3x.png" class="tui-order-icon"></image>
 							<view class="tui-badge tui-badge-red" v-if="false">12</view>
@@ -111,7 +111,7 @@
 							<view class="tui-badge tui-badge-red">2</view>
 						</view>
 						<view class="tui-order-text">退款/售后</view>
-					</view>
+					</view> -->
 				</view>
 			</view>
 
@@ -644,7 +644,8 @@
 		padding: 0 30rpx;
 		box-sizing: border-box;
 		position: relative;
-		top: -72rpx;
+		/* top: -72rpx; */
+		top: -190rpx;
 		z-index: 10;
 	}
 

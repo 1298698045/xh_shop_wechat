@@ -22,10 +22,10 @@
 						<swiper-item @tap.stop="detail"><image src="https://thorui.cn/images/mall/banner/5.jpg" class="slide-image" /></swiper-item>
 					</swiper>
 					<view class="class-box">
-						<view class="class-item">
-							<view class="class-name">{{ item.name }}</view>
-							<view class="g-container" v-for="(self,idx) in item.children" :key="idx">
-								<view class="g-box" @click="productList(self)" :data-key="self.name">
+						<view class="class-item" v-for="(one,i) in item.children">
+							<view class="class-name">{{ one.name }}</view>
+							<view class="g-container">
+								<view class="g-box" v-for="(self,idx) in one.children" :key="idx" @click="productList(self)" :data-key="self.name">
 									<image src="/static/images/product/11.jpg" class="g-image" />
 									<view class="g-title">{{self.name}}</view>
 								</view>

@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<tui-tabs :tabs="tabs" :isFixed="scrollTop>=0" :currentTab="currentTab" selectedColor="#E41F19" sliderBgColor="#E41F19"
-		 @change="change" itemWidth="20%"></tui-tabs>
+		 @change="change" itemWidth="25%"></tui-tabs>
 		<!--选项卡逻辑自己实现即可，此处未做处理-->
 		<view :class="{'tui-order-list':scrollTop>=0}">
 			<view class="tui-order-item" v-for="(model,orderIndex) in 3" :key="orderIndex">
@@ -38,9 +38,9 @@
 					<view class="tui-btn-ml">
 						<tui-button type="black" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="invoiceDetail">查看发票</tui-button>
 					</view>
-					<view class="tui-btn-ml">
+					<!-- <view class="tui-btn-ml">
 						<tui-button type="black" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="addEvaluate">评价晒单</tui-button>
-					</view>
+					</view> -->
 					<view class="tui-btn-ml">
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle">再次购买</tui-button>
 					</view>
@@ -100,27 +100,74 @@
 	export default {
 		data() {
 			return {
-				tabs: [{
-					name: "全部"
-				}, {
-					name: "待付款"
-				}, {
-					name: "待发货"
-				}, {
-					name: "待收货"
-				}, {
-					name: "待评价"
-				}],
+				// tabs: [{
+				// 	name: "全部"
+				// }, {
+				// 	name: "待付款"
+				// }, {
+				// 	name: "待发货"
+				// }, {
+				// 	name: "待收货"
+				// }, 
+				// {
+				// 	name: "待评价"
+				// },
+				// ],
+				tabs:[
+					{
+						name: "全部"
+					},
+					{
+						name: "待付款"
+					},
+					{
+						name: "待收货"
+					},
+					{
+						name: "已完成"
+					}
+				],
 				currentTab: 0,
 				pageIndex: 1,
 				loadding: false,
 				pullUpOn: true,
-				scrollTop: 0
+				scrollTop: 0,
+				orderStatus:0
 			}
 		},
+		computed:{
+			uerId(){
+				return this.$store.state.userId;
+			}
+		},
+		onLoad(){
+			this.getQuery();
+		},
 		methods: {
+			getQuery(){
+				this.$http.getMyoder(
+					{
+						customerId:this.uerId,
+						orderStatus:this.orderStatus, 
+						searchWord:"",
+						pageNumber:1
+					}
+				).then(res=>{
+					console.log(res);
+				})
+			},
 			change(e) {
-				this.currentTab = e.index
+				this.currentTab = e.index;
+				if(idx==0){
+					this.orderStatus = 0;
+				}else if(idx==1){
+					this.orderStatus = 1;
+				}else if(idx==2){
+					this.orderStatus = 4;
+				}else if(idx==3){
+					this.orderStatus = 5;
+				}
+				this.getQuery();
 			},
 			detail() {
 				uni.navigateTo({

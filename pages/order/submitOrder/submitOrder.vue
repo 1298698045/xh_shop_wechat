@@ -3,13 +3,13 @@
 		<view class="tui-box">
 			<tui-list-cell :arrow="true" unlined :radius="true" @click="chooseAddr">
 				<view class="tui-address">
-					<view v-if="true">
+					<view v-if="currenAddress.address1">
 						<view class="tui-userinfo">
-							<text class="tui-name">小仙女</text> 139****7708
+							<text class="tui-name">{{currenAddress.contactName | ''}}</text> {{currenAddress.phoneNumber | ''}}
 						</view>
 						<view class="tui-addr">
 							<view class="tui-addr-tag">公司</view>
-							<text>广东省深圳市南山区高新科技园中区一路</text>
+							<text>{{currenAddress.city + currenAddress.address1 | ''}}</text>
 						</view>
 					</view>
 					<view class="tui-none-addr" v-else>
@@ -126,10 +126,15 @@
 				couponShow:false
 			}
 		},
+		computed:{
+			currenAddress(){
+				return this.$store.state.currenAddress;
+			}
+		},
 		methods: {
 			chooseAddr() {
 				uni.navigateTo({
-					url: "/pages/my/address/address"
+					url: "/pages/my/address/address?isAddress=1"
 				})
 			},
 			btnPay() {

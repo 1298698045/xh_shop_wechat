@@ -23,14 +23,14 @@
 			 @change="bannerChange">
 				<block v-for="(item, index) in banner" :key="index">
 					<swiper-item :data-index="index" @tap.stop="previewImage">
-						<image :src="item" class="tui-slide-image" :style="{ height: scrollH + 'px' }" />
+						<image :src="item.thumbImageUrl" class="tui-slide-image" :style="{ height: scrollH + 'px' }" />
 					</swiper-item>
 				</block>
 			</swiper>
-			<view class="tui-video__box" @tap.stop="play">
+			<!-- <view class="tui-video__box" @tap.stop="play">
 				<image src="https://www.thorui.cn/images/mall/img_video_3x.png" mode="widthFix"></image>
 				<view>00′30″</view>
-			</view>
+			</view> -->
 			<view class="tui-banner-tag">
 				<tui-tag padding="12rpx 18rpx" type="translucent" shape="circleLeft" :scaleMultiple="0.82" originRight>{{ bannerIndex + 1 }}/{{ banner.length }}</tui-tag>
 			</view>
@@ -44,37 +44,37 @@
 					<view class="tui-pro-price">
 						<view>
 							<text>￥</text>
-							<text class="tui-price">49</text>
+							<text class="tui-price">{{shopDetail.productPrice.priceValue}}</text>
 							<text>.00</text>
 						</view>
-						<tui-tag padding="10rpx 20rpx" size="24rpx" plain type="high-green" shape="circle" :scaleMultiple="0.8">新品</tui-tag>
+						<!-- <tui-tag padding="10rpx 20rpx" size="24rpx" plain type="high-green" shape="circle" :scaleMultiple="0.8">新品</tui-tag> -->
 					</view>
-					<view class="tui-collection tui-size" @tap="collecting">
+					<!-- <view class="tui-collection tui-size" @tap="collecting">
 						<tui-icon :name="collected ? 'like-fill' : 'like'" :color="collected ? '#ff201f' : '#333'" :size="20"></tui-icon>
 						<view class="tui-scale-collection" :class="{'tui-icon-red':collected}">收藏</view>
-					</view>
+					</view> -->
 				</view>
 				<view class="tui-original-price tui-gray">
 					价格
-					<text class="tui-line-through">￥199.00</text>
+					<text class="tui-line-through">￥{{shopDetail.productPrice.priceValue}}</text>
 				</view>
 				<view class="tui-pro-titbox">
-					<view class="tui-pro-title">谈判官明星同款耳坠韩国气质简约显脸瘦的耳环女百搭个性长款耳钉 个性水滴耳环【A2】</view>
-					<view class="tui-share-position" @tap="showSharePopup">
+					<view class="tui-pro-title">{{shopDetail.name}}</view>
+					<!-- <view class="tui-share-position" @tap="showSharePopup">
 						<tui-tag type="gray" shape="circleLeft" padding="12rpx 16rpx">
 							<view class="tui-share-box">
 								<tui-icon name="partake" color="#999" :size="15"></tui-icon>
 								<text class="tui-share-text tui-gray tui-size">分享</text>
 							</view>
 						</tui-tag>
-					</view>
+					</view> -->
 				</view>
 				<view class="tui-padding">
-					<view class="tui-sub-title tui-size tui-gray">此商品将于2019-06-28,10点结束闪购特卖，时尚美饰联合专场</view>
+					<!-- <view class="tui-sub-title tui-size tui-gray">此商品将于2019-06-28,10点结束闪购特卖，时尚美饰联合专场</view> -->
 					<view class="tui-sale-info tui-size tui-gray">
 						<view>快递：0.00</view>
-						<view>月销2000</view>
-						<view>浙江杭州</view>
+						<!-- <view>月销2000</view>
+						<view>浙江杭州</view> -->
 					</view>
 				</view>
 			</view>
@@ -116,7 +116,7 @@
 			<view class="tui-basic-info tui-mtop tui-radius-all">
 				<view class="tui-list-cell" @tap="showPopup">
 					<view class="tui-bold tui-cell-title">已选</view>
-					<view class="tui-selected-box">个性水滴耳环【A2】,1个，可选服务</view>
+					<view class="tui-selected-box">{{shopDetail.name}},{{productNum}}个</view>
 					<view class="tui-ml-auto">
 						<tui-icon name="more-fill" :size="20" color="#666"></tui-icon>
 					</view>
@@ -186,8 +186,9 @@
 				<tui-nomore text="宝贝详情" backgroundColor="#f7f7f7"></tui-nomore>
 			</view>
 			<view class="tui-product-img tui-radius-all">
-				<image :src="'https://www.thorui.cn/img/detail/' + (index + 1) + '.jpg'" v-for="(img, index) in 20" :key="index"
-				 mode="widthFix"></image>
+				<!-- <image :src="'https://www.thorui.cn/img/detail/' + (index + 1) + '.jpg'" v-for="(img, index) in 20" :key="index"
+				 mode="widthFix"></image> -->
+				 <rich-text type="text" :nodes="shopDetail.fullDescription"></rich-text>
 			</view>
 			<tui-nomore text="已经到最底了" backgroundColor="#f7f7f7"></tui-nomore>
 			<view class="tui-safearea-bottom"></view>
@@ -204,7 +205,7 @@
 					<tui-icon name="shop" :size="22" color="#333"></tui-icon>
 					<view class="tui-operation-text tui-scale-small">店铺</view>
 				</view> -->
-				<view class="tui-operation-item" hover-class="tui-opcity" :hover-stay-time="150">
+				<view class="tui-operation-item" hover-class="tui-opcity" :hover-stay-time="150" @click="gotoShopCart()">
 					<tui-icon name="cart" :size="22" color="#333"></tui-icon>
 					<view class="tui-operation-text tui-scale-small">购物车</view>
 					<tui-badge type="red" absolute :scaleRatio="0.8" right="10rpx" top="-4rpx">9</tui-badge>
@@ -248,37 +249,38 @@
 		<tui-bottom-popup :show="popupShow" @close="hidePopup">
 			<view class="tui-popup-box">
 				<view class="tui-product-box tui-padding">
-					<image src="https://www.thorui.cn/img/product/11.jpg" class="tui-popup-img"></image>
+					<image :src="banner[0].thumbImageUrl" class="tui-popup-img"></image>
 					<view class="tui-popup-price">
-						<view class="tui-amount tui-bold">￥49.00</view>
+						<view class="tui-amount tui-bold">￥{{defaultAttribute.price}}</view>
 						<view class="tui-number">编号:4373299399393</view>
 					</view>
 				</view>
 				<scroll-view scroll-y class="tui-popup-scroll">
 					<view class="tui-scrollview-box">
-						<view class="tui-bold tui-attr-title">颜色</view>
-						<view class="tui-attr-box">
-							<view class="tui-attr-item">五角星钻耳线</view>
-							<view class="tui-attr-item">米子珍珠耳线</view>
-							<view class="tui-attr-item">花朵镶钻耳线</view>
-							<view class="tui-attr-item">扇子珍珠流苏耳线</view>
-							<view class="tui-attr-item tui-attr-active">扇子珍珠流苏耳线耳线</view>
-						</view>
-
+						<!-- 属性 -->
+						<blcok v-for="(item,index) in shopDetail.productAttributes" :key="index">
+							<view class="tui-bold tui-attr-title">{{item.name}}</view>
+							<view class="tui-attr-box">
+								<view class="tui-attr-item"
+								 :class="{'tui-attr-active':idx==defaultAttribute.num}"
+								 @click="setChoiceSpecs(item,v,idx)"
+								  v-for="(v,idx) in item.values" :key="idx">{{v.name}}</view>
+							</view>
+						</blcok>
 						<view class="tui-number-box tui-bold tui-attr-title">
 							<view class="tui-attr-title">数量</view>
-							<tui-numberbox :max="99" :min="1" :value="value" @change="change"></tui-numberbox>
+							<tui-numberbox :max="99" :min="1" :value="productNum" @change="change"></tui-numberbox>
 						</view>
-						<view class="tui-bold tui-attr-title">尺寸</view>
+						<!-- <view class="tui-bold tui-attr-title">尺寸</view>
 						<view class="tui-attr-box">
 							<view class="tui-attr-item">5cm</view>
 							<view class="tui-attr-item">8cm</view>
 							<view class="tui-attr-item">12cm</view>
 							<view class="tui-attr-item">16cm</view>
 							<view class="tui-attr-item tui-attr-active">18cm</view>
-						</view>
+						</view> -->
 
-						<view class="tui-bold tui-attr-title">保障服务</view>
+						<!-- <view class="tui-bold tui-attr-title">保障服务</view>
 						<view class="tui-attr-box">
 							<view class="tui-attr-item">半年掉钻保 ￥4.0</view>
 						</view>
@@ -287,7 +289,7 @@
 						<view class="tui-attr-box">
 							<view class="tui-attr-item">三月意外换￥2.0</view>
 							<view class="tui-attr-item">半年意外换￥2.0</view>
-						</view>
+						</view> -->
 					</view>
 				</scroll-view>
 				<view class="tui-operation tui-operation-right tui-right-flex tui-popup-btn">
@@ -414,7 +416,12 @@
 				posterImg: '',
 				winWidth: uni.upx2px(560 * 2),
 				winHeight: uni.upx2px(890 * 2),
-				modalShow: false
+				modalShow: false,
+				shopDetail:{},
+				defaultAttribute:{
+					num:0
+				},
+				productNum:1
 			};
 		},
 		onLoad: function(options) {
@@ -447,14 +454,28 @@
 			getQuery(){
 				this.$http.getShopDetail(
 					{
-						id:this.id
+						itemId:this.id
 					}
 				).then(res=>{
-					console.log(res);
+					this.shopDetail = res.returnValue;
+					this.banner = this.shopDetail.pictureModels;
+					this.defaultAttribute.num = 0;
+					this.defaultAttribute.price = this.shopDetail.productAttributes[0].values[0].priceAdjustment;
+				})
+			},
+			// 选择规格
+			setChoiceSpecs(item,v,idx){
+				this.defaultAttribute.num = idx;
+				this.defaultAttribute.price = v.priceAdjustment;
+			},
+			// 跳转到购物车
+			gotoShopCart(){
+				uni.switchTab({
+					url:'/pages/tabbar/cart/cart'
 				})
 			},
 			bannerChange: function(e) {
-				this.bannerIndex = e.detail.current;
+				this.value = e.detail.current;
 			},
 			previewImage: function(e) {
 				let index = e.currentTarget.dataset.index;
@@ -479,7 +500,7 @@
 				this.popupShow = false;
 			},
 			change: function(e) {
-				this.value = e.value;
+				this.productNum = e.value;
 			},
 			collecting: function() {
 				this.collected = !this.collected;
