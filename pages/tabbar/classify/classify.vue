@@ -26,7 +26,7 @@
 							<view class="class-name">{{ one.name }}</view>
 							<view class="g-container">
 								<view class="g-box" v-for="(self,idx) in one.children" :key="idx" @click="productList(self)" :data-key="self.name">
-									<image src="/static/images/product/11.jpg" class="g-image" />
+									<image :src="self.pictureVirtualPath" class="g-image" />
 									<view class="g-title">{{self.name}}</view>
 								</view>
 							</view>

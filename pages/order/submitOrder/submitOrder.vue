@@ -25,17 +25,17 @@
 						商品信息
 					</view>
 				</tui-list-cell>
-				<block v-for="(item,index) in 2" :key="index">
+				<block v-for="(item,index) in listData" :key="index">
 					<tui-list-cell :hover="false" padding="0">
 						<view class="tui-goods-item">
-							<image :src="`/static/images/mall/product/${index+3}.jpg`" class="tui-goods-img"></image>
+							<image :src="item.picture.thumbImageUrl" class="tui-goods-img"></image>
 							<view class="tui-goods-center">
-								<view class="tui-goods-name">欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）</view>
+								<view class="tui-goods-name">{{item.productName}}</view>
 								<view class="tui-goods-attr">黑色，50ml</view>
 							</view>
 							<view class="tui-price-right">
-								<view>￥298.00</view>
-								<view>x2</view>
+								<view>￥{{item.unitPrice}}</view>
+								<view>x{{item.quantity}}</view>
 							</view>
 						</view>
 					</tui-list-cell>
@@ -43,15 +43,15 @@
 				<tui-list-cell :hover="false">
 					<view class="tui-padding tui-flex">
 						<view>商品总额</view>
-						<view>￥1192.00</view>
+						<view>￥{{totalPrice}}</view>
 					</view>
 				</tui-list-cell>
-				<tui-list-cell :arrow="hasCoupon" :hover="hasCoupon" @click="couponShow=true">
+	<!-- 			<tui-list-cell :arrow="hasCoupon" :hover="hasCoupon" @click="couponShow=true">
 					<view class="tui-padding tui-flex">
 						<view>优惠券</view>
 						<view :class="{'tui-color-red':hasCoupon}">{{hasCoupon?"满5减1":'没有可用优惠券'}}</view>
 					</view>
-				</tui-list-cell>
+				</tui-list-cell> -->
 				<tui-list-cell :hover="true" :arrow="true" @click="invoice">
 					<view class="tui-padding tui-flex">
 						<view>发票</view>
@@ -75,14 +75,14 @@
 						<view class="tui-flex-end tui-color-red">
 							<view class="tui-black">合计： </view>
 							<view class="tui-size-26">￥</view>
-							<view class="tui-price-large">1192</view>
-							<view class="tui-size-26">.00</view>
+							<view class="tui-price-large">{{totalPrice}}</view>
+							<!-- <view class="tui-size-26">.00</view> -->
 						</view>
 					</view>
 				</tui-list-cell>
 			</view>
 
-			<view class="tui-top">
+			<!-- <view class="tui-top">
 				<tui-list-cell unlined :hover="insufficient" :radius="true" :arrow="insufficient">
 					<view class="tui-flex">
 						<view class="tui-balance">余额支付<text class="tui-gray">(￥2020.00)</text></view>
@@ -90,21 +90,21 @@
 						<view class="tui-pr-30 tui-light-dark" v-show="insufficient">余额不足, 去充值</view>
 					</view>
 				</tui-list-cell>
-			</view>
+			</view> -->
 		</view>
 		<view class="tui-safe-area"></view>
 		<view class="tui-tabbar">
 			<view class="tui-flex-end tui-color-red tui-pr-20">
 				<view class="tui-black">实付金额: </view>
 				<view class="tui-size-26">￥</view>
-				<view class="tui-price-large">1192</view>
-				<view class="tui-size-26">.00</view>
+				<view class="tui-price-large">{{totalPrice}}</view>
+				<!-- <view class="tui-size-26">.00</view> -->
 			</view>
 			<view class="tui-pr25">
 				<tui-button width="200rpx" height="70rpx" :size="28" type="danger" shape="circle" @click="btnPay">确认支付</tui-button>
 			</view>
 		</view>
-		<t-pay-way :show="show" @close="popupClose"></t-pay-way>
+		<t-pay-way :show="show" @close="popupClose" :totalPrice='totalPrice'></t-pay-way>
 		<t-select-coupons :show="couponShow" @close="couponClose"></t-select-coupons>
 		
 	</view>
@@ -123,22 +123,108 @@
 				hasCoupon: true,
 				insufficient: false,
 				show: false,
-				couponShow:false
+				couponShow:false,
+				orderId:'',
+				cartIds:[], // 购物车已选择的id
+				cartDataList:[], // 购物车数据
+				listData:[], // 订单数据
+				totalPrice:"", // 合计金额
+				addressList:[]
 			}
 		},
 		computed:{
+			// 当前地址
 			currenAddress(){
 				return this.$store.state.currenAddress;
+			},
+			userId(){
+				return this.$store.state.userId;
+			}
+		},
+		onLoad(options){
+			Object.assign(this.$data, this.$options.data());
+			this.orderId = options.orderId;
+			if(options.cartIds){
+				this.cartIds = JSON.parse(options.cartIds);
+				console.log(this.cartIds,'====')
+				this.totalPrice = options.totalPrice;
+				this.queryAddress();
+				this.queryCartData();
 			}
 		},
 		methods: {
+			queryAddress(){
+				this.$http.queryAddress({
+					customerId:this.userId
+				}).then(res=>{
+					this.addressList = res.returnValue;
+					this.addressList.forEach(item=>{
+						if(item.isDefault==1){
+							this.$store.commit('setAddress',item);
+						}
+					})
+				})
+			},
+			// 获取购物车数据all
+			queryCartData(){
+				this.$http.getShoppingCart({
+					customerId:this.userId
+				}).then((res)=>{
+					this.cartDataList = res.returnValue;
+					this.cartDataList.forEach(item=>{
+						this.cartIds.forEach(v=>{
+							if(item.id==v){
+								this.listData.push(item);
+							}
+						})
+					})
+					console.log('订单数据：',this.listData);
+				})   
+			},
 			chooseAddr() {
 				uni.navigateTo({
 					url: "/pages/my/address/address?isAddress=1"
 				})
 			},
 			btnPay() {
-				this.show = true
+				let obj = {
+					customerId:this.userId,
+					shippingAddressId:this.currenAddress.id
+				}
+				let ids = this.getCheckAttr();
+				// console.log('id:',ids);
+				var data = '\r\n--XXX'
+				for(var item in ids){
+					if(ids[item]){						
+						data+=
+							'\r\nContent-Disposition: form-data; name="'+item+'"'+
+							'\r\n'+
+							'\r\n'+ids[item]+
+							'\r\n--XXX' 
+					}
+				}
+				data += '--';
+				uni.request({
+				    url: 'https://cbt.pumchit.cn/shopapi/Checkout/order/confirm?customerId='+obj.customerId+'&shippingAddressId='+obj.shippingAddressId,
+				    header: {
+				        'content-type': 'multipart/form-data; boundary=XXX', 
+				    },
+					method:'POST',
+				    data:data,	
+				    success: (res) => {
+						
+				    }
+				});
+				this.show = true;
+			},
+			getCheckAttr(){
+				var temp = {};
+				var i = 0;
+				this.listData.forEach(item=>{	
+					i++
+					temp['cartitem_id_'+i] = item.id;
+				})
+				return temp;
 			},
 			popupClose() {
 				this.show = false

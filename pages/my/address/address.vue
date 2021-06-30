@@ -55,6 +55,9 @@
 		computed:{
 			currenAddress(){
 				return this.$store.state.currenAddress;
+			},
+			userId(){
+				return this.$store.state.userId;
 			}
 		},
 		onShow: function() {
@@ -72,7 +75,7 @@
 		methods: {
 			getQuery(){
 				this.$http.queryAddress({
-					customerId:1
+					customerId:this.userId
 				}).then(res=>{
 					console.log(res);
 					this.addressList = res.returnValue;
@@ -91,7 +94,7 @@
 			setDelete(item){
 				// console.log(item,'===')
 				this.$http.deleteAddress({
-					customerId:1,
+					customerId:this.userId,
 					addressId:item.id
 				}).then(res=>{
 					this.getQuery();

@@ -8,38 +8,39 @@
 			</view>
 		</view>
 		<!-- #endif -->
-		<checkbox-group @change="buyChange">
-			<view class="tui-cart-cell  tui-mtop" v-for="(item,index) in dataList" :key="index">
-				<tui-swipe-action :actions="actions" @click="handlerButton" :params="item">
-					<template v-slot:content>
-						<view class="tui-goods-item">
-							<label class="tui-checkbox">
-								<checkbox :value="item.id" :checked="item.selected" color="#fff"></checkbox>
-							</label>
-							<image :src="'/static/images/mall/product/'+(index%2==0?'1.jpg':'4.jpg')" class="tui-goods-img" />
-							<view class="tui-goods-info">
-								<view class="tui-goods-title">
-									{{item.productIdName}}
-								</view>
-								<!-- 规格 -->
-								<!-- <view class="tui-goods-model">
-									<view class="tui-model-text">{{index%2==0?"440ml;10件;套装":"500ml;2支"}}</view>
-									<tui-icon name="arrowdown" :size="16" color="#333"></tui-icon>
-								</view> -->
-								<view class="tui-price-box">
-									<view class="tui-goods-price">￥{{item.unitPrice}}</view>
-									<tui-numberbox :value="item.quantity" :height="36" :width="64" :min="1" :index="index" @change="changeNum"></tui-numberbox>
+		<div  @click.stop>
+			<checkbox-group @change="buyChange">
+				<view class="tui-cart-cell  tui-mtop" v-for="(item,index) in dataList" :key="index">
+					<tui-swipe-action :actions="actions" @click="handlerButton" :params="item">
+						<template v-slot:content>
+							<view class="tui-goods-item">
+								<label class="tui-checkbox">
+									<checkbox :value="item.id" :checked="item.selected" color="#fff"></checkbox>
+								</label>
+								<image :src="item.picture.thumbImageUrl" class="tui-goods-img" @click.stop="getDetail(item,idex)" />
+								<view class="tui-goods-info" @click.stop="getDetail(item,idex)">
+									<view class="tui-goods-title">
+										{{item.productName}}
+									</view>
+									<!-- 规格 -->
+									<!-- <view class="tui-goods-model">
+										<view class="tui-model-text">{{index%2==0?"440ml;10件;套装":"500ml;2支"}}</view>
+										<tui-icon name="arrowdown" :size="16" color="#333"></tui-icon>
+									</view> -->
+									<view class="tui-price-box">
+										<view class="tui-goods-price">￥{{item.unitPrice}}</view>
+										<tui-numberbox :value="item.quantity" :height="36" :width="64" :min="1" :index="index" @change="changeNum($event,item)"></tui-numberbox>
+									</view>
 								</view>
 							</view>
-						</view>
-					</template>
-				</tui-swipe-action>
-				<!-- <view class="tui-sub-info" v-if="index%2==0">赠品：柔色尽情丝柔口红唇膏1支柔色尽情丝柔口红唇膏1支</view> -->
-			</view>
-		</checkbox-group>
-
+						</template>
+					</tui-swipe-action>
+					<!-- <view class="tui-sub-info" v-if="index%2==0">赠品：柔色尽情丝柔口红唇膏1支柔色尽情丝柔口红唇膏1支</view> -->
+				</view>
+			</checkbox-group>
+		</div>
 		<!--商品失效-->
-		<view class="tui-cart-cell  tui-mtop">
+		<!-- <view class="tui-cart-cell  tui-mtop">
 			<view class="tui-activity">
 				<view class="tui-bold">失效商品</view>
 				<view class="tui-buy">
@@ -69,7 +70,7 @@
 					</template>
 				</tui-swipe-action>
 			</view>
-		</view>
+		</view> -->
 		
 		<!--猜你喜欢-->
 
@@ -158,20 +159,21 @@
 				totalPrice: 0,
 				buyNum: 0,
 				cartIds: [], //购物车id
-				actions: [{
-						name: '收藏',
-						width: 64,
-						color: '#fff',
-						fontsize: 28,
-						background: '#FFC600'
-					},
-					{
-						name: '看相似',
-						color: '#fff',
-						fontsize: 28,
-						width: 64,
-						background: '#FF7035'
-					},
+				actions: [
+					// {
+					// 	name: '收藏',
+					// 	width: 64,
+					// 	color: '#fff',
+					// 	fontsize: 28,
+					// 	background: '#FFC600'
+					// },
+					// {
+					// 	name: '看相似',
+					// 	color: '#fff',
+					// 	fontsize: 28,
+					// 	width: 64,
+					// 	background: '#FF7035'
+					// },
 					{
 						name: '删除',
 						color: '#fff',
@@ -279,11 +281,21 @@
 			}
 		},
 		onLoad(options){
-			this.getQuery();
+			// this.getQuery();
+		},
+		onShow() {
+			this.getQuery()
+		},
+		computed:{
+			userId(){
+				return this.$store.state.userId;
+			}
 		},
 		methods: {
 			getQuery(){
-				this.$http.getShoppingCart({}).then((res)=>{
+				this.$http.getShoppingCart({
+					customerId:this.userId
+				}).then((res)=>{
 					console.log(res)
 					this.dataList = res.returnValue;
 					this.dataList.map(item=>{
@@ -293,31 +305,57 @@
 					this.calcHandle();
 				})   
 			},
-			calcHandle() {
-				let buyNum = 0;
-				let totalPrice = 0;
-				let selectedNum = 0;
-				this.dataList.map((item) => {
-					if (item.selected) {
-						buyNum += item.quantity;
-						totalPrice += item.unitPrice * item.quantity;
-						selectedNum++
-					}
+			// 查看详情
+			getDetail(item,index){
+				uni.navigateTo({
+					url:'/pages/index/productDetail/productDetail?id='+item.productId
 				})
-				this.isAll = selectedNum === this.dataList.length
-				this.buyNum = buyNum
-				this.totalPrice = totalPrice
 			},
-			changeNum: function(e) {
+			calcHandle() {
+				console.log('calchandle',this.dataList,'6666666')
+				return new Promise((resolve,reject)=>{				
+					let buyNum = 0;
+					let totalPrice = 0;
+					let selectedNum = 0;
+					this.dataList.map((item) => {
+						if (item.selected) {
+							buyNum += item.quantity;
+							totalPrice += item.unitPrice * item.quantity;
+							selectedNum++
+						}
+					})
+					this.isAll = selectedNum === this.dataList.length
+					this.buyNum = buyNum
+					this.totalPrice = totalPrice
+					resolve(buyNum);
+				})
+			},
+			changeNum: function(e,item) {
 				this.dataList[e.index].quantity = e.value
-				setTimeout(() => {
-					this.calcHandle()
-				}, 0)
+				item.quantity = e.value;
+				this.calcHandle().then(res=>{
+					this.handleQuantity(item.id,e.value);
+				})
+			},
+			handleQuantity(id,quantity){
+				this.$http.changeQuantity({
+					customerId:this.userId,
+					id:id,
+					quantity:quantity
+				}).then(res=>{
+					console.log(res);
+				})
 			},
 			handlerButton: function(e) {
+				console.log(e);
 				let index = e.index;
 				let item = e.item;
-				this.tui.toast(`商品id：${item.id}，按钮index：${index}`);
+				this.$http.setRemoveCartShop({customerId:this.userId,id:item.id}).then(res=>{
+					console.log(res);
+					this.tui.toast('删除成功！');
+					this.getQuery();
+				})
+				// this.tui.toast(`商品id：${item.id}，按钮index：${index}`);
 			},
 			editGoods: function() {
 				// #ifdef H5 || MP
@@ -330,23 +368,59 @@
 				})
 			},
 			btnPay() {
+				this.cartIds = [];
+				this.dataList.forEach(item=>{
+					if(item.selected&&this.cartIds.indexOf(item.id)==-1){
+						this.cartIds.push(item.id);
+					}
+				});
+				// console.log(this.cartIds,this.totalPrice);
+				let cartIds = JSON.stringify(this.cartIds);
 				uni.navigateTo({
-					url: '/pages/order/submitOrder/submitOrder'
+					url: '/pages/order/submitOrder/submitOrder?cartIds='+cartIds+'&totalPrice='+this.totalPrice
 				})
 			},
 			buyChange(e) {
 				this.cartIds = e.detail.value;
-				this.dataList.map(item => {
-					//如果购物车id为数字统一转成字符串
-					if (~this.cartIds.indexOf(item.id)) {
+				// let cartIds = JSON.parse(JSON.stringify(this.cartIds));
+				// console.log(cartIds,'cart')
+				console.log('cartIds:',this.cartIds)
+				this.dataList.map((item,index)=>{
+					// console.log(this.cartIds,this.cartIds.indexOf(item.id),'----------')
+					if(this.cartIds.indexOf(item.id+'')!=-1){
+						console.log(index,item.selected)
 						item.selected = true;
-					} else {
+						this.dataList[index].selected = true;
+					}else {
 						item.selected = false;
+						this.dataList[index].selected = false;
 					}
+					// this.cartIds.forEach(function(v){
+					// 	 console.log('findv:',v)
+					// 	if(v==item.id){
+					// 		item.selected = true;
+					// 	}else {
+					// 		item.selected = false;
+					// 	}
+					// })
 				})
-				setTimeout(() => {
-					this.calcHandle()
-				}, 0)
+				// console.log('this.dataList:',this.dataList,this.cartIds)
+				// let that = this;
+				setTimeout(()=>{
+					this.calcHandle();
+				},0)
+				// this.dataList.map(item => {
+				// 	//如果购物车id为数字统一转成字符串
+				// 	if (~this.cartIds.indexOf(item.id)) {
+				// 		item.selected = true;
+				// 	} else {
+				// 		item.selected = false;
+				// 	}
+				// })
+				// console.log(this.cartIds,this.dataList);
+				// setTimeout(() => {
+				// 	this.calcHandle()
+				// }, 0)
 			},
 			checkAll(e) {
 				this.isAll = !this.isAll;
@@ -361,6 +435,7 @@
 				})
 				this.totalPrice = totalPrice;
 				this.buyNum = buyNum;
+				this.calcHandle();
 			}
 		},
 		onPullDownRefresh() {

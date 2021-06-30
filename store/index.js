@@ -9,7 +9,7 @@ const store = new Vuex.Store({
 		//用户登录手机号
 		mobile: uni.getStorageSync("thorui_mobile") || "echo.",
 		//是否登录 项目中改为真实登录信息判断，如token
-		isLogin: uni.getStorageSync("thorui_mobile") ? true : false,
+		isLogin: uni.getStorageSync("sessionKey") ? true : false,
 		//登录后跳转的页面路径 + 页面参数
 		returnUrl: "",
 		//app版本
@@ -17,7 +17,7 @@ const store = new Vuex.Store({
 		//当前是否有网络连接
 		networkConnected: true,
 		isOnline: false,
-		userId:1,
+		userId:uni.getStorageSync("userId"),
 		currenAddress:{}
 	},
 	mutations: {
@@ -43,6 +43,11 @@ const store = new Vuex.Store({
 		},
 		setAddress(state,address){
 			state.currenAddress = address;
+		},
+		setUserId(state,userId){
+			console.log(userId,'=====')
+			state.userId = userId;
+			state.isLogin = true;
 		}
 	},
 	actions: {
@@ -76,6 +81,9 @@ const store = new Vuex.Store({
 				}
 				// #endif
 			})
+		},
+		cmtUserId(context,data){
+			context.commit('setUserId',data);
 		}
 	}
 })

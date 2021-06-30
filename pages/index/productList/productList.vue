@@ -75,7 +75,7 @@
 				<block v-for="(item, index) in listData" :key="index" v-if="(index + 1) % 2 != 0 || isList">
 					<!--商品列表-->
 					<view class="tui-pro-item" :class="[isList ? 'tui-flex-list' : '']" hover-class="tui-hover" :hover-start-time="150" @tap="detail(item)">
-						<image :src="'/static/images/mall/product/' + item.img + '.jpg'" class="tui-pro-img" :class="[isList ? 'tui-proimg-list' : '']" mode="widthFix" />
+						<image :src="item.thumbImageUrl" class="tui-pro-img" :class="[isList ? 'tui-proimg-list' : '']" mode="widthFix" />
 						<view class="tui-pro-content">
 							<view class="tui-pro-tit">{{ item.name }}</view>
 							<view>

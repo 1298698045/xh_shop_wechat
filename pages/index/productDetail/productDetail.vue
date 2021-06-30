@@ -197,10 +197,10 @@
 		<!--底部操作栏-->
 		<view class="tui-operation">
 			<view class="tui-operation-left tui-col-5">
-				<view class="tui-operation-item" hover-class="tui-opcity" :hover-stay-time="150">
+				<!-- <view class="tui-operation-item" hover-class="tui-opcity" :hover-stay-time="150">
 					<tui-icon name="kefu" :size="22" color="#333"></tui-icon>
 					<view class="tui-operation-text tui-scale-small">客服</view>
-				</view>
+				</view> -->
 				<!-- <view class="tui-operation-item" hover-class="tui-opcity" :hover-stay-time="150" @tap="shop">
 					<tui-icon name="shop" :size="22" color="#333"></tui-icon>
 					<view class="tui-operation-text tui-scale-small">店铺</view>
@@ -208,16 +208,16 @@
 				<view class="tui-operation-item" hover-class="tui-opcity" :hover-stay-time="150" @click="gotoShopCart()">
 					<tui-icon name="cart" :size="22" color="#333"></tui-icon>
 					<view class="tui-operation-text tui-scale-small">购物车</view>
-					<tui-badge type="red" absolute :scaleRatio="0.8" right="10rpx" top="-4rpx">9</tui-badge>
+					<tui-badge type="red" absolute :scaleRatio="0.8" right="10rpx" top="-4rpx">{{cartTotal}}</tui-badge>
 				</view>
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
 				<view class="tui-flex-1">
 					<tui-button height="68rpx" :size="26" type="danger" shape="circle" @click="showPopup">加入购物车</tui-button>
 				</view>
-				<view class="tui-flex-1">
+				<!-- <view class="tui-flex-1">
 					<tui-button height="68rpx" :size="26" type="warning" shape="circle" @click="submit">立即购买</tui-button>
-				</view>
+				</view> -->
 			</view>
 		</view>
 
@@ -294,7 +294,7 @@
 				</scroll-view>
 				<view class="tui-operation tui-operation-right tui-right-flex tui-popup-btn">
 					<view class="tui-flex-1">
-						<tui-button height="72rpx" :size="28" type="danger" shape="circle" @click="hidePopup">加入购物车</tui-button>
+						<tui-button height="72rpx" :size="28" type="danger" shape="circle" @click="getAddCart">加入购物车</tui-button>
 					</view>
 					<view class="tui-flex-1">
 						<tui-button height="72rpx" :size="28" type="warning" shape="circle" @click="submit">立即购买</tui-button>
@@ -421,8 +421,15 @@
 				defaultAttribute:{
 					num:0
 				},
-				productNum:1
+				productNum:1,
+				attrCurrenId:'', // 属性id
+				cartTotal:''
 			};
+		},
+		computed:{
+			userId(){
+				return this.$store.state.userId;
+			}
 		},
 		onLoad: function(options) {
 			let obj = {};
@@ -449,6 +456,7 @@
 			if(options.id)
 			this.id = options.id;
 			this.getQuery();
+			this.getCartNumTotal();
 		},
 		methods: {
 			getQuery(){
@@ -460,19 +468,84 @@
 					this.shopDetail = res.returnValue;
 					this.banner = this.shopDetail.pictureModels;
 					this.defaultAttribute.num = 0;
-					this.defaultAttribute.price = this.shopDetail.productAttributes[0].values[0].priceAdjustment;
+					// this.defaultAttribute.price = this.shopDetail.productAttributes[0].values[0].priceAdjustment;
+					this.defaultAttribute.price = this.shopDetail.productPrice.priceValue;
+					// this.attrCurrenId = this.shopDetail.productAttributes[0].values[0].id;
+					this.attrCurrenId = this.getCheckAttr(0);
+				})
+			},
+			// 购物车数量
+			getCartNumTotal(){
+				this.$http.getCartNumTotal({
+					customerId:this.userId
+				}).then(res=>{
+					this.cartTotal = res.returnValue.quantity;
 				})
 			},
 			// 选择规格
 			setChoiceSpecs(item,v,idx){
 				this.defaultAttribute.num = idx;
 				this.defaultAttribute.price = v.priceAdjustment;
+				this.attrCurrenId = this.getCheckAttr(idx);
 			},
 			// 跳转到购物车
 			gotoShopCart(){
 				uni.switchTab({
 					url:'/pages/tabbar/cart/cart'
 				})
+			},
+			// 加入购物车
+			getAddCart(){
+				var data1 = this.attrCurrenId;
+				let obj = {
+					customerId:this.userId,
+					productId:this.id,
+					quantity:this.productNum
+				};
+				var data = '\r\n--XXX' 
+				for(var item in data1){
+					if(data1[item]){						
+						data+=
+							'\r\nContent-Disposition: form-data; name="'+item+'"' +
+							'\r\n' +
+							'\r\n'+data1[item]+
+							'\r\n--XXX' 
+					}
+				}
+				data += '--'
+				uni.request({
+				    url: 'https://cbt.pumchit.cn/shopapi/ShoppingCart/addcartitem?customerId='+obj.customerId+'&productId='+obj.productId+'&quantity='+obj.quantity, 
+				    header: {
+				        'content-type': 'multipart/form-data; boundary=XXX', 
+				    },
+					method:'POST',
+				    data:data,	
+				    success: (res) => {
+						console.log(res,'123')
+						let that = this;
+						if(res.data.id>0){
+							uni.showToast({
+								title:'添加成功',
+								duration:2000,
+								icon:'success',
+								success:res=>{
+									that.popupShow = false;
+									that.getCartNumTotal();
+								}
+							})
+						}
+				    }
+				});
+			},
+			// 获取属性
+			getCheckAttr(idx){
+				var temp = {};
+				var i = 0;
+				this.shopDetail.productAttributes.forEach(item=>{	
+					i++
+					temp['product_attribute_'+i] = item.values[idx]?item.values[idx].id:''
+				})
+				return temp;
 			},
 			bannerChange: function(e) {
 				this.value = e.detail.current;
@@ -1163,7 +1236,8 @@
 	}
 
 	.tui-col-5 {
-		width: 41.66666667%;
+		/* width: 41.66666667%; */
+		width:20%;
 	}
 
 	.tui-operation {

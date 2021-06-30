@@ -167,6 +167,10 @@
 <script>
 	export default {
 		onLoad: function(options) {
+			let sessionKey = uni.getStorageSync('sessionKey');
+			if(sessionKey){
+				this.info = JSON.parse(uni.getStorageSync('info'));
+			}
 			this.storage_info = uni.getStorageSync('storage_info');
 			let obj = {};
 			// #ifdef MP-WEIXIN
@@ -188,9 +192,20 @@
 				}
 			});
 		},
+		computed:{
+			isLogin(){
+				return this.$store.state.isLogin;
+			}
+		},
+		watch:{
+			isLogin(val,oldVal){
+				console.log(val,oldVal);
+			}
+		},
 		data() {
 			return {
-				isLogin: false,
+				// isLogin: false,
+				sessionKey:"",
 				webURL: 'https://www.thorui.cn/wx',
 				top: 0, //标题图标距离顶部距离
 				opacity: 0,
@@ -355,22 +370,39 @@
 			},
 			getUserProfile() {
 				let that = this;
-			  wx.getUserProfile({
-			    desc: '登录',
-			    success: function(res) {
-			      var userInfo = res.userInfo
-				  that.isLogin = true;
-				  that.info = userInfo;
-			      console.log('userInfo==>', userInfo)
-			      wx.setStorageSync('storage_info', 1);//本地标记
-			      //下面将userInfo存入服务器中的用户个人资料
-			      //...
-			    },
-			    fail() {
-			      console.log("用户拒绝授权")
-				  that.isLogin = false;
-			    }
-			  })
+				let code = '';
+				uni.login({
+					provider:'weixin',
+					success:res=>{		
+						console.log(res.code,'code')
+						code = res.code;
+					}
+				})
+				uni.getUserProfile({
+					desc: '登录',
+					success: function(res) {
+					  var userInfo = res.userInfo
+					  that.info = userInfo;
+					  wx.setStorageSync('info',JSON.stringify(userInfo));
+					  // console.log('userInfo==>', userInfo)
+					  wx.setStorageSync('storage_info', 1);//本地标记
+					  //下面将userInfo存入服务器中的用户个人资料
+					  //...
+					  that.$http.getLogin({js_code:code}).then(res=>{
+						  console.log(res);
+						  uni.setStorageSync('openId',res.openId);
+						  uni.setStorageSync('sessionKey',res.sessionKey);
+						  uni.setStorageSync('userId',res.customerId);
+						  that.$store.dispatch('cmtUserId',res.customerId);
+						  that.sessionKey = res.sessionKey;
+						  that.tui.toast('登陆成功')
+					  })
+					},
+					fail() {
+					  console.log("用户拒绝授权")
+					  that.isLogin = false;
+					}
+				})
 			},
 			appLoginWx(){
 				uni.getProvider({

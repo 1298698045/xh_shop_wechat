@@ -4,24 +4,24 @@
 		 @change="change" itemWidth="25%"></tui-tabs>
 		<!--选项卡逻辑自己实现即可，此处未做处理-->
 		<view :class="{'tui-order-list':scrollTop>=0}">
-			<view class="tui-order-item" v-for="(model,orderIndex) in 3" :key="orderIndex">
+			<view class="tui-order-item" v-for="(item,orderIndex) in listData" :key="orderIndex">
 				<tui-list-cell :hover="false" :lineLeft="false">
 					<view class="tui-goods-title">
-						<view>订单号：T201910000</view>
-						<view class="tui-order-status">已完成</view>
+						<view>订单号：{{item.id}}</view>
+						<view class="tui-order-status">{{item.orderStatus}}</view>
 					</view>
 				</tui-list-cell>
-				<block v-for="(item,index) in 2" :key="index">
-					<tui-list-cell padding="0" @click="detail">
+				<block v-for="(v,idx) in item.items" :key="idx">
+					<tui-list-cell padding="0" @click="detail(item)">
 						<view class="tui-goods-item">
-							<image :src="`/static/images/mall/product/${index+3}.jpg`" class="tui-goods-img"></image>
+							<image :src="v.picture.thumbImageUrl" class="tui-goods-img"></image>
 							<view class="tui-goods-center">
-								<view class="tui-goods-name">欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）</view>
+								<view class="tui-goods-name">{{v.productName}}</view>
 								<view class="tui-goods-attr">黑色，50ml</view>
 							</view>
 							<view class="tui-price-right">
-								<view>￥298.00</view>
-								<view>x2</view>
+								<view>￥{{v.subTotal}}</view>
+								<view>x{{v.quantity}}</view>
 							</view>
 						</view>
 					</tui-list-cell>
@@ -30,24 +30,27 @@
 					<view class="tui-goods-price">
 						<view>共4件商品 合计：</view>
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">1192</view>
-						<view class="tui-size-24">.00</view>
+						<view class="tui-price-large">{{item.orderTotal}}</view>
+						<!-- <view class="tui-size-24">.00</view> -->
 					</view>
 				</tui-list-cell>
 				<view class="tui-order-btn">
-					<view class="tui-btn-ml">
+					<!-- <view class="tui-btn-ml">
 						<tui-button type="black" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="invoiceDetail">查看发票</tui-button>
-					</view>
+					</view> -->
 					<!-- <view class="tui-btn-ml">
 						<tui-button type="black" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="addEvaluate">评价晒单</tui-button>
 					</view> -->
-					<view class="tui-btn-ml">
+					<view class="tui-btn-ml" v-if="item.paymentStatusId==10">
+						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="detail(item)">去付款</tui-button>
+					</view>
+					<view class="tui-btn-ml" v-else>
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle">再次购买</tui-button>
 					</view>
 				</view>
 			</view>
 
-			<view class="tui-order-item">
+			<!-- <view class="tui-order-item">
 				<tui-list-cell :hover="false" :lineLeft="false">
 					<view class="tui-goods-title">
 						<view>订单号：T201910000</view>
@@ -85,7 +88,7 @@
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle">再次购买</tui-button>
 					</view>
 				</view>
-			</view>
+			</view> -->
 
 		</view>
 		<!--加载loadding-->
@@ -115,16 +118,20 @@
 				// ],
 				tabs:[
 					{
-						name: "全部"
+						name: "全部",
+						orderStatus:''
 					},
 					{
-						name: "待付款"
+						name: "待付款",
+						orderStatus:1
 					},
 					{
-						name: "待收货"
+						name: "待收货",
+						orderStatus:4
 					},
 					{
-						name: "已完成"
+						name: "已完成",
+						orderStatus:5
 					}
 				],
 				currentTab: 0,
@@ -132,7 +139,8 @@
 				loadding: false,
 				pullUpOn: true,
 				scrollTop: 0,
-				orderStatus:0
+				orderStatus:0,
+				listData:[]
 			}
 		},
 		computed:{
@@ -153,13 +161,14 @@
 						pageNumber:1
 					}
 				).then(res=>{
-					console.log(res);
+					this.listData = res.returnValue;
 				})
 			},
 			change(e) {
 				this.currentTab = e.index;
+				let idx = e.index;
 				if(idx==0){
-					this.orderStatus = 0;
+					this.orderStatus = '';
 				}else if(idx==1){
 					this.orderStatus = 1;
 				}else if(idx==2){
@@ -169,9 +178,9 @@
 				}
 				this.getQuery();
 			},
-			detail() {
+			detail(item) {
 				uni.navigateTo({
-					url: '/pages/my/orderDetail/orderDetail'
+					url: '/pages/my/orderDetail/orderDetail?orderId='+item.id
 				})
 			},
 			invoiceDetail(){

@@ -2,9 +2,9 @@
 let baseUrl;
 
 if (process.env.NODE_ENV === 'development') {
- baseUrl = 'http://114.116.232.102:5002'    // 开发环境
+ baseUrl = 'https://cbt.pumchit.cn/shopapi'    // 开发环境
 } else {
- baseUrl = 'http://114.116.232.102:5002'    // 生产环境
+ baseUrl = 'https://cbt.pumchit.cn/shopapi'    // 生产环境
 }
 
 export function https(config) {

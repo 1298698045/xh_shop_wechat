@@ -13,7 +13,7 @@
 				<image :src="getImg(status)" class="tui-status-img" mode="widthFix"></image>
 			</view>
 		</view>
-		<tui-list-cell arrow backgroundColor="#fefefe" @click="logistics">
+		<!-- <tui-list-cell arrow backgroundColor="#fefefe" @click="logistics">
 			<view class="tui-flex-box">
 				<image :src="webURL+'img_order_logistics3x.png'" class="tui-icon-img"></image>
 				<view class="tui-logistics">
@@ -21,13 +21,13 @@
 					<view class="tui-logistics-time">2019-06-03 12:02</view>
 				</view>
 			</view>
-		</tui-list-cell>
+		</tui-list-cell> -->
 		<tui-list-cell unlined :hover="false">
 			<view class="tui-flex-box">
 				<image :src="webURL+'img_order_address3x.png'" class="tui-icon-img"></image>
 				<view class="tui-addr">
-					<view class="tui-addr-userinfo">张一<text class="tui-addr-tel">18378849962</text></view>
-					<view class="tui-addr-text">广东省广州市海珠区阅江西路222号鲜卑路16巷吉安花园 2栋106</view>
+					<view class="tui-addr-userinfo">{{orderDetail.shippingAddress.contactName}}<text class="tui-addr-tel">{{orderDetail.shippingAddress.phoneNumber}}</text></view>
+					<view class="tui-addr-text">{{orderDetail.shippingAddress.city+orderDetail.shippingAddress.address1}}</view>
 				</view>
 			</view>
 		</tui-list-cell>
@@ -38,17 +38,17 @@
 					商品信息
 				</view>
 			</tui-list-cell>
-			<block v-for="(item,index) in 2" :key="index">
+			<block v-for="(item,index) in orderDetail.items" :key="index">
 				<tui-list-cell padding="0">
 					<view class="tui-goods-item">
-						<image :src="`/static/images/mall/product/${index+3}.jpg`" class="tui-goods-img"></image>
+						<image :src="item.picture.thumbImageUrl" class="tui-goods-img"></image>
 						<view class="tui-goods-center">
-							<view class="tui-goods-name">欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）</view>
+							<view class="tui-goods-name">{{item.productName}}</view>
 							<view class="tui-goods-attr">黑色，50ml</view>
 						</view>
 						<view class="tui-price-right">
-							<view>￥298.00</view>
-							<view>x2</view>
+							<view>￥{{item.unitPrice}}</view>
+							<view>x{{item.quantity}}</view>
 						</view>
 					</view>
 				</tui-list-cell>
@@ -56,12 +56,12 @@
 			<view class="tui-goods-info">
 				<view class="tui-price-flex tui-size24">
 					<view>商品总额</view>
-					<view>￥1192.00</view>
+					<view>￥{{orderDetail.orderTotal}}</view>
 				</view>
-				<view class="tui-price-flex  tui-size24">
+				<!-- <view class="tui-price-flex  tui-size24">
 					<view>优惠券</view>
 					<view>￥0.00</view>
-				</view>
+				</view> -->
 				<view class="tui-price-flex  tui-size24">
 					<view>配送费</view>
 					<view>￥0.00</view>
@@ -70,16 +70,16 @@
 					<view class="tui-flex-shrink">合计</view>
 					<view class="tui-goods-price">
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">1192</view>
-						<view class="tui-size-24">.00</view>
+						<view class="tui-price-large">{{orderDetail.orderTotal}}</view>
+						<!-- <view class="tui-size-24">.00</view> -->
 					</view>
 				</view>
 				<view class="tui-price-flex tui-size32">
 					<view class="tui-flex-shrink">实付款</view>
 					<view class="tui-goods-price tui-primary-color">
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">1192</view>
-						<view class="tui-size-24">.00</view>
+						<view class="tui-price-large">{{orderDetail.orderTotal}}</view>
+						<!-- <view class="tui-size-24">.00</view> -->
 					</view>
 				</view>
 			</view>
@@ -102,7 +102,7 @@
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">创建时间:</view>
-					<view class="tui-item-content">2019-05-26 10:36</view>
+					<view class="tui-item-content">{{orderDetail.createdOn}}</view>
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">付款时间:</view>
@@ -121,25 +121,28 @@
 					<view class="tui-item-content">麻烦尽快发货，打包包裹时请多拿几个泡沫放在纸箱盒内，防止摔碎</view>
 				</view>
 			</view>
-			<tui-list-view unlined="bottom">
+			<!-- <tui-list-view unlined="bottom">
 				<tui-list-cell unlined>
 					<view class="tui-contact">
 						<image src="https://thorui.cn/images/mall/group/icon_order_contactmerchant.png"></image>
 						<text>联系商家</text>
 					</view>
 				</tui-list-cell>
-			</tui-list-view>
+			</tui-list-view> -->
 		</view>
 		<view class="tui-safe-area"></view>
 		<view class="tui-tabbar tui-order-btn">
 			<!-- <view class="tui-btn-mr">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle">删除订单</tui-button>
 			</view> -->
-			<view class="tui-btn-mr">
+			<!-- <view class="tui-btn-mr">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="refund">申请售后</tui-button>
-			</view>
-			<view class="tui-btn-mr">
+			</view> -->
+			<view class="tui-btn-mr" v-if="orderDetail.paymentStatusId==10">
 				<tui-button type="danger" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="btnPay">立即支付</tui-button>
+			</view>
+			<view class="tui-btn-mr" v-else>
+				<tui-button type="danger" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle">已完成</tui-button>
 			</view>
 		</view>
 		<t-pay-way :show="show" @close="popupClose"></t-pay-way>
@@ -157,10 +160,36 @@
 				webURL: "https://www.thorui.cn/wx/static/images/mall/order/",
 				//1-待付款 2-付款成功 3-待收货 4-订单已完成 5-交易关闭
 				status: 1,
-				show: false
+				show: false,
+				orderId:"",
+				orderDetail:{}
 			}
 		},
+		computed:{
+			userId(){
+				return this.$store.state.userId;
+			}
+		},
+		onLoad(options){
+			this.orderId = options.orderId;
+			this.getQuery();
+		},
 		methods: {
+			getQuery(){
+				this.$http.getSingleOrder(
+					{
+						customerId:this.userId,
+						orderId:this.orderId
+					}
+				).then(res=>{
+					this.orderDetail = res.returnValue;
+					if(this.orderDetail.paymentStatusId==10){
+						this.status = 1;
+					}else {
+						this.status = 2;
+					}
+				})
+			},
 			getImg: function(status) {
 				return this.webURL + ["img_order_payment3x.png", "img_order_send3x.png", "img_order_received3x.png",
 					"img_order_signed3x.png", "img_order_closed3x.png"

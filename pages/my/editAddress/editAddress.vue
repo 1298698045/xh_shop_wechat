@@ -43,7 +43,7 @@
 			<tui-list-cell :hover="false" padding="0">
 				<view class="tui-swipe-cell">
 					<view>设为默认地址</view>
-					<switch checked color="#19be6b" class="tui-switch-small" />
+					<switch :checked='isDefault==0?false:true' color="#19be6b" class="tui-switch-small" @change="changeSettingDefault" />
 				</view>
 			</tui-list-cell>
 			<!-- 保存地址 -->
@@ -74,7 +74,13 @@
 				},
 				idx:1,
 				listData:[],
-				id:0
+				id:0,
+				isDefault:0
+			}
+		},
+		computed:{
+			userId(){
+				return this.$store.state.userId;
 			}
 		},
 		onLoad(options) {
@@ -83,8 +89,8 @@
 				this.toArr(this.selectList[0].children),
 				this.toArr(this.selectList[0].children[0].children)
 			]
-			let addressList = JSON.parse(wx.getStorageSync('addressList'));
-			this.listData = this.listData.concat(addressList)
+			// let addressList = JSON.parse(wx.getStorageSync('addressList'));
+			// this.listData = this.listData.concat(addressList)
 			if(options.params){
 				let paramsData = JSON.parse(options.params);
 				console.log('paramsData',paramsData)
@@ -114,6 +120,15 @@
 					// this.selectList[value[0]].children[value[1]].children[value[2]].value
 					this.text = provice + " " + city + " " + district;
 					this.setRowData.city = this.text;
+				}
+			},
+			changeSettingDefault(e){
+				console.log(e);
+				let val = e.mp.detail.value;
+				if(val){
+					this.isDefault = 1;
+				}else {
+					this.isDefault = 0;
 				}
 			},
 			toArr(object) {
@@ -164,12 +179,13 @@
 				obj = JSON.stringify(obj);
 				this.$http.setAddress(
 					{
-						customerId:1,
+						customerId:this.userId,
 						id:this.id,
 						contactName:this.setRowData.name,
 						city:this.setRowData.city,
 						address1:this.setRowData.address,
-						phoneNumber:this.setRowData.phone
+						phoneNumber:this.setRowData.phone,
+						isDefault:this.isDefault
 					}
 				).then(res=>{
 					console.log(res);

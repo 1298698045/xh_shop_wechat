@@ -4,11 +4,11 @@
 			<tui-list-cell :hover="false">
 				<view class="tui-pay-item__title">
 					<view>请选择支付方式</view>
-					<view>支付金额：<text class="tui-pay-amuont">￥100.00</text></view>
+					<view>支付金额：<text class="tui-pay-amuont">￥{{totalPrice}}</text></view>
 				</view>
 			</tui-list-cell>
 			<radio-group>
-				<tui-list-cell unlined :hover="false">
+				<!-- <tui-list-cell unlined :hover="false">
 					<label class="tui-pay-item">
 						<image src="/static/images/mall/pay/icon_pay_balance.png" class="tui-pay-logo"></image>
 						<text>余额支付（余额0，余额不足）</text>
@@ -17,7 +17,7 @@
 						</view>
 						<view class="tui-recharge">去充值</view>
 					</label>
-				</tui-list-cell>
+				</tui-list-cell> -->
 				<tui-list-cell unlined>
 					<label class="tui-pay-item">
 						<image src="/static/images/mall/pay/icon_pay_weixin.png" class="tui-pay-logo"></image>
@@ -27,7 +27,7 @@
 						</view>
 					</label>
 				</tui-list-cell>
-				<tui-list-cell unlined>
+				<!-- <tui-list-cell unlined>
 					<label class="tui-pay-item">
 						<image src="/static/images/mall/pay/icon_pay_zhifubao.png" class="tui-pay-logo"></image>
 						<text>支付宝支付</text>
@@ -35,7 +35,7 @@
 							<radio color="#EB0909" name="pay"></radio>
 						</view>
 					</label>
-				</tui-list-cell>
+				</tui-list-cell> -->
 			</radio-group>
 			<view class="tui-btn-pay">
 				<tui-button height="88rpx" type="danger" shape="circle" shadow @click="btnPay">去付款</tui-button>
@@ -56,6 +56,9 @@
 			page:{
 				type:Number,
 				default:1
+			},
+			totalPrice:{
+				type:String
 			}
 		},
 		data() {
