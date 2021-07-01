@@ -137,6 +137,24 @@ class api{
 		})
 		return res
 	}
+	// 首页商品
+	async getQueryShops(data){
+		const res = await https({
+			method: "get", // 请求方式
+			url: '/Catalog/home/item/list', // 请求url
+			data: data,// 参数
+		})
+		return res
+	}
+	// 推荐商品Catalog/recommend/item/list
+	async getRecommend(data){
+		const res = await https({
+			method: "get", // 请求方式
+			url: '/Catalog/recommend/item/list', // 请求url
+			data: data,// 参数
+		})
+		return res
+	}
     // 下面可以接着写API接口集
     // 接口二
     // 接口三

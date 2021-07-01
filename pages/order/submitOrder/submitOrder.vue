@@ -5,11 +5,11 @@
 				<view class="tui-address">
 					<view v-if="currenAddress.address1">
 						<view class="tui-userinfo">
-							<text class="tui-name">{{currenAddress.contactName | ''}}</text> {{currenAddress.phoneNumber | ''}}
+							<text class="tui-name">{{currenAddress.contactName ||''}}</text> {{currenAddress.phoneNumber || ''}}
 						</view>
 						<view class="tui-addr">
 							<view class="tui-addr-tag">公司</view>
-							<text>{{currenAddress.city + currenAddress.address1 | ''}}</text>
+							<text>{{currenAddress.city + currenAddress.address1 || ''}}</text>
 						</view>
 					</view>
 					<view class="tui-none-addr" v-else>

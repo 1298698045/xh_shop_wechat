@@ -1,11 +1,18 @@
 <template>
 	<view class="container">
 		<!-- #ifdef MP || H5-->
+		<div class="cartIcon" v-if="!isLogin">
+			<image src="/static/images/tabbar/icon_cart_fill.png" mode=""></image>
+			<tui-button width="50%" type="warning" plain margin="0 auto" @click='getGotoLogin'>去登录</tui-button>
+		</div>
+		<div v-else>
+			
+		
 		<view class="tui-edit-goods">
 			<view>购物车共<text class="tui-goods-num">{{dataList.length}}</text>件商品</view>
-			<view>
+			<!-- <view>
 				<tui-button type="gray" :plain="true" shape="circle" width="160rpx" height="60rpx" :size="24" @click="editGoods">{{isEdit?"完成":"编辑商品"}}</tui-button>
-			</view>
+			</view> -->
 		</view>
 		<!-- #endif -->
 		<div  @click.stop>
@@ -137,6 +144,7 @@
 		</view>
 		<!--加载loadding-->
 		<tui-loadmore v-if="loadding" :index="3" type="red"></tui-loadmore>
+		</div>
 	</view>
 </template>
 
@@ -284,14 +292,30 @@
 			// this.getQuery();
 		},
 		onShow() {
-			this.getQuery()
+			if(this.isLogin){
+				this.getQuery()
+			}
 		},
 		computed:{
-			userId(){
+			userId(){ 
 				return this.$store.state.userId;
+			},
+			isLogin(){
+				return this.$store.state.isLogin;
+			}
+		},
+		watch:{
+			isLogin(val,oldVal){
+				console.log(val,oldVal);
 			}
 		},
 		methods: {
+			// 去登录
+			getGotoLogin(){
+				uni.navigateTo({
+					url:'/pages/index/login/login'
+				})
+			},
 			getQuery(){
 				this.$http.getShoppingCart({
 					customerId:this.userId
@@ -824,5 +848,13 @@
 		padding-top: 10rpx;
 		font-size: 24rpx;
 		color: #656565;
+	}
+	.cartIcon {
+		margin-top: 100rpx;
+		text-align: center;
+	}
+	.cartIcon image{
+		width: 200rpx;
+		height: 200rpx;
 	}
 </style>

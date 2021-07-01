@@ -70,7 +70,11 @@
 				address:"",
 				city:"",
 				setRowData:{
-					idx:1
+					idx:1,
+					name:"",
+					city:"",
+					address:"",
+					phone:""
 				},
 				idx:1,
 				listData:[],
@@ -177,29 +181,43 @@
 					}
 				}
 				obj = JSON.stringify(obj);
-				this.$http.setAddress(
-					{
-						customerId:this.userId,
-						id:this.id,
-						contactName:this.setRowData.name,
-						city:this.setRowData.city,
-						address1:this.setRowData.address,
-						phoneNumber:this.setRowData.phone,
-						isDefault:this.isDefault
-					}
-				).then(res=>{
-					console.log(res);
-					uni.navigateBack({
-						delta:1
+				if(this.setRowData.name == ''){
+					this.tui.toast('请输入姓名');
+					return false;
+				}else if(this.setRowData.city == ''){
+					this.tui.toast('请选择城市');
+					return false;
+				}else if(this.setRowData.address ==''){
+					this.tui.toast('请输入地址');
+					return false;
+				}else if(this.setRowData.phone == ''){
+					this.tui.toast('请输入手机号');
+					return false;
+				}else{
+					this.$http.setAddress(
+						{
+							customerId:this.userId,
+							id:this.id,
+							contactName:this.setRowData.name,
+							city:this.setRowData.city,
+							address1:this.setRowData.address,
+							phoneNumber:this.setRowData.phone,
+							isDefault:this.isDefault
+						}
+					).then(res=>{
+						console.log(res);
+						uni.navigateBack({
+							delta:1
+						})
 					})
-				})
-				// this.listData.push(this.setRowData);
-				// let addressData = JSON.stringify(this.listData);
-				// uni.setStorageSync('addressList',addressData);
-				// console.log(this.setRowData,'---')
-				// uni.navigateBack({
-				// 	delta:1
-				// })
+					// this.listData.push(this.setRowData);
+					// let addressData = JSON.stringify(this.listData);
+					// uni.setStorageSync('addressList',addressData);
+					// console.log(this.setRowData,'---')
+					// uni.navigateBack({
+					// 	delta:1
+					// })
+				}
 			}
 		}
 	}

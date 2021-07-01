@@ -9,13 +9,13 @@
 		<tui-list-cell padding="0" :hover="false">
 			<view class="tui-list-cell tui-pr30">
 				<view>用户名</view>
-				<view class="tui-content">Athor</view>
+				<view class="tui-content">{{info.nickName || ''}}</view>
 			</view>
 		</tui-list-cell>
 		<tui-list-cell padding="0" :arrow="true" @click="nickname">
 			<view class="tui-list-cell">
 				<view>昵称</view>
-				<view class="tui-content">echo.</view>
+				<view class="tui-content">{{info.nickName || ''}}</view>
 			</view>
 		</tui-list-cell>
 		<tui-list-cell padding="0" :arrow="true" @click="changeSex">
@@ -40,7 +40,18 @@
 		data() {
 			return {
 				sex: '男',
-				date:'请选择'
+				date:'请选择',
+				info:{}
+			}
+		},
+		computed:{
+			isLogin(){
+				return this.$store.state.isLogin;
+			}
+		},
+		onLoad(){
+			if(this.isLogin){
+				this.info = JSON.parse(uni.getStorageSync('info'));
 			}
 		},
 		methods: {

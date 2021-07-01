@@ -3,7 +3,7 @@
 		<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(1)">
 			<view class="tui-list-cell tui-info-box">
 				<image src="/static/images/my/mine_def_touxiang_3x.png" class="tui-avatar"></image>
-				<view>echo.</view>
+				<view>{{info.nickName || ''}}</view>
 			</view>
 		</tui-list-cell>
 		<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(2)">
@@ -28,7 +28,7 @@
 				</view>
 			</tui-list-cell>
 		</view> -->
-		<view class="tui-mtop">
+		<!-- <view class="tui-mtop">
 			<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(4)">
 				<view class="tui-list-cell">
 					关于我们
@@ -39,11 +39,11 @@
 					意见反馈
 				</view>
 			</tui-list-cell>
-		</view>
+		</view> -->
 
-		<view class="tui-exit">
+	<!-- 	<view class="tui-exit">
 			<tui-button shape="circle" shadow type="danger" height="88rpx">退出登录</tui-button>
-		</view>
+		</view> -->
 	</view>
 </template>
 
@@ -51,7 +51,17 @@
 	export default {
 		data() {
 			return {
-
+				info:''
+			}
+		},
+		computed:{
+			isLogin(){
+				return this.$store.state.isLogin;
+			}
+		},
+		onLoad(){
+			if(this.isLogin){
+				this.info = JSON.parse(uni.getStorageSync('info'));
 			}
 		},
 		methods: {

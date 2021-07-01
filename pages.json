@@ -371,15 +371,6 @@
             }
             
         }
-        ,{
-            "path" : "pages/login/login/login",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
         
     ],
 	"subpackages":[{

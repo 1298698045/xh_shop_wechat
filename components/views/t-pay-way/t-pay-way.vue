@@ -71,8 +71,23 @@
 				this.$emit("close",{})
 			},
 			btnPay(){
-				this.close();
-				this.tui.href("/pages/order/success/success")
+				let timeStamp = new Date().getTime();
+				uni.requestPayment({
+					timeStamp:timeStamp,
+					nonceStr:'',
+					package:'',
+					signType: 'MD5',
+					paySign:'',
+					success(res){
+						
+					},
+					fail(err){
+						
+					}
+				})
+				
+				// this.close();
+				// this.tui.href("/pages/order/success/success")
 			}
 		}
 	}

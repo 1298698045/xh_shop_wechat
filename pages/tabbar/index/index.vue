@@ -31,7 +31,7 @@
 				<view class="tui-banner-box">
 					<swiper :indicator-dots="true" :autoplay="true" :interval="5000" :duration="150" class="tui-banner-swiper"
 					 :circular="true" indicator-color="rgba(255, 255, 255, 0.8)" indicator-active-color="#fff">
-						<swiper-item v-for="(item, index) in banner" :key="index" @tap.stop="detail">
+						<swiper-item v-for="(item, index) in banner" :key="index">
 							<image :src="'https://thorui.cn/images/mall/banner/' + item" class="tui-slide-image" mode="scaleToFill" />
 						</swiper-item>
 					</swiper>
@@ -49,18 +49,18 @@
 			</view>
 			<view class="tui-product-list">
 				<view class="tui-product-container">
-					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 != 0">
+					<block v-for="(item, index) in productList" :key="index"  v-if="(index + 1) % 2 != 0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
-							<image :src="'/static/images/mall/product/' + item.img + '.jpg'" class="tui-pro-img" mode="widthFix" />
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail(item)">
+							<image :src="item.thumbImageUrl" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
 								<view class="tui-pro-tit">{{ item.name }}</view>
 								<view>
 									<view class="tui-pro-price">
-										<text class="tui-sale-price">￥{{ item.sale }}</text>
-										<text class="tui-factory-price">￥{{ item.factory }}</text>
+										<text class="tui-sale-price">￥{{ item.price }}</text>
+										<text class="tui-factory-price">￥{{ item.price }}</text>
 									</view>
-									<view class="tui-pro-pay">{{ item.payNum }}人付款</view>
+									<view class="tui-pro-pay">{{ item.payNum || '' }}人付款</view>
 								</view>
 							</view>
 						</view>
@@ -70,21 +70,21 @@
 				</view>
 				<view class="tui-product-container">
 					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 == 0">
-						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
-							<image :src="'/static/images/mall/product/' + item.img + '.jpg'" class="tui-pro-img" mode="widthFix" />
+						<!-- 商品列表 -->
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail(item)">
+							<image :src="item.thumbImageUrl" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
 								<view class="tui-pro-tit">{{ item.name }}</view>
 								<view>
 									<view class="tui-pro-price">
-										<text class="tui-sale-price">￥{{ item.sale }}</text>
-										<text class="tui-factory-price">￥{{ item.factory }}</text>
+										<text class="tui-sale-price">￥{{ item.price }}</text>
+										<text class="tui-factory-price">￥{{ item.price }}</text>
 									</view>
-									<view class="tui-pro-pay">{{ item.payNum }}人付款</view>
+									<view class="tui-pro-pay">{{ item.payNum || '' }}人付款</view>
 								</view>
 							</view>
 						</view>
-						<!--商品列表-->
+						<!-- 商品列表 -->
 					</block>
 				</view>
 			</view>
@@ -193,87 +193,100 @@
 						isLabel: true
 					}
 				],
-				productList: [{
-						img: 1,
-						name: '欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）',
-						sale: 599,
-						factory: 899,
-						payNum: 2342
-					},
-					{
-						img: 2,
-						name: '德国DMK进口牛奶  欧德堡（Oldenburger）超高温处理全脂纯牛奶1L*12盒',
-						sale: 29,
-						factory: 69,
-						payNum: 999
-					},
-					{
-						img: 3,
-						name: '【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红',
-						sale: 299,
-						factory: 699,
-						payNum: 666
-					},
-					{
-						img: 4,
-						name: '百雀羚套装女补水保湿护肤品',
-						sale: 1599,
-						factory: 2899,
-						payNum: 236
-					},
-					{
-						img: 5,
-						name: '百草味 肉干肉脯 休闲零食 靖江精制猪肉脯200g/袋',
-						sale: 599,
-						factory: 899,
-						payNum: 2399
-					},
-					{
-						img: 6,
-						name: '短袖睡衣女夏季薄款休闲家居服短裤套装女可爱韩版清新学生两件套 短袖粉色长颈鹿 M码75-95斤',
-						sale: 599,
-						factory: 899,
-						payNum: 2399
-					},
-					{
-						img: 1,
-						name: '欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜',
-						sale: 599,
-						factory: 899,
-						payNum: 2342
-					},
-					{
-						img: 2,
-						name: '德国DMK进口牛奶',
-						sale: 29,
-						factory: 69,
-						payNum: 999
-					},
-					{
-						img: 3,
-						name: '【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红',
-						sale: 299,
-						factory: 699,
-						payNum: 666
-					},
-					{
-						img: 4,
-						name: '百雀羚套装女补水保湿护肤品',
-						sale: 1599,
-						factory: 2899,
-						payNum: 236
-					}
-				],
+				// productList: [{
+				// 		img: 1,
+				// 		name: '欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）',
+				// 		sale: 599,
+				// 		factory: 899,
+				// 		payNum: 2342
+				// 	},
+				// 	{
+				// 		img: 2,
+				// 		name: '德国DMK进口牛奶  欧德堡（Oldenburger）超高温处理全脂纯牛奶1L*12盒',
+				// 		sale: 29,
+				// 		factory: 69,
+				// 		payNum: 999
+				// 	},
+				// 	{
+				// 		img: 3,
+				// 		name: '【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红',
+				// 		sale: 299,
+				// 		factory: 699,
+				// 		payNum: 666
+				// 	},
+				// 	{
+				// 		img: 4,
+				// 		name: '百雀羚套装女补水保湿护肤品',
+				// 		sale: 1599,
+				// 		factory: 2899,
+				// 		payNum: 236
+				// 	},
+				// 	{
+				// 		img: 5,
+				// 		name: '百草味 肉干肉脯 休闲零食 靖江精制猪肉脯200g/袋',
+				// 		sale: 599,
+				// 		factory: 899,
+				// 		payNum: 2399
+				// 	},
+				// 	{
+				// 		img: 6,
+				// 		name: '短袖睡衣女夏季薄款休闲家居服短裤套装女可爱韩版清新学生两件套 短袖粉色长颈鹿 M码75-95斤',
+				// 		sale: 599,
+				// 		factory: 899,
+				// 		payNum: 2399
+				// 	},
+				// 	{
+				// 		img: 1,
+				// 		name: '欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜',
+				// 		sale: 599,
+				// 		factory: 899,
+				// 		payNum: 2342
+				// 	},
+				// 	{
+				// 		img: 2,
+				// 		name: '德国DMK进口牛奶',
+				// 		sale: 29,
+				// 		factory: 69,
+				// 		payNum: 999
+				// 	},
+				// 	{
+				// 		img: 3,
+				// 		name: '【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红',
+				// 		sale: 299,
+				// 		factory: 699,
+				// 		payNum: 666
+				// 	},
+				// 	{
+				// 		img: 4,
+				// 		name: '百雀羚套装女补水保湿护肤品',
+				// 		sale: 1599,
+				// 		factory: 2899,
+				// 		payNum: 236
+				// 	}
+				// ],
+				productList:[],
 				pageIndex: 1,
 				loadding: false,
 				pullUpOn: true,
 				opacity: 1
 			};
 		},
+		onLoad(){
+			this.getQuery();
+		},
 		methods: {
-			detail: function() {
+			getQuery(){
+				this.$http.getQueryShops({
+					pageNumber:1,
+					pageSize:100
+				}).then(res=>{
+					console.log(res);
+					this.productList = res.returnValue;
+				})
+			},
+			detail: function(item) {
 				uni.navigateTo({
-					url: '/pages/index/productDetail/productDetail'
+					url: '/pages/index/productDetail/productDetail?id='+item.id
 				});
 			},
 			coupon() {
@@ -316,21 +329,21 @@
 			uni.stopPullDownRefresh();
 		},
 		onReachBottom: function() {
-			if (!this.pullUpOn) return;
-			this.loadding = true;
-			if (this.pageIndex == 4) {
-				this.loadding = false;
-				this.pullUpOn = false;
-			} else {
-				let loadData = JSON.parse(JSON.stringify(this.productList));
-				loadData = loadData.splice(0, 10);
-				if (this.pageIndex == 1) {
-					loadData = loadData.reverse();
-				}
-				this.productList = this.productList.concat(loadData);
-				this.pageIndex = this.pageIndex + 1;
-				this.loadding = false;
-			}
+			// if (!this.pullUpOn) return;
+			// this.loadding = true;
+			// if (this.pageIndex == 4) {
+			// 	this.loadding = false;
+			// 	this.pullUpOn = false;
+			// } else {
+			// 	let loadData = JSON.parse(JSON.stringify(this.productList));
+			// 	loadData = loadData.splice(0, 10);
+			// 	if (this.pageIndex == 1) {
+			// 		loadData = loadData.reverse();
+			// 	}
+			// 	this.productList = this.productList.concat(loadData);
+			// 	this.pageIndex = this.pageIndex + 1;
+			// 	this.loadding = false;
+			// }
 		},
 		onPageScroll(e) {
 			// #ifdef APP-PLUS

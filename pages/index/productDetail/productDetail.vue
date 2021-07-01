@@ -7,11 +7,11 @@
 				<view class="tui-icon-box" :style="{ backgroundColor: 'rgba(0, 0, 0,' + iconOpcity + ')' }" @tap="back">
 					<tui-icon name="arrowleft" :size="30" :color="opcity >= 1 ? '#000' : '#fff'"></tui-icon>
 				</view>
-
+<!-- 
 				<view class="tui-icon-box tui-icon-ml" :style="{backgroundColor: 'rgba(0, 0, 0,' + iconOpcity + ')'}" @tap.stop="openMenu">
 					<tui-icon name="more-fill" :size="20" :color="opcity >= 1 ? '#000' : '#fff'"></tui-icon>
 					<tui-badge type="red" :scaleRatio="0.8" absolute top="0" right="-4rpx">5</tui-badge>
-				</view>
+				</view> -->
 
 			</view>
 		</view>
@@ -56,7 +56,7 @@
 				</view>
 				<view class="tui-original-price tui-gray">
 					价格
-					<text class="tui-line-through">￥{{shopDetail.productPrice.priceValue}}</text>
+					<text class="tui-line-through">￥{{shopDetail.productPrice.oldPrice || ''}}</text>
 				</view>
 				<view class="tui-pro-titbox">
 					<view class="tui-pro-title">{{shopDetail.name}}</view>
@@ -121,7 +121,7 @@
 						<tui-icon name="more-fill" :size="20" color="#666"></tui-icon>
 					</view>
 				</view>
-				<view class="tui-list-cell" @tap="showPopup">
+				<view class="tui-list-cell">
 					<view class="tui-bold tui-cell-title">送至</view>
 					<view class="tui-addr-box">
 						<view class="tui-addr-item">北京朝阳区三环到四环之间</view>
@@ -296,9 +296,9 @@
 					<view class="tui-flex-1">
 						<tui-button height="72rpx" :size="28" type="danger" shape="circle" @click="getAddCart">加入购物车</tui-button>
 					</view>
-					<view class="tui-flex-1">
+					<!-- <view class="tui-flex-1">
 						<tui-button height="72rpx" :size="28" type="warning" shape="circle" @click="submit">立即购买</tui-button>
-					</view>
+					</view> -->
 				</view>
 				<view class="tui-right">
 					<tui-icon name="close-fill" color="#999" :size="20" @click="hidePopup"></tui-icon>
@@ -429,6 +429,9 @@
 		computed:{
 			userId(){
 				return this.$store.state.userId;
+			},
+			isLogin(){
+				return this.$store.state.isLogin;
 			}
 		},
 		onLoad: function(options) {
@@ -455,8 +458,13 @@
 			}, 0);
 			if(options.id)
 			this.id = options.id;
+			// this.getQuery();
+		},
+		onShow(){
 			this.getQuery();
-			this.getCartNumTotal();
+			if(this.isLogin){
+				this.getCartNumTotal();
+			}
 		},
 		methods: {
 			getQuery(){
@@ -567,7 +575,13 @@
 				this.menuShow = false;
 			},
 			showPopup: function() {
-				this.popupShow = true;
+				if(this.isLogin){
+					this.popupShow = true;
+				}else {
+					uni.navigateTo({
+						url:'/pages/index/login/login'
+					})
+				}
 			},
 			hidePopup: function() {
 				this.popupShow = false;
@@ -1528,5 +1542,10 @@
 		transform-origin: center center;
 		color: #ffffff;
 		padding-top: 12rpx;
+	}
+	.tui-product-img img{
+		width: 100%!important;
+		height: 100%;
+		
 	}
 </style>

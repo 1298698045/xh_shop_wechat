@@ -40,10 +40,10 @@
 				<!-- #endif -->
 				<!-- #ifdef MP -->
 				<view class="tui-set-box">
-					<view class="tui-icon-box tui-icon-message" @tap="href(7)">
+					<!-- <view class="tui-icon-box tui-icon-message" @tap="href(7)">
 						<tui-icon name="message" color="#fff" :size="26"></tui-icon>
 						<view v-if="isLogin" class="tui-badge tui-badge-white">1</view>
-					</view>
+					</view> -->
 					<view class="tui-icon-box tui-icon-setup" @tap="href(2)">
 						<tui-icon name="setup" color="#fff" :size="26"></tui-icon>
 					</view>
@@ -122,16 +122,16 @@
 				<view class="tui-product-container">
 					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 != 0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
-							<image :src="'/static/images/mall/product/' + item.img + '.jpg'" class="tui-pro-img" mode="widthFix" />
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail(item)">
+							<image :src="item.thumbImageUrl" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
 								<view class="tui-pro-tit">{{ item.name }}</view>
 								<view>
 									<view class="tui-pro-price">
-										<text class="tui-sale-price">￥{{ item.sale }}</text>
-										<text class="tui-factory-price">￥{{ item.factory }}</text>
+										<text class="tui-sale-price">￥{{ item.price }}</text>
+										<text class="tui-factory-price">￥{{ item.price }}</text>
 									</view>
-									<view class="tui-pro-pay">{{ item.payNum }}人付款</view>
+									<view class="tui-pro-pay">{{ item.payNum || ''}}人付款</view>
 								</view>
 							</view>
 						</view>
@@ -142,16 +142,16 @@
 				<view class="tui-product-container">
 					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 == 0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
-							<image :src="'/static/images/mall/product/' + item.img + '.jpg'" class="tui-pro-img" mode="widthFix" />
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail(item)">
+							<image :src="item.thumbImageUrl" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
 								<view class="tui-pro-tit">{{ item.name }}</view>
 								<view>
 									<view class="tui-pro-price">
-										<text class="tui-sale-price">￥{{ item.sale }}</text>
-										<text class="tui-factory-price">￥{{ item.factory }}</text>
+										<text class="tui-sale-price">￥{{ item.price }}</text>
+										<text class="tui-factory-price">￥{{ item.price }}</text>
 									</view>
-									<view class="tui-pro-pay">{{ item.payNum }}人付款</view>
+									<view class="tui-pro-pay">{{ item.payNum || ''}}人付款</view>
 								</view>
 							</view>
 						</view>
@@ -167,10 +167,6 @@
 <script>
 	export default {
 		onLoad: function(options) {
-			let sessionKey = uni.getStorageSync('sessionKey');
-			if(sessionKey){
-				this.info = JSON.parse(uni.getStorageSync('info'));
-			}
 			this.storage_info = uni.getStorageSync('storage_info');
 			let obj = {};
 			// #ifdef MP-WEIXIN
@@ -191,6 +187,13 @@
 					this.scrollH = res.windowWidth * 0.6;
 				}
 			});
+		},
+		onShow(){
+			let sessionKey = uni.getStorageSync('sessionKey');
+			if(sessionKey){
+				this.info = JSON.parse(uni.getStorageSync('info'));
+			}
+			this.getRecommend();
 		},
 		computed:{
 			isLogin(){
@@ -289,6 +292,13 @@
 			};
 		},
 		methods: {
+			// 推荐商品
+			getRecommend(){
+				this.$http.getRecommend({}).then(res=>{
+					console.log(res);
+					this.productList = res.returnValue;
+				})
+			},
 			href(page) {
 				//未登录状态下应跳转至登录页面，此处未作处理
 				let url = '';
@@ -334,9 +344,9 @@
 					this.tui.toast('功能尚未完善~');
 				}
 			},
-			detail: function() {
+			detail: function(item) {
 				uni.navigateTo({
-					url: '/pages/index/productDetail/productDetail'
+					url: '/pages/index/productDetail/productDetail?id='+item.id
 				});
 			},
 			initNavigation(e) {
@@ -464,21 +474,21 @@
 			}, 200);
 		},
 		onReachBottom: function() {
-			if (!this.pullUpOn) return;
-			this.loadding = true;
-			if (this.pageIndex == 4) {
-				this.loadding = false;
-				this.pullUpOn = false;
-			} else {
-				let loadData = JSON.parse(JSON.stringify(this.productList));
-				loadData = loadData.splice(0, 10);
-				if (this.pageIndex == 1) {
-					loadData = loadData.reverse();
-				}
-				this.productList = this.productList.concat(loadData);
-				this.pageIndex = this.pageIndex + 1;
-				this.loadding = false;
-			}
+			// if (!this.pullUpOn) return;
+			// this.loadding = true;
+			// if (this.pageIndex == 4) {
+			// 	this.loadding = false;
+			// 	this.pullUpOn = false;
+			// } else {
+			// 	let loadData = JSON.parse(JSON.stringify(this.productList));
+			// 	loadData = loadData.splice(0, 10);
+			// 	if (this.pageIndex == 1) {
+			// 		loadData = loadData.reverse();
+			// 	}
+			// 	this.productList = this.productList.concat(loadData);
+			// 	this.pageIndex = this.pageIndex + 1;
+			// 	this.loadding = false;
+			// }
 		}
 	};
 </script>
