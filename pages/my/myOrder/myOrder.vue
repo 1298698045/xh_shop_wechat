@@ -7,7 +7,7 @@
 			<view class="tui-order-item" v-for="(item,orderIndex) in listData" :key="orderIndex">
 				<tui-list-cell :hover="false" :lineLeft="false">
 					<view class="tui-goods-title">
-						<view>订单号：{{item.id}}</view>
+						<view>订单号：{{item.customOrderNumber}}</view>
 						<view class="tui-order-status">{{item.orderStatus}}</view>
 					</view>
 				</tui-list-cell>

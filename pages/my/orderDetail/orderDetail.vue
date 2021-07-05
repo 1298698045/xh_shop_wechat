@@ -145,7 +145,7 @@
 				<tui-button type="danger" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle">已完成</tui-button>
 			</view>
 		</view>
-		<t-pay-way :show="show" @close="popupClose"></t-pay-way>
+		<t-pay-way :show="show" :totalPrice="orderDetail.orderTotal" @close="popupClose"></t-pay-way>
 	</view>
 </template>
 
