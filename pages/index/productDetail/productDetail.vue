@@ -124,11 +124,11 @@
 				<view class="tui-list-cell">
 					<view class="tui-bold tui-cell-title">送至</view>
 					<view class="tui-addr-box">
-						<view class="tui-addr-item">北京朝阳区三环到四环之间</view>
-						<view class="tui-addr-item">今日23:59前完成下单，预计6月28日23:30前发货，7月1日24:00前送达</view>
+						<view class="tui-addr-item">{{currenAddress.city + currenAddress.address1 || ''}}</view>
+						<!-- <view class="tui-addr-item">今日23:59前完成下单，预计6月28日23:30前发货，7月1日24:00前送达</view> -->
 					</view>
 					<view class="tui-right">
-						<tui-icon name="more-fill" :size="20" color="#666"></tui-icon>
+						<!-- <tui-icon name="more-fill" :size="20" color="#666"></tui-icon> -->
 					</view>
 				</view>
 				<view class="tui-list-cell tui-last">
@@ -427,6 +427,10 @@
 			};
 		},
 		computed:{
+			// 当前地址
+			currenAddress(){
+				return this.$store.state.currenAddress;
+			},
 			userId(){
 				return this.$store.state.userId;
 			},
@@ -464,6 +468,7 @@
 			this.getQuery();
 			if(this.isLogin){
 				this.getCartNumTotal();
+				this.queryAddress();
 			}
 		},
 		methods: {
@@ -480,6 +485,18 @@
 					this.defaultAttribute.price = this.shopDetail.productPrice.priceValue;
 					// this.attrCurrenId = this.shopDetail.productAttributes[0].values[0].id;
 					this.attrCurrenId = this.getCheckAttr(0);
+				})
+			},
+			queryAddress(){
+				this.$http.queryAddress({
+					customerId:this.userId
+				}).then(res=>{
+					let addressList = res.returnValue;
+					addressList.forEach(item=>{
+						if(item.isDefault==1){
+							this.$store.commit('setAddress',item);
+						}
+					})
 				})
 			},
 			// 购物车数量

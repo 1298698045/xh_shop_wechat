@@ -1,6 +1,16 @@
 <template>
-	<view>
-		<tui-button plain @tap="getUserProfile">微信快速登陆</tui-button>
+	<view class="wrap">
+		<image src="../../../static/images/loginBG.jpg" mode="scaleToFill" class="imgs"></image>
+		<div class="box">
+			<div class="boxChild">				
+				<button class="btn" @tap="getUserProfile">微信号/手机号快速登陆</button>
+				
+				<div class="tips">
+					<p class="text">登录注册后成为本商城会员</p>
+					<p class="text">登录即视为您已阅读并同意《用户协议》和《隐私协议》</p>
+				</div>
+			</div>
+		</div>
 	</view>
 </template>
 
@@ -53,5 +63,32 @@
 </script>
 
 <style>
-
+	.wrap .imgs{
+		width: 100%;
+		height: 100vh;
+	}
+	.wrap{
+		position: relative;
+	}
+	.wrap .box{
+		width: 100%;
+		position: absolute;
+		bottom: 150rpx;
+	}
+	.boxChild{
+		width: 80%;
+		margin: 0 auto;
+	}
+	.boxChild .btn{
+		color: #910619;
+		font-size: 32rpx;
+	}
+	.boxChild .tips{
+		margin-top: 30rpx;
+	}
+	.boxChild .tips .text{
+		color: #fff;
+		font-size: 24rpx;
+		text-align: center;
+	}
 </style>
