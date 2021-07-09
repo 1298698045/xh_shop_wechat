@@ -104,7 +104,7 @@
 				<tui-button width="200rpx" height="70rpx" :size="28" type="danger" shape="circle" @click="btnPay">确认支付</tui-button>
 			</view>
 		</view>
-		<t-pay-way :show="show" @close="popupClose" :totalPrice='totalPrice'></t-pay-way>
+		<t-pay-way :show="show" @close="popupClose" :totalPrice='totalPrice' :orderId='orderId'></t-pay-way>
 		<t-select-coupons :show="couponShow" @close="couponClose"></t-select-coupons>
 		
 	</view>
@@ -149,8 +149,11 @@
 				console.log(this.cartIds,'====')
 				this.totalPrice = options.totalPrice;
 				this.queryAddress();
-				this.queryCartData();
+				this.queryCartData().then(res=>{
+					this.getSubmitOrder();
+				});
 			}
+			
 		},
 		methods: {
 			queryAddress(){
@@ -167,19 +170,22 @@
 			},
 			// 获取购物车数据all
 			queryCartData(){
-				this.$http.getShoppingCart({
-					customerId:this.userId
-				}).then((res)=>{
-					this.cartDataList = res.returnValue;
-					this.cartDataList.forEach(item=>{
-						this.cartIds.forEach(v=>{
-							if(item.id==v){
-								this.listData.push(item);
-							}
+				return new Promise((resolve,reject)=>{					
+					this.$http.getShoppingCart({
+						customerId:this.userId
+					}).then((res)=>{
+						this.cartDataList = res.returnValue;
+						this.cartDataList.forEach(item=>{
+							this.cartIds.forEach(v=>{
+								if(item.id==v){
+									this.listData.push(item);
+								}
+							})
 						})
-					})
-					console.log('订单数据：',this.listData);
-				})   
+						console.log('订单数据：',this.listData);
+						resolve(res);
+					})   
+				})
 			},
 			chooseAddr() {
 				uni.navigateTo({
@@ -187,6 +193,10 @@
 				})
 			},
 			btnPay() {
+				
+				this.show = true;
+			},
+			getSubmitOrder(){
 				let obj = {
 					customerId:this.userId,
 					shippingAddressId:this.currenAddress.id
@@ -212,10 +222,10 @@
 					method:'POST',
 				    data:data,	
 				    success: (res) => {
-						
+						console.log(res,'res')
+						this.orderId = res.data.returnValue.id;
 				    }
 				});
-				this.show = true;
 			},
 			getCheckAttr(){
 				var temp = {};

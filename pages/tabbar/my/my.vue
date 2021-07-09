@@ -25,9 +25,9 @@
 				<view class="tui-info" v-if="isLogin">
 					<view class="tui-nickname">
 						{{info.nickName}}
-						<image src="/static/images/mall/my/icon_vip_3x.png" class="tui-img-vip"></image>
+						<!-- <image src="/static/images/mall/my/icon_vip_3x.png" class="tui-img-vip"></image> -->
 					</view>
-					<view class="tui-explain">这家伙很懒…</view>
+					<!-- <view class="tui-explain">这家伙很懒…</view> -->
 				</view>
 				<view class="tui-login" v-if="!isLogin">
 					<span @tap="login()">登录/注册</span>

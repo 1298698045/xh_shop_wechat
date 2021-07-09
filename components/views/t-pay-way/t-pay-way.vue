@@ -23,7 +23,7 @@
 						<image src="/static/images/mall/pay/icon_pay_weixin.png" class="tui-pay-logo"></image>
 						<text>微信支付</text>
 						<view class="tui-radio">
-							<radio color="#EB0909" name="pay"></radio>
+							<radio color="#EB0909" checked="true" name="pay"></radio>
 						</view>
 					</label>
 				</tui-list-cell>
@@ -59,6 +59,9 @@
 			},
 			totalPrice:{
 				type:String
+			},
+			orderId:{
+				type:String
 			}
 		},
 		data() {
@@ -66,28 +69,63 @@
 
 			};
 		},
+		computed:{
+			userId(){
+				return this.$store.state.userId;
+			}
+		},
 		methods: {
 			close() {
 				this.$emit("close",{})
 			},
 			btnPay(){
 				let timeStamp = new Date().getTime();
-				uni.requestPayment({
-					timeStamp:timeStamp,
-					nonceStr:'',
-					package:'',
-					signType: 'MD5',
-					paySign:'',
-					success(res){
-						
-					},
-					fail(err){
-						
-					}
+				console.log(timeStamp,'=====')
+				this.$http.orderCreate({
+					customerId:this.userId,
+					orderId:this.orderId
+				}).then(res=>{
+					console.log(res);
+					let data = res.returnValue;
+					let that = this;
+					uni.requestPayment({
+						provider:'wxpay',
+						appid:data.appid,
+						timeStamp:String(data.timeStamp),
+						nonceStr:data.nonceStr,
+						package:data.package,
+						signType: data.signType,
+						paySign:data.paySign,
+						success: function (res) {
+							console.log('success:' + JSON.stringify(res));
+							that.paymentSubmit();
+						},
+						fail: function (err) {
+							console.log('fail:' + JSON.stringify(err));
+							uni.showToast({
+								title:'已取消支付',
+								duration:3000,
+								icon:'success'
+							})
+							that.$parent.show = false;
+							that.paymentSubmit();
+						}
+					})
 				})
 				
 				// this.close();
 				// this.tui.href("/pages/order/success/success")
+			},
+			// 支付成功确认接口
+			paymentSubmit(){
+				this.$http.paymentSubmit({
+					customerId:this.userId,
+					orderId:this.orderId,
+					statusCode:30
+				}).then(res=>{
+					that.$parent.show = false;
+					that.tui.href("/pages/order/success/success");
+				})
 			}
 		}
 	}

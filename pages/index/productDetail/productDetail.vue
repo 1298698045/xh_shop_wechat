@@ -121,7 +121,7 @@
 						<tui-icon name="more-fill" :size="20" color="#666"></tui-icon>
 					</view>
 				</view>
-				<view class="tui-list-cell">
+				<view class="tui-list-cell" @tap="getOpenLocation">
 					<view class="tui-bold tui-cell-title">送至</view>
 					<view class="tui-addr-box">
 						<view class="tui-addr-item">{{currenAddress.city + currenAddress.address1 || ''}}</view>
@@ -340,6 +340,28 @@
 				<view class="tui-share__tips">保存图片到手机相册后，将图片分享到您的圈子</view>
 			</view>
 		</tui-modal>
+		<!-- 底部配送自取弹层 -->
+		<tui-bottom-popup :show="isExpress" @close="hideisEcpress">
+			<div class="locationBox">
+				<p class="title">配送服务</p>
+				<div class="bd">
+					<div class="left">
+						<tui-tag type="red" shape="circle" padding="12rpx 24rpx" size="24rpx">支持自提</tui-tag>
+					</div>
+					<div class="right">
+						<p class="tips">
+							共有一个门店支持自提：
+						</p>
+						<p class="local">北京市海淀区花园路</p>
+						<p class="local">电话：1888888888</p>
+						<p class="local">营业时间：周一至周五 09：00-18：00</p>
+					</div>
+				</div>
+				<div class="btnWrap">
+					<button class="btn" @click="hideisEcpress">确定</button>
+				</div>
+			</div>
+		</tui-bottom-popup>
 	</view>
 </template>
 
@@ -423,7 +445,8 @@
 				},
 				productNum:1,
 				attrCurrenId:'', // 属性id
-				cartTotal:''
+				cartTotal:'',
+				isExpress:false
 			};
 		},
 		computed:{
@@ -574,6 +597,7 @@
 			},
 			bannerChange: function(e) {
 				this.value = e.detail.current;
+				this.bannerIndex = e.detail.current;
 			},
 			previewImage: function(e) {
 				let index = e.currentTarget.dataset.index;
@@ -599,6 +623,12 @@
 						url:'/pages/index/login/login'
 					})
 				}
+			},
+			getOpenLocation(){
+				this.isExpress = true;
+			},
+			hideisEcpress(){
+				this.isExpress = false;
 			},
 			hidePopup: function() {
 				this.popupShow = false;
@@ -1564,5 +1594,34 @@
 		width: 100%!important;
 		height: 100%;
 		
+	}
+	.locationBox .title{
+		padding: 40rpx 0;
+		text-align: center;
+		border-bottom: 1rpx solid #e2e3e5;
+		font-weight: bold;
+	}
+	.locationBox .bd{
+		padding: 20rpx;
+		box-sizing: border-box;
+		display: flex;
+		font-size: 28rpx;
+	}
+	.locationBox .bd .left{
+		width: 150rpx;
+	}
+	.locationBox .bd .right{
+		flex: 1;
+		margin-left: 10rpx;
+	}
+	.locationBox .bd .right .tips{
+		padding-bottom: 20rpx;
+	}
+	.locationBox .btnWrap{
+		margin: 100rpx 20rpx 50rpx 20rpx;
+	}
+	.locationBox .btnWrap .btn{
+		background: #eb0909;
+		color: #fff;
 	}
 </style>

@@ -155,6 +155,24 @@ class api{
 		})
 		return res
 	}
+	// 生成订单/WechatPay/transaction/create
+	async orderCreate(data){
+		const res = await https({
+			method: "get", // 请求方式
+			url: '/WechatPay/transaction/create', // 请求url
+			data: data,// 参数
+		})
+		return res
+	}
+	// 支付成功之后确认接口transaction/pay/status
+	async paymentSubmit(data){
+		const res = await https({
+			method: "get", // 请求方式
+			url: '/WechatPay/transaction/pay/status', // 请求url
+			data: data,// 参数
+		})
+		return res
+	}
     // 下面可以接着写API接口集
     // 接口二
     // 接口三
