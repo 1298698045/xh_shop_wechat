@@ -16,11 +16,11 @@
 			<scroll-view scroll-y class="right-box" :style="{ height: height + 'px', top: top + 'px' }" v-if="currentTab == index">
 				<!--内容部分 start 自定义可删除-->
 				<view class="page-view">
-					<swiper indicator-dots autoplay circular :interval="5000" :duration="150" class="swiper">
+				<!-- 	<swiper indicator-dots autoplay circular :interval="5000" :duration="150" class="swiper">
 						<swiper-item v-if="index % 2 === 0" @tap.stop="detail"><image src="https://thorui.cn/images/mall/banner/2.jpg" class="slide-image" /></swiper-item>
 						<swiper-item @tap.stop="detail"><image src="https://thorui.cn/images/mall/banner/4.jpg" class="slide-image" /></swiper-item>
 						<swiper-item @tap.stop="detail"><image src="https://thorui.cn/images/mall/banner/5.jpg" class="slide-image" /></swiper-item>
-					</swiper>
+					</swiper> -->
 					<view class="class-box">
 						<view class="class-item" v-for="(one,i) in item.children">
 							<view class="class-name">{{ one.name }}</view>

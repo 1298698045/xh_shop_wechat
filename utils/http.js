@@ -14,7 +14,7 @@ export function https(config) {
  }); 
  //设置请求头
  config.header = {
-     'content-type': 'application/x-www-form-urlencoded'
+     'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
  };
  //检查缓存中有没有token
  var token = wx.getStorageSync('token');

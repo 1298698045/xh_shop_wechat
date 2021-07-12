@@ -94,7 +94,7 @@
 			<view class="tui-order-content">
 				<view class="tui-order-flex">
 					<view class="tui-item-title">订单号:</view>
-					<view class="tui-item-content">48690010100035</view>
+					<view class="tui-item-content">{{orderDetail.customOrderNumber || ''}}</view>
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">物流单号:</view>
@@ -102,7 +102,7 @@
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">创建时间:</view>
-					<view class="tui-item-content">{{orderDetail.createdOn}}</view>
+					<view class="tui-item-content">{{orderDetail.createdOn || ''}}</view>
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">付款时间:</view>

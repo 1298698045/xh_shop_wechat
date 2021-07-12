@@ -82,6 +82,24 @@
 			}
 
 		} 
+        ,{
+            "path" : "pages/common/about/about",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "服务协议",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/common/pvivacy/pvivacy",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "隐私协议",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"subpackages":[{
 		"root":"pages/index",

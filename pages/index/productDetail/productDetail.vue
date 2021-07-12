@@ -350,11 +350,16 @@
 					</div>
 					<div class="right">
 						<p class="tips">
-							共有一个门店支持自提：
+							共有两个门店支持自提：
 						</p>
-						<p class="local">北京市海淀区花园路</p>
-						<p class="local">电话：1888888888</p>
-						<p class="local">营业时间：周一至周五 09：00-18：00</p>
+						<div class="box" v-for="(item,index) in shopaddressList" :key="index">							
+							<p class="local">
+								{{item.address1}}
+							</p>
+							<p class="local" @click="handlePhone(1)">电话：{{item.phoneNumber}}</p>
+							<p class="local">营业时间：{{item.openTime}}</p>
+							<p class="local">备注：{{item.description}}</p>
+						</div>
 					</div>
 				</div>
 				<div class="btnWrap">
@@ -446,7 +451,8 @@
 				productNum:1,
 				attrCurrenId:'', // 属性id
 				cartTotal:'',
-				isExpress:false
+				isExpress:false,
+				shopaddressList:[]
 			};
 		},
 		computed:{
@@ -492,9 +498,33 @@
 			if(this.isLogin){
 				this.getCartNumTotal();
 				this.queryAddress();
+				this.shopaddress();
 			}
 		},
 		methods: {
+			// 获取自提地址
+			shopaddress(){
+				this.$http.shopaddress().then(res=>{
+					this.shopaddressList = res.returnValue;
+				})
+			},
+			// 拨打电话
+			handlePhone(i){
+				let phoneNumber = '';
+				switch(i){
+					case 1:
+						phoneNumber = '010-69159983';
+						break;
+					case 2:
+						phoneNumber = '010-69158138';
+						break;
+					default:
+						break;
+				}
+				uni.makePhoneCall({
+				    phoneNumber: phoneNumber 
+				});
+			},
 			getQuery(){
 				this.$http.getShopDetail(
 					{
@@ -1616,6 +1646,9 @@
 	}
 	.locationBox .bd .right .tips{
 		padding-bottom: 20rpx;
+	}
+	.locationBox .bd .right .box:last-child{
+		margin-top: 20rpx;
 	}
 	.locationBox .btnWrap{
 		margin: 100rpx 20rpx 50rpx 20rpx;

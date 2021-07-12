@@ -3,11 +3,19 @@
 		<image src="../../../static/images/loginBG.jpg" mode="scaleToFill" class="imgs"></image>
 		<div class="box">
 			<div class="boxChild">				
-				<button class="btn" @tap="getUserProfile">微信号/手机号快速登陆</button>
+				<button class="btn" @tap="serverAgreement&&userAgreement?getUserProfile():getRead()">微信快速登陆</button>
 				
 				<div class="tips">
 					<p class="text">登录注册后成为本商城会员</p>
-					<p class="text">登录即视为您已阅读并同意《用户协议》和《隐私协议》</p>
+					<p class="text">登录即视为您已阅读并同意
+						<span @click="getHerf(1)">
+							《用户协议》
+						</span>
+						和 
+						<span @click="getHerf(2)">
+							《隐私协议》
+						</span>
+					</p>
 				</div>
 			</div>
 		</div>
@@ -18,10 +26,39 @@
 	export default {
 		data() {
 			return {
-				code:''
+				code:'',
+				serverAgreement:false,
+				userAgreement:false
 			}
 		},
+		onShow(){
+			this.serverAgreement =  uni.getStorageSync('serverAgreement');
+			this.userAgreement = uni.getStorageSync('userAgreement');
+		},
 		methods: {
+			getHerf(i){
+				switch(i){
+					case 1:
+						uni.navigateTo({
+							url:'../../common/about/about'
+						})
+						break;
+					case 2:
+						uni.navigateTo({
+							url:'../../common/pvivacy/pvivacy'
+						})
+						break;
+					default:
+						break;
+				}
+			},
+			getRead(){
+				uni.showToast({
+					title:'请先阅读用户协议和隐私协议',
+					icon:'none',
+					duration:3000
+				})
+			},
 			getUserProfile() {
 				let that = this;
 				let code = '';

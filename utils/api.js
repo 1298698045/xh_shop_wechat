@@ -173,10 +173,24 @@ class api{
 		})
 		return res
 	}
-    // 下面可以接着写API接口集
-    // 接口二
-    // 接口三
-    // ......
+	// 获取自提地址/Customer/shopaddress/list
+	async shopaddress(data){
+		const res = await https({
+			method: "get", // 请求方式
+			url: '/Customer/shopaddress/list', // 请求url
+			data: data,// 参数
+		})
+		return res;
+	}
+	// 获取发票​/shopapi​/Contact​/invoicetitle​/list
+	async getInvoices(data){
+		const res = await https({
+			method: "get", // 请求方式
+			url: '/​​Inovice/invoicetitle/list', // 请求url
+			data: data,// 参数
+		})
+		return res;
+	}
 }
 
 export default new api()

@@ -30,7 +30,7 @@
 					<!-- <view class="tui-explain">这家伙很懒…</view> -->
 				</view>
 				<view class="tui-login" v-if="!isLogin">
-					<span @tap="login()">登录/注册</span>
+					<span @tap="serverAgreement&&userAgreement?login():getRead()">登录/注册</span>
 					<tui-icon name="arrowright" color="#fff" :size="36" unit="rpx"></tui-icon>
 				</view>
 				<!-- #ifndef MP -->
@@ -40,10 +40,11 @@
 				<!-- #endif -->
 				<!-- #ifdef MP -->
 				<view class="tui-set-box">
-					<!-- <view class="tui-icon-box tui-icon-message" @tap="href(7)">
+					<!-- 消息 -->
+					<view class="tui-icon-box tui-icon-message" @tap="href(7)" style="visibility: hidden;">
 						<tui-icon name="message" color="#fff" :size="26"></tui-icon>
 						<view v-if="isLogin" class="tui-badge tui-badge-white">1</view>
-					</view> -->
+					</view>
 					<view class="tui-icon-box tui-icon-setup" @tap="href(2)">
 						<tui-icon name="setup" color="#fff" :size="26"></tui-icon>
 					</view>
@@ -189,6 +190,8 @@
 			});
 		},
 		onShow(){
+			this.serverAgreement =  uni.getStorageSync('serverAgreement');
+			this.userAgreement = uni.getStorageSync('userAgreement');
 			let sessionKey = uni.getStorageSync('sessionKey');
 			if(sessionKey){
 				this.info = JSON.parse(uni.getStorageSync('info'));
@@ -209,6 +212,8 @@
 			return {
 				// isLogin: false,
 				sessionKey:"",
+				serverAgreement:false,
+				userAgreement:false,
 				webURL: 'https://www.thorui.cn/wx',
 				top: 0, //标题图标距离顶部距离
 				opacity: 0,
@@ -297,6 +302,13 @@
 				this.$http.getRecommend({}).then(res=>{
 					console.log(res);
 					this.productList = res.returnValue;
+				})
+			},
+			getRead(){
+				uni.showToast({
+					title:'请先阅读用户协议和隐私协议',
+					icon:'none',
+					duration:3000
 				})
 			},
 			href(page) {

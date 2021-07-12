@@ -10,7 +10,7 @@
 					<view class="tui-attr-item" :class="{ 'tui-attr-active': type === 1 }" @tap="switchType(1)">电子普通发票</view>
 					<view class="tui-attr-item" :class="{ 'tui-attr-active': type === 2 }" @tap="switchType(2)">不开发票</view>
 				</view>
-				<view class="tui-tips">ThorUI商城启用电子普通发票，与纸质普通发票具备同等法律效力，订单完成后24小时内在“我的订单”查看</view>
+				<view class="tui-tips">协和百年文创启用电子普通发票，与纸质普通发票具备同等法律效力，订单完成后24小时内在“我的订单”查看</view>
 			</tui-list-cell>
 			<view v-if="type === 1">
 				<tui-list-cell :hover="false">
@@ -103,12 +103,27 @@
 				modal: false
 			};
 		},
+		computed:{
+			userId(){
+				return this.$store.state.userId;
+			}
+		},
+		onLoad(){
+			this.getQuery(); 
+		},
 		methods: {
 			switchType(type) {
 				this.type = type;
 			},
 			switchTitle(type) {
 				this.invoiceTitle = type;
+			},
+			getQuery(){
+				this.$http.getInvoices({
+					customerId:this.userId
+				}).then(res=>{
+					console.log(res);
+				})
 			}
 		}
 	};

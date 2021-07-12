@@ -28,18 +28,28 @@
 				</view>
 			</tui-list-cell>
 		</view> -->
-		<!-- <view class="tui-mtop">
-			<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(4)">
+		<view class="tui-mtop">
+			<!-- <tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(4)">
 				<view class="tui-list-cell">
 					关于我们
 				</view>
+			</tui-list-cell> -->
+			<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(4)">
+				<view class="tui-list-cell">
+					服务协议
+				</view>
 			</tui-list-cell>
-			<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(5)">
+			<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(6)">
+				<view class="tui-list-cell">
+					隐私协议
+				</view>
+			</tui-list-cell>
+			<!-- <tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(5)">
 				<view class="tui-list-cell">
 					意见反馈
 				</view>
-			</tui-list-cell>
-		</view> -->
+			</tui-list-cell> -->
+		</view>
 
 	<!-- 	<view class="tui-exit">
 			<tui-button shape="circle" shadow type="danger" height="88rpx">退出登录</tui-button>
@@ -82,6 +92,9 @@
 						break;
 					case 5:
 						url = "/pages/my/feedback/feedback?page=mall"
+						break;
+					case 6:
+						url = "/pages/common/pvivacy/pvivacy"
 						break;
 					default:
 						break;

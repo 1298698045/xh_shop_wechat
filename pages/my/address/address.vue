@@ -12,7 +12,7 @@
 										<view class="tui-address-tel">{{item.phoneNumber}}</view>
 									</view>
 									<view class="tui-address-detail">
-										<view class="tui-address-label">{{item.idx==0?'默认':item.idx==1?'家':item.idx==2?'学校':'其他'}}</view>
+										<view class="tui-address-label">{{item.isDefault==1?'默认':'其他'}}</view>
 										<text>{{item.city+item.address1}}</text>
 									</view>
 								</view>

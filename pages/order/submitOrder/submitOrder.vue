@@ -52,6 +52,12 @@
 						<view :class="{'tui-color-red':hasCoupon}">{{hasCoupon?"满5减1":'没有可用优惠券'}}</view>
 					</view>
 				</tui-list-cell> -->
+				<tui-list-cell :hover="true">
+					<view class="tui-padding tui-flex">
+						<view>自提</view>
+						<switch :checked='isExtraction==0?false:true' color="#19be6b" class="tui-switch-small" @change="changeExtraction" />
+					</view>
+				</tui-list-cell>
 				<tui-list-cell :hover="true" :arrow="true" @click="invoice">
 					<view class="tui-padding tui-flex">
 						<view>发票</view>
@@ -129,7 +135,8 @@
 				cartDataList:[], // 购物车数据
 				listData:[], // 订单数据
 				totalPrice:"", // 合计金额
-				addressList:[]
+				addressList:[],
+				isExtraction:0
 			}
 		},
 		computed:{
@@ -156,6 +163,10 @@
 			
 		},
 		methods: {
+			changeExtraction(e){
+				console.log(e);
+				this.isExtraction = e.detail.value;
+			},
 			queryAddress(){
 				this.$http.queryAddress({
 					customerId:this.userId
@@ -521,5 +532,10 @@
 	.tui-safe-area {
 		height: 1rpx;
 		padding-bottom: env(safe-area-inset-bottom);
+	}
+	
+	.tui-switch-small {
+		transform: scale(0.8);
+		transform-origin: 100% center;
 	}
 </style>
