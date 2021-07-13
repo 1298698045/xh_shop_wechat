@@ -212,9 +212,9 @@
 					一般情况下，我们将在十五天内回复。如果您对我们的回复不满意，特别是我们的个人信息处理行为损害了您的合法权益，您还可以向网信、电信、公安及工商等监管部门进行投诉或举报。
 				</p>
 			</div>
-			<button v-if="show" :disabled="disabled" @click="getReturn">
+			<!-- <button v-if="show" :disabled="disabled" @click="getReturn">
 				{{timeNum}} 完成
-			</button>
+			</button> -->
 		</div>
 	</view>
 </template>

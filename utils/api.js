@@ -186,8 +186,17 @@ class api{
 	async getInvoices(data){
 		const res = await https({
 			method: "get", // 请求方式
-			url: '/​​Inovice/invoicetitle/list', // 请求url
+			url: '/Inoivce/invoicetitle/list', // 请求url
 			data: data,// 参数
+		})
+		return res;
+	}
+	// 发票编辑
+	async invoiceEdit(data){
+		const res = await https({
+			method:"get",
+			url:"/Inoivce/invoicetitle/edit",
+			data: data,
 		})
 		return res;
 	}

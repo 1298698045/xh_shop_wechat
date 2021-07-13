@@ -17,7 +17,7 @@
 							<image :src="v.picture.thumbImageUrl" class="tui-goods-img"></image>
 							<view class="tui-goods-center">
 								<view class="tui-goods-name">{{v.productName}}</view>
-								<view class="tui-goods-attr">黑色，50ml</view>
+								<!-- <view class="tui-goods-attr">黑色，50ml</view> -->
 							</view>
 							<view class="tui-price-right">
 								<view>￥{{v.subTotal}}</view>
@@ -28,7 +28,7 @@
 				</block>
 				<tui-list-cell :hover="false" unlined>
 					<view class="tui-goods-price">
-						<view>共4件商品 合计：</view>
+						<view>共{{item.items.length}}件商品 合计：</view>
 						<view class="tui-size-24">￥</view>
 						<view class="tui-price-large">{{item.orderTotal}}</view>
 						<!-- <view class="tui-size-24">.00</view> -->
@@ -41,12 +41,12 @@
 					<!-- <view class="tui-btn-ml">
 						<tui-button type="black" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="addEvaluate">评价晒单</tui-button>
 					</view> -->
-					<view class="tui-btn-ml" v-if="item.paymentStatusId==10">
+					<view class="tui-btn-ml" v-if="item.orderStatusId==10">
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="detail(item)">去付款</tui-button>
 					</view>
-					<view class="tui-btn-ml" v-else>
+					<!-- <view class="tui-btn-ml" v-else>
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle">再次购买</tui-button>
-					</view>
+					</view> -->
 				</view>
 			</view>
 
@@ -126,6 +126,10 @@
 						orderStatus:1
 					},
 					{
+						name: "已付款",
+						orderStatus:2
+					},
+					{
 						name: "待收货",
 						orderStatus:4
 					},
@@ -172,8 +176,10 @@
 				}else if(idx==1){
 					this.orderStatus = 1;
 				}else if(idx==2){
-					this.orderStatus = 4;
+					this.orderStatus = 2;
 				}else if(idx==3){
+					this.orderStatus = 4;
+				}else if(idx==4){
 					this.orderStatus = 5;
 				}
 				this.getQuery();

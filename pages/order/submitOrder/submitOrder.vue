@@ -8,7 +8,7 @@
 							<text class="tui-name">{{currenAddress.contactName ||''}}</text> {{currenAddress.phoneNumber || ''}}
 						</view>
 						<view class="tui-addr">
-							<view class="tui-addr-tag">公司</view>
+							<view class="tui-addr-tag">{{currenAddress.isDefault==1?'默认':'其他'}}</view>
 							<text>{{currenAddress.city + currenAddress.address1 || ''}}</text>
 						</view>
 					</view>
@@ -31,7 +31,7 @@
 							<image :src="item.picture.thumbImageUrl" class="tui-goods-img"></image>
 							<view class="tui-goods-center">
 								<view class="tui-goods-name">{{item.productName}}</view>
-								<view class="tui-goods-attr">黑色，50ml</view>
+								<!-- <view class="tui-goods-attr">黑色，50ml</view> -->
 							</view>
 							<view class="tui-price-right">
 								<view>￥{{item.unitPrice}}</view>
@@ -61,7 +61,7 @@
 				<tui-list-cell :hover="true" :arrow="true" @click="invoice">
 					<view class="tui-padding tui-flex">
 						<view>发票</view>
-						<view class="tui-invoice-text">不开发票</view>
+						<view class="tui-invoice-text">{{isInvoice?'普通发票':'不开发票'}}</view>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false">
@@ -73,7 +73,7 @@
 				<tui-list-cell :hover="false" :lineLeft="false" padding="0">
 					<view class="tui-remark-box tui-padding tui-flex">
 						<view>订单备注</view>
-						<input type="text" class="tui-remark" placeholder="选填: 请先和商家协商一致" placeholder-class="tui-phcolor"></input>
+						<input type="text" class="tui-remark" @input="changeOrderNode" v-model="orderNode" placeholder="选填: 请先和商家协商一致" placeholder-class="tui-phcolor"></input>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false" unlined>
@@ -112,7 +112,32 @@
 		</view>
 		<t-pay-way :show="show" @close="popupClose" :totalPrice='totalPrice' :orderId='orderId'></t-pay-way>
 		<t-select-coupons :show="couponShow" @close="couponClose"></t-select-coupons>
-		
+		<!-- 底部配送自取弹层 -->
+		<tui-bottom-popup :show="isExpress" @close="hideisEcpress">
+			<div class="locationBox">
+				<p class="title">自提地点</p>
+				<div class="bd">
+					<div class="right">
+						<div class="box" v-for="(item,index) in shopaddressList" :key="index" @click="getCheckShopaddress(item,index)">
+							<div class="iconBox">
+								<tui-icon name="circle-fill" :color="number==index?'#3399ff':'#ccc'" :size="26"></tui-icon>
+							</div>
+							<div>								
+								<p class="local">
+									{{item.address1}}
+								</p>
+								<p class="local" @click="handlePhone(item.phoneNumber)">电话：{{item.phoneNumber}}</p>
+								<p class="local">营业时间：{{item.openTime}}</p>
+								<p class="local">备注：{{item.description}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="btnWrap">
+					<button class="btn" @click="hideisEcpress">确定</button>
+				</div>
+			</div>
+		</tui-bottom-popup>
 	</view>
 </template>
 
@@ -136,7 +161,17 @@
 				listData:[], // 订单数据
 				totalPrice:"", // 合计金额
 				addressList:[],
-				isExtraction:0
+				isExtraction:0,
+				isExpress:false,
+				shopaddressList:[], // 自提地点
+				number:-1,
+				paramsAddress:{
+					id:''
+				},
+				orderNode:'', //备注
+				PickupInStore:0,// 是否自提
+				isInvoice:false,
+				invoiceTitleId:''
 			}
 		},
 		computed:{
@@ -146,26 +181,75 @@
 			},
 			userId(){
 				return this.$store.state.userId;
-			}
+			},
+			// 发票id
+			// invoiceTitleId(){
+			// 	return this.$store.state.invoiceTitleId;
+			// }
 		},
 		onLoad(options){
 			Object.assign(this.$data, this.$options.data());
+			uni.setStorageSync('invoice',false);
+			uni.setStorageSync('invoiceTitleId','');
 			this.orderId = options.orderId;
 			if(options.cartIds){
 				this.cartIds = JSON.parse(options.cartIds);
 				console.log(this.cartIds,'====')
 				this.totalPrice = options.totalPrice;
+				this.shopaddress();
 				this.queryAddress();
 				this.queryCartData().then(res=>{
-					this.getSubmitOrder();
+					// this.getSubmitOrder();
 				});
 			}
 			
 		},
+		watch:{
+			invoiceTitleId(a,old){
+				console.log(a,old);
+			}
+		},
+		onShow(){
+			this.isInvoice = uni.getStorageSync('invoice');
+			this.invoiceTitleId = wx.getStorageSync('invoiceTitleId');
+			console.log(this.invoiceTitleId,'invoiceTitleId')
+		},
 		methods: {
+			// 订单备注
+			changeOrderNode(e){
+				this.orderNode = e.mp.detail.value;
+			},
+			// 获取自提地址
+			shopaddress(){
+				this.$http.shopaddress().then(res=>{
+					this.shopaddressList = res.returnValue;
+				})
+			},
+			// 选择自提地点
+			getCheckShopaddress(item,index){
+				this.number = index;
+				this.paramsAddress = item;
+			},
+			handlePhone(phone){
+				uni.makePhoneCall({
+				    phoneNumber: phone 
+				});
+			},
+			hideisEcpress(){
+				this.isExpress = false;
+			},
 			changeExtraction(e){
 				console.log(e);
 				this.isExtraction = e.detail.value;
+				if(this.isExtraction!=0){
+					this.isExpress = true;
+					this.PickupInStore = 1;
+				}else {
+					this.paramsAddress = {};
+					this.number = -1;
+					this.isExpress = false;
+					this.PickupInStore = 0;
+				}
 			},
 			queryAddress(){
 				this.$http.queryAddress({
@@ -204,13 +288,14 @@
 				})
 			},
 			btnPay() {
-				
+				this.getSubmitOrder();
 				this.show = true;
 			},
 			getSubmitOrder(){
 				let obj = {
 					customerId:this.userId,
-					shippingAddressId:this.currenAddress.id
+					shippingAddressId:this.currenAddress.id,
+					orderNode:this.orderNode
 				}
 				let ids = this.getCheckAttr();
 				// console.log('id:',ids);
@@ -224,6 +309,23 @@
 							'\r\n--XXX' 
 					}
 				}
+				data += '\r\nContent-Disposition: form-data; name="orderNode"'+
+							'\r\n'+
+							'\r\n'+obj.orderNode+
+							'\r\n--XXX'
+				data += '\r\nContent-Disposition: form-data; name="PickupInStore"'+
+							'\r\n'+
+							'\r\n'+this.PickupInStore+
+							'\r\n--XXX'
+				data += '\r\nContent-Disposition: form-data; name="PickupAddressId"'+
+							'\r\n'+
+							'\r\n'+this.paramsAddress.id+
+							'\r\n--XXX'
+							
+				data += '\r\nContent-Disposition: form-data; name="invoiceTitleId"'+
+							'\r\n'+
+							'\r\n'+this.invoiceTitleId+
+							'\r\n--XXX'
 				data += '--';
 				uni.request({
 				    url: 'https://cbt.pumchit.cn/shopapi/Checkout/order/confirm?customerId='+obj.customerId+'&shippingAddressId='+obj.shippingAddressId,
@@ -537,5 +639,47 @@
 	.tui-switch-small {
 		transform: scale(0.8);
 		transform-origin: 100% center;
+	}
+	
+	.locationBox .title{
+		padding: 40rpx 0;
+		text-align: center;
+		border-bottom: 1rpx solid #e2e3e5;
+		font-weight: bold;
+	}
+	.locationBox .bd{
+		padding: 20rpx;
+		box-sizing: border-box;
+		display: flex;
+		font-size: 28rpx;
+	}
+	.locationBox .bd .left{
+		width: 150rpx;
+	}
+	.locationBox .bd .right{
+		flex: 1;
+		margin-left: 10rpx;
+	}
+	.locationBox .bd .right .tips{
+		padding-bottom: 20rpx;
+	}
+	.locationBox .bd .right .box:last-child{
+		margin-top: 20rpx;
+	}
+	.locationBox .btnWrap{
+		margin: 100rpx 20rpx 50rpx 20rpx;
+	}
+	.locationBox .btnWrap .btn{
+		background: #eb0909;
+		color: #fff;
+	}
+	.locationBox .bd .right .box {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.locationBox .bd .right .box .iconBox{
+		width: 80rpx;
+		margin-right: 10rpx;
 	}
 </style>

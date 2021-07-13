@@ -367,6 +367,13 @@
 						"bounce": "vertical"
 					}
 				}
+			},
+			{
+				"path" : "showInvoice/showInvoice",
+				"style":{
+					"navigationBarTitleText": "电子发票",
+					"enablePullDownRefresh": false
+				}
 			}
 		]
 	},

@@ -103,6 +103,7 @@
 				this.setRowData.phone = paramsData.phoneNumber;
 				this.setRowData.address = paramsData.address1;
 				this.setRowData.city = paramsData.city;
+				this.isDefault = paramsData.isDefault;
 				this.text = paramsData.city;
 				let arr = paramsData.city.split(' ');
 				console.log(this.multiArray[0],this.selectList,arr[0])

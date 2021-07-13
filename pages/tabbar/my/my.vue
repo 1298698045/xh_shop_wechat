@@ -30,7 +30,7 @@
 					<!-- <view class="tui-explain">这家伙很懒…</view> -->
 				</view>
 				<view class="tui-login" v-if="!isLogin">
-					<span @tap="serverAgreement&&userAgreement?login():getRead()">登录/注册</span>
+					<span @tap="login()">登录/注册</span>
 					<tui-icon name="arrowright" color="#fff" :size="36" unit="rpx"></tui-icon>
 				</view>
 				<!-- #ifndef MP -->
@@ -82,22 +82,22 @@
 					<view class="tui-order-item" @tap="href(4)">
 						<view class="tui-icon-box">
 							<image src="/static/images/mall/my/icon_daifukuan_3x.png" class="tui-order-icon"></image>
-							<view class="tui-badge tui-badge-red">1</view>
+							<!-- <view class="tui-badge tui-badge-red">1</view> -->
 						</view>
 						<view class="tui-order-text">待付款</view>
 					</view>
 					<view class="tui-order-item" @tap="href(4)">
 						<view class="tui-icon-box">
 							<image src="/static/images/mall/my/icon_daifahuo_3x.png" class="tui-order-icon"></image>
-							<view class="tui-badge tui-badge-red">1</view>
+							<!-- <view class="tui-badge tui-badge-red">1</view> -->
 						</view>
-						<view class="tui-order-text">待发货</view>
+						<view class="tui-order-text">待收货</view>
 					</view>
 					<view class="tui-order-item" @tap="href(4)">
 						<view class="tui-icon-box">
 							<image src="/static/images/mall/my/icon_daishouhuo_3x.png" class="tui-order-icon"></image>
 						</view>
-						<view class="tui-order-text">待收货</view>
+						<view class="tui-order-text">已完成</view>
 					</view>
 					<!-- <view class="tui-order-item" @tap="href(4)">
 						<view class="tui-icon-box">
@@ -130,7 +130,7 @@
 								<view>
 									<view class="tui-pro-price">
 										<text class="tui-sale-price">￥{{ item.price }}</text>
-										<text class="tui-factory-price">￥{{ item.price }}</text>
+										<text class="tui-factory-price">￥{{ item.oldPrice }}</text>
 									</view>
 									<view class="tui-pro-pay">{{ item.payNum || ''}}人付款</view>
 								</view>
@@ -150,7 +150,7 @@
 								<view>
 									<view class="tui-pro-price">
 										<text class="tui-sale-price">￥{{ item.price }}</text>
-										<text class="tui-factory-price">￥{{ item.price }}</text>
+										<text class="tui-factory-price">￥{{ item.oldPrice }}</text>
 									</view>
 									<view class="tui-pro-pay">{{ item.payNum || ''}}人付款</view>
 								</view>
@@ -385,7 +385,11 @@
 				// 	}
 				// })
 				if(!this.isLogin){
-					this.getUserProfile();
+					//登录
+					// this.getUserProfile();
+					uni.navigateTo({
+						url:'../../index/login/login'
+					})
 				}else {
 					this.tui.toast('已登录')
 				}

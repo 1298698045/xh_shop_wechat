@@ -3,7 +3,7 @@
 		<view class="tui-searchbox">
 			<view class="tui-search-input">
 				<icon type="search" :size='13' color='#333'></icon>
-				<input confirm-type="search" placeholder="大家都在搜：2019退役球星" :focus="true" auto-focus placeholder-class="tui-input-plholder"
+				<input confirm-type="search" placeholder="大家都在搜" :focus="true" auto-focus placeholder-class="tui-input-plholder"
 				 class="tui-input" v-model.trim="key" @input="inputKey"/>
 				<icon type="clear" :size='13' color='#bcbcbc' @tap="cleanKey" v-show="key"></icon>
 			</view>
@@ -55,17 +55,6 @@
 		data() {
 			return {
 				history: [
-					"美洲杯",
-					"D站观点",
-					"C罗",
-					"早安D站",
-					"2019退役球星",
-					"女神大会",
-					"德利赫特",
-					"托雷斯",
-					"自热火锅",
-					"华为手机",
-					"有机酸奶"
 				],
 				hot: [
 					"德利赫特",
@@ -83,7 +72,8 @@
 				key: "",
 				showActionSheet: false,
 				tips: "确认清空搜索历史吗？",
-				searchResult:["按照展示的列表输入关键词看效果","thorui","2019退役球星","搜索关键词高亮显示","模拟搜索结果集","开源不易，需要鼓励","人人为我，我为人人"],
+				// searchResult:["按照展示的列表输入关键词看效果","2019退役球星","搜索关键词高亮显示","模拟搜索结果集","开源不易，需要鼓励","人人为我，我为人人"],
+				searchResult:[],
 				searchList:[]
 			}
 		},

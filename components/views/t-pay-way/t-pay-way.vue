@@ -72,6 +72,9 @@
 		computed:{
 			userId(){
 				return this.$store.state.userId;
+			},
+			invoiceTitleId(){
+				return this.$store.state.invoiceTitleId;
 			}
 		},
 		methods: {
@@ -98,6 +101,7 @@
 						paySign:data.paySign,
 						success: function (res) {
 							console.log('success:' + JSON.stringify(res));
+							uni.removeStorageSync('invoice');
 							that.paymentSubmit();
 						},
 						fail: function (err) {
@@ -108,7 +112,7 @@
 								icon:'success'
 							})
 							that.$parent.show = false;
-							that.paymentSubmit();
+							// that.paymentSubmit();
 						}
 					})
 				})
@@ -123,8 +127,10 @@
 					orderId:this.orderId,
 					statusCode:30
 				}).then(res=>{
-					that.$parent.show = false;
-					that.tui.href("/pages/order/success/success");
+					this.$parent.show = false;
+					uni.navigateTo({
+						url: "/pages/order/success/success"
+					})
 				})
 			}
 		}

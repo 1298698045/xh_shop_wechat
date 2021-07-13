@@ -10,20 +10,20 @@
 				<tui-icon name="search-2" :size="32" unit="rpx"></tui-icon>
 				<swiper vertical autoplay circular interval="8000" class="tui-swiper">
 					<swiper-item v-for="(item, index) in hotSearch" :key="index" class="tui-swiper-item" @tap="search">
-						<view class="tui-hot-item">{{ item }}</view>
+						<!-- <view class="tui-hot-item">{{ item }}</view> -->
 					</swiper-item>
 				</swiper>
 			</view>
 		</view>
 		<!--header-->
 		<view class="tui-header-banner">
-			<view class="tui-hot-search">
+	<!-- 		<view class="tui-hot-search">
 				<view>热搜</view>
 				<view class="tui-hot-tag" @tap="search">自热火锅</view>
 				<view class="tui-hot-tag" @tap="search">华为手机</view>
 				<view class="tui-hot-tag" @tap="search">有机酸奶</view>
 				<view class="tui-hot-tag" @tap="search">苹果手机</view>
-			</view>
+			</view> -->
 			<view class="tui-banner-bg">
 				<view class="tui-primary-bg tui-route-left"></view>
 				<view class="tui-primary-bg tui-route-right"></view>
@@ -58,7 +58,7 @@
 								<view>
 									<view class="tui-pro-price">
 										<text class="tui-sale-price">￥{{ item.price }}</text>
-										<text class="tui-factory-price">￥{{ item.price }}</text>
+										<text class="tui-factory-price">￥{{ item.oldPrice }}</text>
 									</view>
 									<view class="tui-pro-pay">{{ item.payNum || '' }}人付款</view>
 								</view>
@@ -78,7 +78,7 @@
 								<view>
 									<view class="tui-pro-price">
 										<text class="tui-sale-price">￥{{ item.price }}</text>
-										<text class="tui-factory-price">￥{{ item.price }}</text>
+										<text class="tui-factory-price">￥{{ item.oldPrice }}</text>
 									</view>
 									<view class="tui-pro-pay">{{ item.payNum || '' }}人付款</view>
 								</view>

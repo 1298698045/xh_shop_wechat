@@ -44,7 +44,7 @@
 						<image :src="item.picture.thumbImageUrl" class="tui-goods-img"></image>
 						<view class="tui-goods-center">
 							<view class="tui-goods-name">{{item.productName}}</view>
-							<view class="tui-goods-attr">黑色，50ml</view>
+							<!-- <view class="tui-goods-attr">黑色，50ml</view> -->
 						</view>
 						<view class="tui-price-right">
 							<view>￥{{item.unitPrice}}</view>
@@ -96,29 +96,33 @@
 					<view class="tui-item-title">订单号:</view>
 					<view class="tui-item-content">{{orderDetail.customOrderNumber || ''}}</view>
 				</view>
-				<view class="tui-order-flex">
+				<view class="tui-order-flex" v-if="orderDetail.shipments!=''" v-for="(self,i) in orderDetail.shipments" :key="i">
 					<view class="tui-item-title">物流单号:</view>
-					<view class="tui-item-content">33655511251265578556</view>
+					<view class="tui-item-content">{{self.trackingNumber}}</view>
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">创建时间:</view>
 					<view class="tui-item-content">{{orderDetail.createdOn || ''}}</view>
 				</view>
-				<view class="tui-order-flex">
+				<view class="tui-order-flex" v-if="orderDetail.orderStatusId==20||orderDetail.orderStatusId==30">
 					<view class="tui-item-title">付款时间:</view>
-					<view class="tui-item-content">2019-05-26 10:44</view>
+					<view class="tui-item-content">{{orderDetail.paidDateUtc}}</view>
 				</view>
-				<view class="tui-order-flex">
+				<view class="tui-order-flex" v-if="orderDetail.shipments!=''" v-for="(self,i) in orderDetail.shipments" :key="i">
 					<view class="tui-item-title">发货时间:</view>
-					<view class="tui-item-content">2019-05-27 10:20</view>
+					<view class="tui-item-content">{{self.shippedDate}}</view>
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">配送方式:</view>
-					<view class="tui-item-content">包邮</view>
+					<view class="tui-item-content">{{orderDetail.pickupInStore?'自提':'配送'}}</view>
+				</view>
+				<view class="tui-order-flex">
+					<view class="tui-item-title">自提地点:</view>
+					<view class="tui-item-content" v-if="orderDetail.pickupInStore">{{orderDetail.pickupAddress.address1 || ''}}</view>
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">订单备注:</view>
-					<view class="tui-item-content">麻烦尽快发货，打包包裹时请多拿几个泡沫放在纸箱盒内，防止摔碎</view>
+					<view class="tui-item-content">{{orderDetail.orderNotes.length>=1?orderDetail.orderNotes[0].note:''}}</view>
 				</view>
 			</view>
 			<!-- <tui-list-view unlined="bottom">
@@ -130,6 +134,94 @@
 				</tui-list-cell>
 			</tui-list-view> -->
 		</view>
+		<view class="tui-order-info" v-if="orderDetail.invoiceTitleId!=''&&orderDetail.invoiceTitleId!='00000000-0000-0000-0000-000000000000'">
+			<tui-list-cell :hover="false">
+				<view class="tui-order-title">
+					<!-- 电子发票 -->
+					增值税电子普通发票
+				</view>
+			</tui-list-cell>
+			<div class="pannel">
+				<!-- <h3 class="title">增值税电子普通发票</h3> -->
+				<div class="bd">
+					<div class="left">
+						<div class="box">
+							<span class="label">
+								发票类型
+							</span>
+							<span class="val">
+								电子普通发票
+							</span>
+						</div>
+						<div class="box">
+							<span class="label">
+								发票类别
+							</span>
+							<span class="val">
+								商品类别
+							</span>
+						</div>
+						<div class="box">
+							<span class="label">
+								抬头类型
+							</span>
+							<span class="val">
+								{{orderDetail.invoiceTitle.invoiceTitleType==1?'单位':'个人'}}
+							</span>
+						</div>
+						<div class="box">
+							<span class="label">
+								抬头名称
+							</span>
+							<span class="val">
+								{{orderDetail.invoiceTitle.name || ''}}
+							</span>
+						</div>
+						<div class="box">
+							<span class="label">
+								公司税号
+							</span>
+							<span class="val">
+								{{orderDetail.invoiceTitle.taxpayerCode||''}}
+							</span>
+						</div>
+						<div class="box">
+							<span class="label">
+								接收人邮箱
+							</span>
+							<span class="val">
+								{{orderDetail.invoiceTitle.shipTo_Email||''}}
+							</span>
+						</div>
+						<div class="box">
+							<span class="label">
+								开票金额
+							</span>
+							<span class="val">
+								{{orderDetail.orderTotal}}
+							</span>
+						</div>
+						<div class="box">
+							<span class="label">
+								开票时间
+							</span>
+							<span class="val">
+								
+							</span>
+						</div>
+						<div class="box">
+							<span class="label">
+								申请时间
+							</span>
+							<span class="val">
+								
+							</span>
+						</div>
+					</div>
+					<div class="right"></div>
+				</div>
+			</div>
+		</view>
 		<view class="tui-safe-area"></view>
 		<view class="tui-tabbar tui-order-btn">
 			<!-- <view class="tui-btn-mr">
@@ -138,11 +230,11 @@
 			<!-- <view class="tui-btn-mr">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="refund">申请售后</tui-button>
 			</view> -->
-			<view class="tui-btn-mr" v-if="orderDetail.paymentStatusId==10">
+			<view class="tui-btn-mr" v-if="orderDetail.orderStatusId==10">
 				<tui-button type="danger" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="btnPay">立即支付</tui-button>
 			</view>
 			<view class="tui-btn-mr" v-else>
-				<tui-button type="danger" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle">已完成</tui-button>
+				<tui-button type="danger" disabled="true" :plain="true" width="200rpx" height="56rpx" :size="26" shape="circle">{{orderDetail.shippingStatus}}</tui-button>
 			</view>
 		</view>
 		<t-pay-way :show="show" :totalPrice="orderDetail.orderTotal" :orderId='orderId' @close="popupClose"></t-pay-way>
@@ -184,7 +276,14 @@
 					}
 				).then(res=>{
 					this.orderDetail = res.returnValue;
-					if(this.orderDetail.paymentStatusId==10){
+					this.orderDetail.createdOn = res.returnValue.createdOn.replace('T',' ')
+					if(this.orderDetail.shipments!=''){
+						this.orderDetail.shipments.map(item=>{
+							item.shippedDate = item.shippedDate.replace('T',' ');
+							return item;
+						})
+					}
+					if(this.orderDetail.orderStatusId==10){
 						this.status = 1;
 					}else {
 						this.status = 2;
@@ -549,5 +648,31 @@
 		width: 36rpx;
 		height: 36rpx;
 		margin-right: 16rpx;
+	}
+	.pannel{
+		width: 100%;
+		height: auto;
+		border-radius: 20rpx;
+		background: #fff;
+		/* margin: 20px 0; */
+		padding: 20rpx 20rpx;
+		box-sizing: border-box;
+		font-size: 26rpx;
+		color: #333;
+	}
+	.pannel .title{
+		text-align: center;
+		font-size: 28rpx;
+		color: #333;
+	}
+	.pannel .box{
+		padding: 10rpx 0;
+	}
+	.pannel .box .label{
+		color: #999;
+	}
+	.pannel .box .val{
+		font-weight: bold;
+		margin-left: 20rpx;
 	}
 </style>

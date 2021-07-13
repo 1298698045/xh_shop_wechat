@@ -286,9 +286,9 @@
 				</p>
 				
 			</div>
-			<button v-if="show" :disabled="disabled" @click="getReturn">
+		<!-- 	<button v-if="show" :disabled="disabled" @click="getReturn">
 				{{timeNum}} 完成
-			</button>
+			</button> -->
 		</div>
 	</view>
 </template>

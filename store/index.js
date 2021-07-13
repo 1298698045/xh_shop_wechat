@@ -18,7 +18,8 @@ const store = new Vuex.Store({
 		networkConnected: true,
 		isOnline: false,
 		userId:uni.getStorageSync("userId"),
-		currenAddress:{}
+		currenAddress:{},
+		invoiceTitleId:"" // 发票id
 	},
 	mutations: {
 		login(state, payload) {
@@ -48,6 +49,9 @@ const store = new Vuex.Store({
 			console.log(userId,'=====')
 			state.userId = userId;
 			state.isLogin = true;
+		},
+		setInvoice(state,id){
+			state.invoiceTitleId = id;
 		}
 	},
 	actions: {

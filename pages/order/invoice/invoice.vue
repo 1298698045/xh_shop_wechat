@@ -22,18 +22,18 @@
 					<view class="tui-form">
 						<view class="tui-box__personal" v-show="invoiceTitle === 1">
 							<view class="tui-input__item">
-								<view class="tui-input__title">个人名称名称</view>
-								<input placeholder="请填写“个人”或您的姓名" placeholder-class="tui-placeholder" />
+								<view class="tui-input__title">个人名称</view>
+								<input placeholder="请输入个人名称" @input="changeName" v-model="personal.name" placeholder-class="tui-placeholder" />
 							</view>
 						</view>
 						<view class="tui-box__enterprise" v-show="invoiceTitle === 2">
 							<view class="tui-input__item">
 								<view class="tui-input__title">单位名称</view>
-								<input placeholder="请填写单位名称" placeholder-class="tui-placeholder" />
+								<input placeholder="请填写单位名称" @input="changeName" v-model="company.name" placeholder-class="tui-placeholder" />
 							</view>
 							<view class="tui-input__item">
 								<view class="tui-input__title">纳税人识别码</view>
-								<input placeholder="纳税人识别号/统一社会信用代码" placeholder-class="tui-placeholder" />
+								<input placeholder="纳税人识别号/统一社会信用代码" @input="changeCode" v-model="company.taxpayerCode" placeholder-class="tui-placeholder" />
 							</view>
 							<view class="tui-input__item tui-between">
 								<view class="tui-input__title">更多选填项</view>
@@ -43,42 +43,53 @@
 								</view>
 							</view>
 							<view class="tui-optional__box" v-if="optional">
-								<view class="tui-input__item">
+								<!-- <view class="tui-input__item">
 									<view class="tui-input__title">注册地址</view>
 									<input placeholder="请填写注册地址" placeholder-class="tui-placeholder" />
 								</view>
 								<view class="tui-input__item">
 									<view class="tui-input__title">注册电话</view>
 									<input type="number" placeholder="请填写注册电话" placeholder-class="tui-placeholder" />
-								</view>
+								</view> -->
 								<view class="tui-input__item">
 									<view class="tui-input__title">开户银行</view>
-									<input placeholder="请填写单位开户银行" placeholder-class="tui-placeholder" />
+									<input placeholder="请填写单位开户银行" @input="changeBankName" v-model="company.BankName" placeholder-class="tui-placeholder" />
 								</view>
 								<view class="tui-input__item">
 									<view class="tui-input__title">银行账号</view>
-									<input placeholder="请填写单位银行账号" placeholder-class="tui-placeholder" />
+									<input placeholder="请填写单位银行账号" @input="changeBankAccountNo" v-model="company.BankAccountNo" placeholder-class="tui-placeholder" />
 								</view>
 							</view>
 						</view>
 					</view>
 				</tui-list-cell>
-				<tui-list-cell :hover="false">
+				<tui-list-cell :hover="false" v-show="invoiceTitle === 1">
 					<view class="tui-title tui-bold">收票人信息</view>
 					<view class="tui-input__item">
 						<view class="tui-input__title">收票人手机</view>
-						<input placeholder="可通过手机号在发票服务平台查询" placeholder-class="tui-placeholder" value="188****0088" />
+						<input placeholder="可通过手机号在发票服务平台查询" @input="changePhone" v-model="personal.shipTo_Telephone" placeholder-class="tui-placeholder" value="188****0088" />
 					</view>
 					<view class="tui-input__item">
 						<view class="tui-input__title">收票人邮箱</view>
-						<input placeholder="用来接收电子发票邮件,可选填" placeholder-class="tui-placeholder" />
+						<input placeholder="用来接收电子发票邮件,可选填" @input="changeEmail" v-model="personal.shipTo_Email" placeholder-class="tui-placeholder" />
+					</view>
+				</tui-list-cell>
+				<tui-list-cell :hover="false" v-show="invoiceTitle === 2">
+					<view class="tui-title tui-bold">收票人信息</view>
+					<view class="tui-input__item">
+						<view class="tui-input__title">收票人手机</view>
+						<input placeholder="可通过手机号在发票服务平台查询" @input="changePhone" v-model="company.shipTo_Telephone" placeholder-class="tui-placeholder" value="188****0088" />
+					</view>
+					<view class="tui-input__item">
+						<view class="tui-input__title">收票人邮箱</view>
+						<input placeholder="用来接收电子发票邮件,可选填" @input="changeEmail" v-model="company.shipTo_Email" placeholder-class="tui-placeholder" />
 					</view>
 				</tui-list-cell>
 			</view>
 		</view>
 
 		<view class="tui-btn__box">
-			<tui-button type="danger" height="88rpx" shape="circle">确定</tui-button>
+			<tui-button type="danger" height="88rpx" shape="circle" @click="getSubmit">确定</tui-button>
 		</view>
 
 		<tui-modal :show="modal" shape="circle" padding="30rpx 40rpx" custom>
@@ -100,7 +111,29 @@
 				type: 1, //发票类型：1-电子普通发票 2-不开发票
 				invoiceTitle: 1, //发票抬头：1-个人 2-企业
 				optional: false,
-				modal: false
+				modal: false,
+				list:[],
+				personal:{
+					InvoiceTitleId:'',
+					invoiceTitleType:'',
+					name:'',
+					BankName:'',
+					BankAccountNo:'',
+					ShipToTelephone:'',
+					ShipToEmail:'',
+					description:''
+				},
+				company:{
+					InvoiceTitleId:'',
+					InvoiceTitleType:'',
+					name:'',
+					BankName:'',
+					BankAccountNo:'',
+					ShipToTelephone:'',
+					ShipToEmail:'',
+					description:''
+				},
+				invoiceTitleType:0
 			};
 		},
 		computed:{
@@ -112,17 +145,155 @@
 			this.getQuery(); 
 		},
 		methods: {
+			changeName(e){
+				if(this.invoiceTitleType==0){
+					this.personal.name = e.mp.detail.value;
+				}else {
+					this.company.name = e.mp.detail.value;
+				}
+			},
+			changePhone(e){
+				if(this.invoiceTitleType==0){
+					this.personal.shipTo_Telephone = e.mp.detail.value;
+					this.personal.ShipToTelephone = e.mp.detail.value;
+				}else {
+					this.company.shipTo_Telephone = e.mp.detail.value;
+					this.company.ShipToTelephone =  e.mp.detail.value;
+				}
+			},
+			changeEmail(e){
+				if(this.invoiceTitleType==0){
+					this.personal.shipTo_Email = e.mp.detail.value;
+					this.personal.ShipToEmail = e.mp.detail.value;
+				}else {
+					this.company.shipTo_Email = e.mp.detail.value;
+					this.company.ShipToEmail = e.mp.detail.value;
+				}
+			},
+			// 税号
+			changeCode(e){
+				this.company.taxpayerCode = e.mp.detail.value;
+				this.company.TaxpayerCode = e.mp.detail.value;
+			},
+			// 开户银行
+			changeBankName(e){
+				this.company.BankName = e.mp.detail.value;
+			},
+			changeBankAccountNo(e){
+				this.company.BankAccountNo = e.mp.detail.value;
+			},
 			switchType(type) {
 				this.type = type;
 			},
 			switchTitle(type) {
 				this.invoiceTitle = type;
+				if(type==2){
+					this.invoiceTitleType = 1;
+				}else {
+					this.invoiceTitleType = 0;
+				}
+				console.log(this.invoiceTitleType)
 			},
 			getQuery(){
 				this.$http.getInvoices({
 					customerId:this.userId
 				}).then(res=>{
-					console.log(res);
+					this.list = res.returnValue;
+					this.personal = res.returnValue[0];
+					this.personal.InvoiceTitleId = res.returnValue[0].invoiceTitleId;
+					this.personal.InvoiceTitleType = res.returnValue[0].invoiceTitleType;
+					this.personal.ShipToTelephone = res.returnValue[0].shipTo_Telephone;
+					this.personal.ShipToEmail = res.returnValue[0].shipTo_Email;
+					// this.company = res.returnValue[1];
+				})
+			},
+			getSubmit(){
+				if(this.invoiceTitleType==0){
+					var {InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,TaxpayerCode} = this.personal
+					if(name==''){
+						uni.showToast({
+							title:'名称不能为空',
+							icon:'none',
+							duration:2000
+						})
+						return false;
+					}else if(ShipToTelephone==''){
+						uni.showToast({
+							title:'手机号不能为空',
+							icon:'none',
+							duration:2000
+						})
+						return false;
+					}else if(ShipToEmail==''){
+						uni.showToast({
+							title:'邮箱不能为空',
+							icon:'none',
+							duration:2000
+						})
+						return false;
+					}
+					// console.log(InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail)
+				}else {
+					var {InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,TaxpayerCode} = this.company;
+					if(name==''){
+						uni.showToast({
+							title:'名称不能为空',
+							icon:'none',
+							duration:2000
+						})
+						return false;
+					}else if(ShipToTelephone==''){
+						uni.showToast({
+							title:'手机号不能为空',
+							icon:'none',
+							duration:2000
+						})
+						return false;
+					}else if(ShipToEmail==''){
+						uni.showToast({
+							title:'邮箱不能为空',
+							icon:'none',
+							duration:2000
+						})
+						return false;
+					}else if(TaxpayerCode==''){
+						uni.showToast({
+							title:'税号不能为空',
+							icon:'none',
+							duration:2000
+						})
+						return false;
+					}
+				}
+				console.log(InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,'===')
+				// return false;
+				this.$http.invoiceEdit({
+					customerId:this.userId,
+					InvoiceTitleId:InvoiceTitleId,
+					InvoiceTitleType:this.invoiceTitleType,
+					name:name || '',
+					BankName:BankName || '',
+					BankAccountNo:BankAccountNo || '',
+					ShipToTelephone: ShipToTelephone || '',
+					ShipToEmail:ShipToEmail || '',
+					TaxpayerCode:TaxpayerCode || ''
+				}).then(res=>{
+					console.log(res.invoiceTitleId);
+					// this.$store.dispatch('setInvoice',res.invoiceTitleId);
+					uni.setStorageSync('invoiceTitleId',res.invoiceTitleId)
+					wx.showToast({
+						title:'添加成功',
+						icon:'success',
+						duration:2000,
+						success:res=>{
+							uni.setStorageSync('invoice',true)
+							setTimeout(()=>{								
+								uni.navigateBack({
+									delta:1
+								})
+							},1000)
+						}
+					})
 				})
 			}
 		}

@@ -131,11 +131,11 @@
 						<!-- <tui-icon name="more-fill" :size="20" color="#666"></tui-icon> -->
 					</view>
 				</view>
-				<view class="tui-list-cell tui-last">
+				<!-- <view class="tui-list-cell tui-last">
 					<view class="tui-bold tui-cell-title">运费</view>
 					<view class="tui-selected-box">在线支付免运费</view>
-				</view>
-				<view class="tui-guarantee">
+				</view> -->
+				<!-- <view class="tui-guarantee">
 					<view class="tui-guarantee-item">
 						<tui-icon name="circle-selected" :size="14" color="#999"></tui-icon>
 						<text class="tui-pl">可配送海外</text>
@@ -156,7 +156,7 @@
 						<tui-icon name="circle-selected" :size="14" color="#999"></tui-icon>
 						<text class="tui-pl">极速审核</text>
 					</view>
-				</view>
+				</view> -->
 			</view>
 			<!-- 评论 -->
 			<!-- <view class="tui-cmt-box tui-mtop tui-radius-all">
@@ -208,7 +208,7 @@
 				<view class="tui-operation-item" hover-class="tui-opcity" :hover-stay-time="150" @click="gotoShopCart()">
 					<tui-icon name="cart" :size="22" color="#333"></tui-icon>
 					<view class="tui-operation-text tui-scale-small">购物车</view>
-					<tui-badge type="red" absolute :scaleRatio="0.8" right="10rpx" top="-4rpx">{{cartTotal}}</tui-badge>
+					<tui-badge type="red" absolute :scaleRatio="0.8" right="10rpx" top="-4rpx" v-if="cartTotal>0">{{cartTotal}}</tui-badge>
 				</view>
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
@@ -452,7 +452,8 @@
 				attrCurrenId:'', // 属性id
 				cartTotal:'',
 				isExpress:false,
-				shopaddressList:[]
+				shopaddressList:[],
+				paramsAddress:{}
 			};
 		},
 		computed:{
