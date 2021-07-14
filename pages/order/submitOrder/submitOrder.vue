@@ -321,11 +321,12 @@
 							'\r\n'+
 							'\r\n'+this.paramsAddress.id+
 							'\r\n--XXX'
-							
-				data += '\r\nContent-Disposition: form-data; name="invoiceTitleId"'+
-							'\r\n'+
-							'\r\n'+this.invoiceTitleId+
-							'\r\n--XXX'
+				if(this.isInvoice){
+					data += '\r\nContent-Disposition: form-data; name="invoiceTitleId"'+
+								'\r\n'+
+								'\r\n'+this.invoiceTitleId+
+								'\r\n--XXX'
+				}
 				data += '--';
 				uni.request({
 				    url: 'https://cbt.pumchit.cn/shopapi/Checkout/order/confirm?customerId='+obj.customerId+'&shippingAddressId='+obj.shippingAddressId,

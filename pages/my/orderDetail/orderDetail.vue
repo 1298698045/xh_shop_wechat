@@ -1,12 +1,13 @@
 <template>
 	<view class="container">
-		<view class="tui-order-header" @tap="switchStatus">
+		<!--  @tap="switchStatus" -->
+		<view class="tui-order-header">
 			<!-- <image :src="webURL+'img_detail_bg.png'" mode="widthFix" class="tui-img-bg"></image> -->
 			<view class="tui-header-content">
 				<view>
 					<view class="tui-status-text">{{getStatusText(status)}}</view>
 					<view class="tui-reason"><text class="tui-reason-text">{{getReason(status)}}</text>
-						<tui-countdown :time="1800" color="rgba(254,254,254,0.75)" colonColor="rgba(254,254,254,0.75)" borderColor="transparent"
+						<tui-countdown :time="countDown" @end="changeEnd" color="rgba(254,254,254,0.75)" colonColor="rgba(254,254,254,0.75)" borderColor="transparent"
 						 backgroundColor="transparent" v-if="status===1"></tui-countdown>
 					</view>
 				</view>
@@ -230,8 +231,11 @@
 			<!-- <view class="tui-btn-mr">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="refund">申请售后</tui-button>
 			</view> -->
-			<view class="tui-btn-mr" v-if="orderDetail.orderStatusId==10">
+			<view class="tui-btn-mr" v-if="orderDetail.orderStatusId==10&&status!=5">
 				<tui-button type="danger" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="btnPay">立即支付</tui-button>
+			</view>
+			<view class="tui-btn-mr" v-else-if="orderDetail.orderStatusId==40||status==5">
+				<tui-button type="danger" disabled="true" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle">交易关闭</tui-button>
 			</view>
 			<view class="tui-btn-mr" v-else>
 				<tui-button type="danger" disabled="true" :plain="true" width="200rpx" height="56rpx" :size="26" shape="circle">{{orderDetail.shippingStatus}}</tui-button>
@@ -254,7 +258,15 @@
 				status: 1,
 				show: false,
 				orderId:"",
-				orderDetail:{}
+				orderDetail:{},
+				countDown:1800,
+				endOrderTime:'',
+				endOrderTimeStr:'', // 订单结束时间戳
+				currentDate:{
+					nowDateTime:'',
+					timeStr:''
+				},
+				timer:null
 			}
 		},
 		computed:{
@@ -266,8 +278,16 @@
 			this.orderId = options.orderId;
 			console.log(this.orderId)
 			this.getQuery();
+			this.currentTime();
+		},
+		onUnload(){
+			// clearInterval(this.timer);
 		},
 		methods: {
+			// 倒计时结束时间回调
+			changeEnd(e){
+				this.status = 5;
+			},
 			getQuery(){
 				this.$http.getSingleOrder(
 					{
@@ -277,18 +297,63 @@
 				).then(res=>{
 					this.orderDetail = res.returnValue;
 					this.orderDetail.createdOn = res.returnValue.createdOn.replace('T',' ')
+					let date = new Date(this.orderDetail.createdOn.replace(/-/g,'/')).getTime();
+					let min = 30 * 60 * 1000;
+					this.endOrderTimeStr = date+min;
+					let oldTime = this.getYMDHMS(date+min);
+					this.endOrderTime = oldTime;
+					console.log(oldTime,this.endOrderTimeStr,'oldtime')
+					console.log(this.currentDate,'currentDate');
+					
 					if(this.orderDetail.shipments!=''){
 						this.orderDetail.shipments.map(item=>{
 							item.shippedDate = item.shippedDate.replace('T',' ');
 							return item;
 						})
 					}
-					if(this.orderDetail.orderStatusId==10){
+					if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10){
 						this.status = 1;
-					}else {
+					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==20&&this.orderDetail.shippingStatusId==20){
 						this.status = 2;
+					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==20&&this.orderDetail.shippingStatusId==30){
+						this.status = 3;
+					}
+					else if(this.orderDetail.orderStatusId==30&&this.orderDetail.paymentStatusId==30){
+						this.status = 4;
 					}
 				})
+			},
+			// 获取当前时间
+			getTime(){
+				var _this = this;
+				let yy = new Date().getFullYear();
+				let mm = new Date().getMonth()+1;
+				let dd = new Date().getDate();
+				let hh = new Date().getHours();
+				let mf = new Date().getMinutes()<10 ? '0'+new Date().getMinutes() : new Date().getMinutes();
+				let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
+				_this.currentDate.nowDateTime = yy+'/'+mm+'/'+dd+' '+hh+':'+mf+':'+ss;
+				_this.currentDate.timeStr = new Date().getTime();
+				if(this.currentDate.timeStr>this.endOrderTimeStr&&this.orderDetail.orderStatusId==40){
+					this.status = 5;
+				}else {
+					this.countDown = (this.endOrderTimeStr-this.currentDate.timeStr) / 1000;
+					// console.log(this.endOrderTimeStr-this.currentDate.timeStr,'剩余倒计时')
+				}
+			},
+			currentTime(){
+				this.timer = setInterval(this.getTime,500)
+			},
+			getYMDHMS (timestamp) {
+			  let time = new Date(timestamp)
+			  let year = time.getFullYear()
+			  const month = (time.getMonth() + 1).toString().padStart(2, '0')
+			  const date = (time.getDate()).toString().padStart(2, '0')
+			  const hours = (time.getHours()).toString().padStart(2, '0')
+			  const minute = (time.getMinutes()).toString().padStart(2, '0')
+			  const second = (time.getSeconds()).toString().padStart(2, '0')
+		
+			  return year + '/' + month + '/' + date + ' ' + hours + ':' + minute + ':' + second
 			},
 			getImg: function(status) {
 				return this.webURL + ["img_order_payment3x.png", "img_order_send3x.png", "img_order_received3x.png",

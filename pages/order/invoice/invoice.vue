@@ -7,10 +7,10 @@
 					<text class="tui-notice" @tap="modal = true">发票须知</text>
 				</view>
 				<view class="tui-attr__box">
-					<view class="tui-attr-item" :class="{ 'tui-attr-active': type === 1 }" @tap="switchType(1)">电子普通发票</view>
+					<view class="tui-attr-item" :class="{ 'tui-attr-active': type === 1 }" @tap="switchType(1)">普通发票</view>
 					<view class="tui-attr-item" :class="{ 'tui-attr-active': type === 2 }" @tap="switchType(2)">不开发票</view>
 				</view>
-				<view class="tui-tips">协和百年文创启用电子普通发票，与纸质普通发票具备同等法律效力，订单完成后24小时内在“我的订单”查看</view>
+				<view class="tui-tips">商家将纸质发票、商品一同邮寄给用户；若商品退货，需将发票一同寄给商家</view>
 			</tui-list-cell>
 			<view v-if="type === 1">
 				<tui-list-cell :hover="false">
@@ -199,102 +199,120 @@
 					customerId:this.userId
 				}).then(res=>{
 					this.list = res.returnValue;
-					this.personal = res.returnValue[0];
-					this.personal.InvoiceTitleId = res.returnValue[0].invoiceTitleId;
-					this.personal.InvoiceTitleType = res.returnValue[0].invoiceTitleType;
-					this.personal.ShipToTelephone = res.returnValue[0].shipTo_Telephone;
-					this.personal.ShipToEmail = res.returnValue[0].shipTo_Email;
-					// this.company = res.returnValue[1];
+					if(this.list!=''){
+						let idx = this.list.findIndex(item=>item.invoiceTitleType==0);
+						let index = this.list.findIndex(item=>item.invoiceTitleType==1);
+						this.personal = res.returnValue[idx];
+						this.personal.InvoiceTitleId = res.returnValue[idx].invoiceTitleId;
+						this.personal.InvoiceTitleType = res.returnValue[idx].invoiceTitleType;
+						this.personal.ShipToTelephone = res.returnValue[idx].shipTo_Telephone;
+						this.personal.ShipToEmail = res.returnValue[idx].shipTo_Email;
+						this.company = res.returnValue[index];
+						this.company.InvoiceTitleId = res.returnValue[index].invoiceTitleId;
+						this.company.InvoiceTitleType = res.returnValue[index].invoiceTitleType;
+						this.company.ShipToTelephone = res.returnValue[index].shipTo_Telephone;
+						this.company.ShipToEmail = res.returnValue[index].shipTo_Email;
+						this.company.TaxpayerCode = res.returnValue[index].taxpayerCode;
+						this.company.BankName = res.returnValue[index].bankName;
+						this.company.BankAccountNo = res.returnValue[index].bankAccountNo;
+					}
 				})
 			},
 			getSubmit(){
-				if(this.invoiceTitleType==0){
-					var {InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,TaxpayerCode} = this.personal
-					if(name==''){
-						uni.showToast({
-							title:'名称不能为空',
-							icon:'none',
-							duration:2000
-						})
-						return false;
-					}else if(ShipToTelephone==''){
-						uni.showToast({
-							title:'手机号不能为空',
-							icon:'none',
-							duration:2000
-						})
-						return false;
-					}else if(ShipToEmail==''){
-						uni.showToast({
-							title:'邮箱不能为空',
-							icon:'none',
-							duration:2000
-						})
-						return false;
-					}
-					// console.log(InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail)
-				}else {
-					var {InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,TaxpayerCode} = this.company;
-					if(name==''){
-						uni.showToast({
-							title:'名称不能为空',
-							icon:'none',
-							duration:2000
-						})
-						return false;
-					}else if(ShipToTelephone==''){
-						uni.showToast({
-							title:'手机号不能为空',
-							icon:'none',
-							duration:2000
-						})
-						return false;
-					}else if(ShipToEmail==''){
-						uni.showToast({
-							title:'邮箱不能为空',
-							icon:'none',
-							duration:2000
-						})
-						return false;
-					}else if(TaxpayerCode==''){
-						uni.showToast({
-							title:'税号不能为空',
-							icon:'none',
-							duration:2000
-						})
-						return false;
-					}
-				}
-				console.log(InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,'===')
-				// return false;
-				this.$http.invoiceEdit({
-					customerId:this.userId,
-					InvoiceTitleId:InvoiceTitleId,
-					InvoiceTitleType:this.invoiceTitleType,
-					name:name || '',
-					BankName:BankName || '',
-					BankAccountNo:BankAccountNo || '',
-					ShipToTelephone: ShipToTelephone || '',
-					ShipToEmail:ShipToEmail || '',
-					TaxpayerCode:TaxpayerCode || ''
-				}).then(res=>{
-					console.log(res.invoiceTitleId);
-					// this.$store.dispatch('setInvoice',res.invoiceTitleId);
-					uni.setStorageSync('invoiceTitleId',res.invoiceTitleId)
-					wx.showToast({
-						title:'添加成功',
-						icon:'success',
-						duration:2000,
-						success:res=>{
-							uni.setStorageSync('invoice',true)
-							setTimeout(()=>{								
-								uni.navigateBack({
-									delta:1
-								})
-							},1000)
+				if(this.type==1){
+					if(this.invoiceTitleType==0){
+						var {InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,TaxpayerCode} = this.personal
+						if(name==''){
+							uni.showToast({
+								title:'名称不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}else if(ShipToTelephone==''){
+							uni.showToast({
+								title:'手机号不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}else if(ShipToEmail==''){
+							uni.showToast({
+								title:'邮箱不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
 						}
+						// console.log(InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail)
+					}else {
+						var {InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,TaxpayerCode} = this.company;
+						if(name==''){
+							uni.showToast({
+								title:'名称不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}else if(ShipToTelephone==''){
+							uni.showToast({
+								title:'手机号不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}else if(ShipToEmail==''){
+							uni.showToast({
+								title:'邮箱不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}else if(TaxpayerCode==''){
+							uni.showToast({
+								title:'税号不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}
+					}
+					console.log(InvoiceTitleId,InvoiceTitleType,name,BankName,BankAccountNo,ShipToTelephone,ShipToEmail,'===')
+					// return false;
+					this.$http.invoiceEdit({
+						customerId:this.userId,
+						InvoiceTitleId:InvoiceTitleId,
+						InvoiceTitleType:this.invoiceTitleType,
+						name:name || '',
+						BankName:BankName || '',
+						BankAccountNo:BankAccountNo || '',
+						ShipToTelephone: ShipToTelephone || '',
+						ShipToEmail:ShipToEmail || '',
+						TaxpayerCode:TaxpayerCode || ''
+					}).then(res=>{
+						console.log(res.invoiceTitleId);
+						// this.$store.dispatch('setInvoice',res.invoiceTitleId);
+						uni.setStorageSync('invoiceTitleId',res.invoiceTitleId)
+						wx.showToast({
+							title:'添加成功',
+							icon:'success',
+							duration:2000,
+							success:res=>{
+								uni.setStorageSync('invoice',true)
+								setTimeout(()=>{								
+									uni.navigateBack({
+										delta:1
+									})
+								},1000)
+							}
+						})
 					})
-				})
+				}else {
+					uni.setStorageSync('invoice',false);
+					uni.navigateBack({
+						delta:1
+					})
+				}
 			}
 		}
 	};

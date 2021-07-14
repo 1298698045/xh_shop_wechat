@@ -127,7 +127,7 @@
 		</view>
 		
 		<!--tabbar-->
-		<view class="tui-tabbar">
+		<view class="tui-tabbar" v-if="buyNum>0">
 			<view class="tui-checkAll">
 				<checkbox-group @change="checkAll">
 					<label class="tui-checkbox">

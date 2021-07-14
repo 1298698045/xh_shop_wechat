@@ -200,6 +200,15 @@ class api{
 		})
 		return res;
 	}
+	// 确认收货/Order/delivery/confirm
+	async confirmSign(data){
+		const res = await https({
+			method:"get",
+			url:"/Order/delivery/confirm",
+			data: data,
+		})
+		return res;
+	}
 }
 
 export default new api()

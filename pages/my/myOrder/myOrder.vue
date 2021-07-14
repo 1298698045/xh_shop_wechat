@@ -44,6 +44,9 @@
 					<view class="tui-btn-ml" v-if="item.orderStatusId==10">
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="detail(item)">去付款</tui-button>
 					</view>
+					<view class="tui-btn-ml" v-else-if="currentTab==3&&item.paymentStatusId==20&&item.shippingStatusId==30">
+						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" @click="getConfirmSign(item)" shape="circle">确认收货</tui-button>
+					</view>
 					<!-- <view class="tui-btn-ml" v-else>
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle">再次购买</tui-button>
 					</view> -->
@@ -148,7 +151,7 @@
 			}
 		},
 		computed:{
-			uerId(){
+			userId(){
 				return this.$store.state.userId;
 			}
 		},
@@ -159,13 +162,32 @@
 			getQuery(){
 				this.$http.getMyoder(
 					{
-						customerId:this.uerId,
+						customerId:this.userId,
 						orderStatus:this.orderStatus, 
 						searchWord:"",
 						pageNumber:1
 					}
 				).then(res=>{
 					this.listData = res.returnValue;
+				})
+			},
+			getConfirmSign(item){
+				this.$http.confirmSign({
+					customerId:this.userId,
+					orderId:item.id
+				}).then(res=>{
+					console.log(res);
+					let that = this;
+					uni.showToast({
+						title:res.state,
+						icon:'none',
+						duration:2000,
+						success: () => {
+							setTimeout(()=>{
+								that.getQuery();
+							},300)
+						}
+					})
 				})
 			},
 			change(e) {

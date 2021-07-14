@@ -60,7 +60,7 @@
 										<text class="tui-sale-price">￥{{ item.price }}</text>
 										<text class="tui-factory-price">￥{{ item.oldPrice }}</text>
 									</view>
-									<view class="tui-pro-pay">{{ item.payNum || '' }}人付款</view>
+									<!-- <view class="tui-pro-pay">{{ item.payNum || '' }}人付款</view> -->
 								</view>
 							</view>
 						</view>
@@ -80,7 +80,7 @@
 										<text class="tui-sale-price">￥{{ item.price }}</text>
 										<text class="tui-factory-price">￥{{ item.oldPrice }}</text>
 									</view>
-									<view class="tui-pro-pay">{{ item.payNum || '' }}人付款</view>
+									<!-- <view class="tui-pro-pay">{{ item.payNum || '' }}人付款</view> -->
 								</view>
 							</view>
 						</view>
