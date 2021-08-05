@@ -52,6 +52,9 @@
 							<view>x{{item.quantity}}</view>
 						</view>
 					</view>
+					<view class="after_sale" v-if="orderDetail.orderStatusId!=10&&status==5">
+						<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
+					</view>
 				</tui-list-cell>
 			</block>
 			<view class="tui-goods-info">
@@ -380,8 +383,8 @@
 			popupClose() {
 				this.show = false
 			},
-			refund(){
-				this.tui.href("/pages/my/refund/refund")
+			refund(item){
+				this.tui.href("/pages/my/refund/refund?shopId="+item.id+'&orderId='+this.orderId);
 			}
 		}
 	}
@@ -522,7 +525,12 @@
 		display: flex;
 		justify-content: space-between;
 	}
-
+	.after_sale{
+		padding: 0 30rpx 20rpx 30rpx;
+	}
+	.after_sale button{
+		margin-left: auto!important;
+	}
 	.tui-goods-img {
 		width: 180rpx;
 		height: 180rpx;

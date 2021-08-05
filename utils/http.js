@@ -8,14 +8,19 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export function https(config) {
+	console.log(config,'config')
  //显示loading
  wx.showLoading({
      title: '加载中...'
  }); 
  //设置请求头
- config.header = {
-     'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
- };
+ if(config.header){
+	 
+ }else {	 
+	 config.header = {
+		 'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+	 };
+ }
  //检查缓存中有没有token
  var token = wx.getStorageSync('token');
  if (token != '') {

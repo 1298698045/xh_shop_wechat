@@ -209,6 +209,18 @@ class api{
 		})
 		return res;
 	}
+	// 退款
+	async refundSign(url,data){
+		const res = await https({
+			method:"post",
+			url:url,
+			header:{
+				'content-type': 'multipart/form-data; boundary=XXX'
+			},
+			data: data,
+		})
+		return res;
+	}
 }
 
 export default new api()

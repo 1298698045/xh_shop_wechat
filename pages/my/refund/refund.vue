@@ -4,17 +4,16 @@
 			<tui-list-cell padding="20rpx 30rpx" :hover="false" :lineLeft="false">
 				<view class="tui-goods-title"><view>商品信息</view></view>
 			</tui-list-cell>
-			<block v-for="(item, index) in 2" :key="index">
+			<block>
 				<tui-list-cell padding="0" @click="detail">
 					<view class="tui-goods-item">
-						<image :src="`/static/images/mall/product/${index + 3}.jpg`" class="tui-goods-img"></image>
+						<image :src="shopInfo.picture.thumbImageUrl" class="tui-goods-img"></image>
 						<view class="tui-goods-center">
-							<view class="tui-goods-name">欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）</view>
-							<view class="tui-goods-attr">黑色，50ml</view>
+							<view class="tui-goods-name">{{shopInfo.productName}}</view>
 						</view>
 						<view class="tui-price-right">
-							<view>￥298.00</view>
-							<view>x2</view>
+							<view>￥{{shopInfo.unitPrice}}</view>
+							<view>x{{shopInfo.quantity}}</view>
 						</view>
 					</view>
 				</tui-list-cell>
@@ -25,9 +24,20 @@
 				<view class="tui-line-cell">
 					<view class="tui-title">
 						<text class="tui-color__red">*</text>
+						<text>数量</text>
+					</view>
+					<tui-numberbox :value="number" :min="1" :max="shopInfo.quantity" @change="change"></tui-numberbox>
+				</view>
+			</tui-list-cell>
+			<tui-list-cell :hover="true" padding="0"arrow>
+				<view class="tui-line-cell">
+					<view class="tui-title">
+						<text class="tui-color__red">*</text>
 						<text>申请类型</text>
 					</view>
-					<input placeholder-class="tui-phcolor" class="tui-input"   type="text"  value="退货退款" disabled/>
+					<picker @change="bindPickerChange" value="index" :range="array">
+						<input placeholder-class="tui-phcolor" class="tui-input" v-model="array[index]" type="text" disabled/>
+					</picker>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell padding="0" arrow>
@@ -36,7 +46,9 @@
 						<text class="tui-color__red">*</text>
 						<text>申请原因</text>
 					</view>
-					<input placeholder-class="tui-phcolor" class="tui-input"   type="text"  placeholder="请选择退款原因" disabled/>
+					<picker @change="changeReason" value="index" :range="reason">
+						<input placeholder-class="tui-phcolor" class="tui-input" v-model="reason[reasonIdx]" type="text" disabled/>
+					</picker>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="false" padding="0">
@@ -45,7 +57,7 @@
 						<text class="tui-color__red">*</text>
 						<text>退款金额</text>
 					</view>
-					<input placeholder-class="tui-phcolor" class="tui-input"   type="text"  value="￥596.00" disabled/>
+					<input placeholder-class="tui-phcolor" class="tui-input"   type="text"  :value="refundPrice" disabled/>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="false" padding="0">
@@ -54,12 +66,12 @@
 						<text class="tui-color__red">*</text>
 						<text>申请说明</text>
 					</view>
-					<input placeholder-class="tui-phcolor" class="tui-input"   type="text"  placeholder="请填写申请说明"/>
+					<input v-model="desc" placeholder-class="tui-phcolor" class="tui-input"   type="text"  placeholder="请填写申请说明"/>
 				</view>
 			</tui-list-cell>
 		</view>
 		<view class="tui-btn__box">
-			<tui-button height="88rpx" type="danger" shadow shape="circle">提交申请</tui-button>
+			<tui-button height="88rpx" type="danger" shadow shape="circle" @click="getSubmit">提交申请</tui-button>
 		</view>
 	</view>
 </template>
@@ -67,9 +79,100 @@
 <script>
 export default {
 	data() {
-		return {};
+		return {
+			orderDetail:{},
+			orderId:"",
+			shopId:"",
+			shopInfo:[],
+			number:"",
+			desc:"",
+			index:0,
+			array:['退货退款','仅退款'],
+			reason:[
+				'商品成分描述不符',
+				'退运费',
+				'假冒品牌',
+				'发票问题',
+				'卖家发错货'
+			],
+			reasonIdx:0
+		};
 	},
-	methods: {}
+	computed:{
+		userId(){
+			return this.$store.state.userId;
+		},
+		refundPrice(){
+			return this.number * this.shopInfo.unitPrice;
+		}
+	},
+	onLoad(options){
+		this.orderId = options.orderId;
+		this.shopId = options.shopId;
+		this.getQuery();
+	},
+	methods: {
+		// 订单详情
+		getQuery(){
+			this.$http.getSingleOrder(
+				{
+					customerId:this.userId,
+					orderId:this.orderId
+				}
+			).then(res=>{
+				this.orderDetail = res.returnValue;
+				this.shopInfo = this.orderDetail.items.find(item=>item.id==this.shopId);
+				this.number = this.shopInfo.quantity;
+			})
+		},
+		change(e){
+			this.number = e.value;
+		},
+		bindPickerChange(e){
+			this.index = e.mp.detail.value;
+		},
+		changeReason(e){
+			this.reasonIdx = e.mp.detail.value;
+		},
+		getSubmit(){
+			let url = "/Order/delivery/refund?customerId="+this.userId+'&orderId='+this.orderId
+			let obj = {
+				ReturnRequestStatusId:0,
+				StaffNotes:'',
+				CustomerComments:this.desc,
+				ReasonForReturn:this.reason[this.reasonIdx],
+				StoreId:1,
+				CustomNumber:'',
+				UploadedFileId:0,
+				RequestedAction:this.array[this.index],
+				['OrderItemId_'+this.shopId]:this.number
+			};
+			let data = '';
+			for(var key in obj){
+					data+=
+						'\r\nContent-Disposition: form-data; name="'+key+'"' +
+						'\r\n' +
+						'\r\n'+obj[key]+
+						'\r\n--XXX' 
+			}
+			data += '--';
+			this.$http.refundSign(url,data).then(res=>{
+				if(res.state=='SUCCESS')
+				uni.showToast({
+					title:'提交成功',
+					icon:'success',
+					duration:2000,
+					success:res=>{
+						setTimeout(()=>{
+							uni.navigateBack({
+								delta:1
+							})
+						},1000)
+					}
+				})
+			})
+		}
+	}
 };
 </script>
 
