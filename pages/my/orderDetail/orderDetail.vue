@@ -52,8 +52,9 @@
 							<view>x{{item.quantity}}</view>
 						</view>
 					</view>
-					<view class="after_sale" v-if="orderDetail.orderStatusId!=10&&status==5">
-						<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
+					<view class="after_sale" v-if="orderDetail.paymentStatusId==30">
+						<tui-button v-if="orderDetail.isRefunded" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</tui-button>
+						<tui-button v-else type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
 					</view>
 				</tui-list-cell>
 			</block>
@@ -385,6 +386,9 @@
 			},
 			refund(item){
 				this.tui.href("/pages/my/refund/refund?shopId="+item.id+'&orderId='+this.orderId);
+			},
+			refundList(item){
+				this.tui.href("/pages/my/refundList/refundList?shopId="+item.id+'&orderId='+this.orderId);
 			}
 		}
 	}

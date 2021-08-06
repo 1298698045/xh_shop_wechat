@@ -209,7 +209,7 @@ class api{
 		})
 		return res;
 	}
-	// 退款
+	// 申请售后
 	async refundSign(url,data){
 		const res = await https({
 			method:"post",
@@ -217,6 +217,24 @@ class api{
 			header:{
 				'content-type': 'multipart/form-data; boundary=XXX'
 			},
+			data: data,
+		})
+		return res;
+	}
+	// 售后列表/Order/ReturnRe/getReturnRequest
+	async refundList(data){
+		const res = await https({
+			method:"get",
+			url:"/Order/ReturnRe/getReturnRequest",
+			data: data,
+		})
+		return res;
+	}
+	// 填写物流单号
+	async orederNoSubmit(data){
+		const res = await https({
+			method:"get",
+			url:"/Order/ReturnRe/submitReturnNumber",
 			data: data,
 		})
 		return res;

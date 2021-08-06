@@ -1,39 +1,48 @@
 <template>
 	<view class="container">
 		<view class="tui-order-list">
-			<view class="tui-order-item" v-for="(model, orderIndex) in 4" :key="orderIndex" @tap="detail">
+			<view class="tui-order-item" v-for="(item, orderIndex) in list" :key="orderIndex">
 				<tui-list-cell :hover="false" :lineLeft="false">
 					<view class="tui-goods-title">
-						<view >2020-09-01 03:01:30</view>
-						<view class="tui-order-status">退款成功</view>
+						<view >{{item.createdTime}}</view>
+						<view class="tui-order-status">{{getStatusText(item.returnRequestStatusId)}}</view>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell padding="0" :hover="false">
-					<view class="tui-goods-item">
-						<image src="/static/images/mall/product/4.jpg" class="tui-goods-img"></image>
+					<view class="tui-goods-item" v-for="(shop,idx) in item.orderItems" :key="idx">
+						<image :src="shop.picture.thumbImageUrl" class="tui-goods-img"></image>
 						<view class="tui-goods-center">
-							<view class="tui-goods-name">欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）</view>
-							<view class="tui-goods-attr">黑色，50ml</view>
+							<view class="tui-goods-name">{{shop.productName}}</view>
 						</view>
 						<view class="tui-price-right">
-							<view>￥298.00</view>
-							<view>x2</view>
+							<view>￥{{shop.unitPrice}}</view>
+							<view>x{{shop.quantity}}</view>
 						</view>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false" unlined>
 					<view class="tui-goods-price">
-						<view>共2件商品 合计：</view>
+						<view>共{{item.orderItems.length}}件商品 合计：</view>
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">596</view>
+						<view class="tui-price-large">{{totalPrice(item.orderItems)}}</view>
 						<view class="tui-size-24">.00</view>
 					</view>
 				</tui-list-cell>
-				<view class="tui-order-btn">
-					<tui-button type="black" plain width="152rpx" height="52rpx" :size="26" shape="circle">查看详情</tui-button>
+				<view class="tui-order-btn" v-if="item.returnRequestStatusId==20" @click.stop="LogisticsOrderNo(item)">
+					<tui-button type="black" plain width="152rpx" height="52rpx" :size="26" shape="circle">物流单号</tui-button>
+					<!-- <tui-button type="black" plain width="152rpx" height="52rpx" :size="26" shape="circle">查看详情</tui-button> -->
 				</view>
 			</view>
 		</view>
+		<tui-modal :show="isModal" custom>
+			<view class="tui-modal-custom">
+				<view class="tui-modal-custom-text">填写物流单号：</view>
+				<view class="tui-input-box">
+					<input placeholder-class="tui-phcolor" placeholder="请填写物流单号" type="number" class="tui-input" v-model="noNumber"/>
+				</view>
+				<tui-button height="72rpx" :size="28" type="danger" shape="circle" @click="handleClick">确定</tui-button>
+			</view>
+		</tui-modal>
 		<tui-divider width="60%" gradual>没有更多了</tui-divider>
 	</view>
 </template>
@@ -42,12 +51,112 @@
 export default {
 	data() {
 		return {
-			
+			orderId:"",
+			list:[],
+			isModal:false,
+			noNumber:"",
+			id:""
 		};
+	},
+	onLoad(options) {
+		this.orderId = options.orderId;
+		this.getQuery();
+	},
+	computed:{
+		userId(){
+			return this.$store.state.userId;
+		}
 	},
 	methods: {
 		detail() {
 			this.tui.href('/pages/my/refundDetail/refundDetail')
+		},
+		getQuery(){
+			this.$http.refundList(
+				{
+					customerId:this.userId,
+					orderId:this.orderId,
+					ReturnRequestStatus:''
+				}
+			).then(res=>{
+				this.list = res.returnValue;
+				this.list.forEach(item=>{
+					var createdTime = item.createdOnUtc.replace(/\T/g,' ');
+					item.createdTime = createdTime;
+					return item;
+				})
+			})
+		},
+		getStatusText(status){
+			let idx = 0;
+			switch(status){
+				case 0:
+					idx = 0;
+					break;
+				case 10:
+					idx = 1; 
+					break;
+				case 20:
+					idx = 2;
+					break;
+				case 30:
+					idx = 3;
+					break;
+				case 40:
+					idx = 4;
+					break;
+				case 50:
+					idx = 5;
+					break;
+				case 60:
+					idx = 6;
+					break;
+				default:
+					idx = 0;
+			}
+			return ['等待','已收到','退货授权','货物已更换','货物已退款','拒绝请求','已取消'][idx];
+		},
+		totalPrice(list){
+			let price = '';
+			list.map(item=>{
+				price += item.unitPrice * item.quantity;
+			})
+			return price;
+		},
+		// 填写物流单号
+		LogisticsOrderNo(item){
+			this.id = item.id;
+			this.isModal = true;
+		},
+		// 提交物流单号
+		handleClick(){
+			if(this.noNumber==''){
+				uni.showToast({
+					title:'请填写物流单号',
+					icon:'none',
+					duration:2000
+				})
+			}else {
+				this.$http.orederNoSubmit(
+					{
+						customerId:this.userId,
+						RetId:this.id,
+						ReturnNumber:this.noNumber
+					}
+				).then(res=>{
+					let that= this;
+					uni.showToast({
+						title:'提交成功',
+						icon:'none',
+						duration:2000,
+						success:res=>{
+							setTimeout(()=>{
+								that.isModal = false;
+							},1000)
+						}
+					})
+				})
+			}
 		}
 	}
 };
@@ -167,5 +276,12 @@ export default {
 	background: #fff;
 	padding: 10rpx 30rpx 20rpx;
 	box-sizing: border-box;
+}
+.tui-modal-custom .tui-input-box{
+	padding:20rpx 0;
+}
+.tui-modal-custom .tui-input-box input{
+	border: 1rpx solid #E2E3E5;
+	border-radius: 10rpx;
 }
 </style>
