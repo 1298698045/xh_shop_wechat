@@ -44,7 +44,7 @@
 					<view class="tui-btn-ml" v-if="item.orderStatusId==10">
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" shape="circle" @click="detail(item)">去付款</tui-button>
 					</view>
-					<view class="tui-btn-ml" v-else-if="currentTab==3&&item.paymentStatusId==20&&item.shippingStatusId==30">
+					<view class="tui-btn-ml" v-else-if="(currentTab==0||currentTab==3)&&(item.paymentStatusId==30)&&item.shippingStatusId==30">
 						<tui-button type="danger" plain width="152rpx" height="56rpx" :size="26" @click="getConfirmSign(item)" shape="circle">确认收货</tui-button>
 					</view>
 					<!-- <view class="tui-btn-ml" v-else>

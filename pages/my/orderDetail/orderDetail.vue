@@ -270,7 +270,8 @@
 					nowDateTime:'',
 					timeStr:''
 				},
-				timer:null
+				timer:null,
+				isCountDown:true
 			}
 		},
 		computed:{
@@ -290,7 +291,9 @@
 		methods: {
 			// 倒计时结束时间回调
 			changeEnd(e){
-				this.status = 5;
+				this.isCountDown = false;
+				this.getQuery();
+				// this.status = 5;
 			},
 			getQuery(){
 				this.$http.getSingleOrder(
@@ -315,16 +318,31 @@
 							return item;
 						})
 					}
-					if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10){
+					
+					if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10&&this.isCountDown){
 						this.status = 1;
-					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==20&&this.orderDetail.shippingStatusId==20){
-						this.status = 2;
-					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==20&&this.orderDetail.shippingStatusId==30){
+					}else if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10&&!this.isCountDown){
+						this.status = 5;
+					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==20){
+						this.status = 2; // 付款成功，待发货
+					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==30){
 						this.status = 3;
-					}
-					else if(this.orderDetail.orderStatusId==30&&this.orderDetail.paymentStatusId==30){
+					}else if(this.orderDetail.orderStatusId==30&&this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==40){
 						this.status = 4;
+					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==10){
+						this.status = 3; // 不需要发货
 					}
+					
+					// if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10){
+					// 	this.status = 1;
+					// }else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==20&&this.orderDetail.shippingStatusId==20){
+					// 	this.status = 2;
+					// }else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==20&&this.orderDetail.shippingStatusId==30){
+					// 	this.status = 3;
+					// }
+					// else if(this.orderDetail.orderStatusId==30&&this.orderDetail.paymentStatusId==30){
+					// 	this.status = 4;
+					// }
 				})
 			},
 			// 获取当前时间
@@ -368,7 +386,8 @@
 				return ["等待您付款", "付款成功", "待收货", "订单已完成", "交易关闭"][status - 1]
 			},
 			getReason: function(status) {
-				return ["剩余时间", "等待卖家发货", "还剩X天XX小时自动确认", "", "超时未付款，订单自动取消"][status - 1]
+				// return ["剩余时间", "等待卖家发货", "还剩X天XX小时自动确认", "", "超时未付款，订单自动取消"][status - 1]
+				return ["剩余时间", "等待卖家发货", "", "", "超时未付款，订单自动取消"][status - 1]
 			},
 			switchStatus() {
 				let status = this.status + 1

@@ -135,42 +135,51 @@ export default {
 			this.reasonIdx = e.mp.detail.value;
 		},
 		getSubmit(){
-			let url = "/Order/delivery/refund?customerId="+this.userId+'&orderId='+this.orderId
-			let obj = {
-				ReturnRequestStatusId:0,
-				StaffNotes:'',
-				CustomerComments:this.desc,
-				ReasonForReturn:this.reason[this.reasonIdx],
-				StoreId:1,
-				CustomNumber:'',
-				UploadedFileId:0,
-				RequestedAction:this.array[this.index],
-				['OrderItemId_'+this.shopId]:this.number
-			};
-			let data = '';
-			for(var key in obj){
-					data+=
-						'\r\nContent-Disposition: form-data; name="'+key+'"' +
-						'\r\n' +
-						'\r\n'+obj[key]+
-						'\r\n--XXX' 
-			}
-			data += '--';
-			this.$http.refundSign(url,data).then(res=>{
-				if(res.state=='SUCCESS')
+			if(this.desc==''){
 				uni.showToast({
-					title:'提交成功',
-					icon:'success',
-					duration:2000,
-					success:res=>{
-						setTimeout(()=>{
-							uni.navigateBack({
-								delta:1
-							})
-						},1000)
-					}
+					title:'请输入申请说明',
+					icon:'none',
+					duration:2000
 				})
-			})
+				return 
+			}else {				
+				let url = "/Order/delivery/refund?customerId="+this.userId+'&orderId='+this.orderId
+				let obj = {
+					ReturnRequestStatusId:0,
+					StaffNotes:'',
+					CustomerComments:this.desc,
+					ReasonForReturn:this.reason[this.reasonIdx],
+					StoreId:1,
+					CustomNumber:'',
+					UploadedFileId:0,
+					RequestedAction:this.array[this.index],
+					['OrderItemId_'+this.shopId]:this.number
+				};
+				let data = '';
+				for(var key in obj){
+						data+=
+							'\r\nContent-Disposition: form-data; name="'+key+'"' +
+							'\r\n' +
+							'\r\n'+obj[key]+
+							'\r\n--XXX' 
+				}
+				data += '--';
+				this.$http.refundSign(url,data).then(res=>{
+					if(res.state=='SUCCESS')
+					uni.showToast({
+						title:'提交成功',
+						icon:'success',
+						duration:2000,
+						success:res=>{
+							setTimeout(()=>{
+								uni.navigateBack({
+									delta:1
+								})
+							},1000)
+						}
+					})
+				})
+			}
 		}
 	}
 };
