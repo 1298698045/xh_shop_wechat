@@ -23,7 +23,7 @@
 		</view>
 		<view v-show="key">
 			<view class="tui-header">
-				<view class="tui-header-left tui-noboredr">搜索 “{{key}}”</view>
+				<view class="tui-header-left tui-noboredr" @click="getSearch(key)">搜索 “{{key}}”</view>
 			</view>
 			<view class="tui-result-box">
 				<block v-for="(item,index) in searchList" :key="index">
@@ -113,6 +113,11 @@
 					})
 				})
 				this.searchList = arr
+			},
+			getSearch(key){
+				uni.navigateTo({
+					url:'../../index/productList/productList?key='+key
+				})
 			}
 		}
 	}

@@ -259,7 +259,7 @@
 			return {
 				webURL: "https://www.thorui.cn/wx/static/images/mall/order/",
 				//1-待付款 2-付款成功 3-待收货 4-订单已完成 5-交易关闭
-				status: 1,
+				status: '',
 				show: false,
 				orderId:"",
 				orderDetail:{},
@@ -291,8 +291,9 @@
 		methods: {
 			// 倒计时结束时间回调
 			changeEnd(e){
+				console.log(1);
 				this.isCountDown = false;
-				this.getQuery();
+				// this.getQuery();
 				// this.status = 5;
 			},
 			getQuery(){

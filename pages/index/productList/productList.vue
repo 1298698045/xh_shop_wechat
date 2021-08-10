@@ -576,6 +576,7 @@ export default {
 		// #ifdef MP-ALIPAY
 		my.hideAddToDesktopMenu();
 		// #endif
+		
 		uni.getSystemInfo({
 			success: res => {
 				this.width = obj.left || res.windowWidth;
@@ -589,6 +590,9 @@ export default {
 				this.drawerH = res.windowHeight - uni.upx2px(100) - this.height;
 			}
 		});
+		if(options.key){
+			this.searchKey = options.key;
+		}
 		this.getQueryList();
 	},
 	methods: {
@@ -596,7 +600,7 @@ export default {
 			return uni.upx2px(num) + 'px';
 		},
 		getQueryList(){
-			this.$http.getShopList({categoryId:this.id}).then((res)=>{
+			this.$http.getShopList({categoryId:this.id,descOrName:this.searchKey}).then((res)=>{
 				console.log(res)
 				this.listData = res.returnValue;
 			}) 
