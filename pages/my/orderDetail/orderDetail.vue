@@ -288,6 +288,9 @@
 		onUnload(){
 			// clearInterval(this.timer);
 		},
+		onShow(){
+			this.getQuery();
+		},
 		methods: {
 			// 倒计时结束时间回调
 			changeEnd(e){
