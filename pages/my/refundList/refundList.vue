@@ -36,7 +36,9 @@
 		</view>
 		<tui-modal :show="isModal" custom>
 			<view class="tui-modal-custom">
-				<view class="tui-modal-custom-text">填写物流单号：</view>
+				<view class="title">物流公司：</view>
+				<input class="tui-input"  placeholder-class="phcolor" placeholder="请填写物流公司" v-model="name"></input>
+				<view class="tui-modal-custom-text">物流单号：</view>
 				<view class="tui-input-box">
 					<input placeholder-class="tui-phcolor" placeholder="请填写物流单号" type="number" class="tui-input" v-model="noNumber"/>
 				</view>
@@ -55,7 +57,8 @@ export default {
 			list:[],
 			isModal:false,
 			noNumber:"",
-			id:""
+			id:"",
+			name:""
 		};
 	},
 	onLoad(options) {
@@ -130,7 +133,13 @@ export default {
 		},
 		// 提交物流单号
 		handleClick(){
-			if(this.noNumber==''){
+			if(this.name==''){
+				uni.showToast({
+					title:'请填写物流公司名称',
+					icon:'none',
+					duration:2000
+				})
+			}else if(this.noNumber==''){
 				uni.showToast({
 					title:'请填写物流单号',
 					icon:'none',
@@ -141,7 +150,8 @@ export default {
 					{
 						customerId:this.userId,
 						RetId:this.id,
-						ReturnNumber:this.noNumber
+						ReturnNumber:this.noNumber,
+						ShippingCompany:this.name
 					}
 				).then(res=>{
 					let that= this;
@@ -280,8 +290,16 @@ export default {
 .tui-modal-custom .tui-input-box{
 	padding:20rpx 0;
 }
-.tui-modal-custom .tui-input-box input{
+/* .tui-modal-custom .tui-input-box input{
 	border: 1rpx solid #E2E3E5;
 	border-radius: 10rpx;
+} */
+.tui-input {
+  font-size: 30rpx;
+  height: 88rpx;
+  border: 1rpx solid #e6e6e6;
+  border-radius: 4rpx;
+  padding: 0 25rpx;
+  box-sizing: border-box;
 }
 </style>

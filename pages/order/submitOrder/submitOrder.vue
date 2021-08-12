@@ -288,8 +288,12 @@
 				})
 			},
 			btnPay() {
-				this.getSubmitOrder();
-				this.show = true;
+				if(!this.isExpress&&(JSON.stringify(this.currenAddress)!="{}")){
+					this.getSubmitOrder();
+					this.show = true;
+				}else {
+					this.tui.toast('请选择地址!')
+				}
 			},
 			getSubmitOrder(){
 				let obj = {

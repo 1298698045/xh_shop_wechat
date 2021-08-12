@@ -44,11 +44,11 @@
 					隐私协议
 				</view>
 			</tui-list-cell>
-			<!-- <tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(5)">
+			<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(5)">
 				<view class="tui-list-cell">
-					意见反馈
+					在线反馈
 				</view>
-			</tui-list-cell> -->
+			</tui-list-cell>
 		</view>
 
 	<!-- 	<view class="tui-exit">

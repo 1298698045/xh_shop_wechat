@@ -1,8 +1,10 @@
 <template>
 	<view class="container">
-		<view class="title">问题描述</view>
+		<view class="title">标题</view>
+		<input class="tui-input"  placeholder-class="phcolor" placeholder="请输入标题" v-model="subject"></input>
+		<view class="title top64">问题描述</view>
 		<view class="tui-cells">
-			<textarea class="tui-textarea" placeholder="我希望加入XXXX功能，因为XX情况下，会出现XX异常" maxlength="500" placeholder-class="phcolor"
+			<textarea class="tui-textarea" placeholder="请输入问题描述" maxlength="500" placeholder-class="phcolor"
 			 v-model="desc" />
 			<view class="textarea-counter">{{descNum}}/500</view>
 	    </view> 
@@ -29,7 +31,8 @@
 		data() {
 			return {
 				desc:"",
-				email:""
+				email:"",
+				subject:""
 			}
 		},
 		methods: {

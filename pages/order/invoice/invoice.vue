@@ -202,19 +202,23 @@
 					if(this.list!=''){
 						let idx = this.list.findIndex(item=>item.invoiceTitleType==0);
 						let index = this.list.findIndex(item=>item.invoiceTitleType==1);
-						this.personal = res.returnValue[idx];
-						this.personal.InvoiceTitleId = res.returnValue[idx].invoiceTitleId;
-						this.personal.InvoiceTitleType = res.returnValue[idx].invoiceTitleType;
-						this.personal.ShipToTelephone = res.returnValue[idx].shipTo_Telephone;
-						this.personal.ShipToEmail = res.returnValue[idx].shipTo_Email;
-						this.company = res.returnValue[index];
-						this.company.InvoiceTitleId = res.returnValue[index].invoiceTitleId;
-						this.company.InvoiceTitleType = res.returnValue[index].invoiceTitleType;
-						this.company.ShipToTelephone = res.returnValue[index].shipTo_Telephone;
-						this.company.ShipToEmail = res.returnValue[index].shipTo_Email;
-						this.company.TaxpayerCode = res.returnValue[index].taxpayerCode;
-						this.company.BankName = res.returnValue[index].bankName;
-						this.company.BankAccountNo = res.returnValue[index].bankAccountNo;
+						if(idx!=-1){							
+							this.personal = res.returnValue[idx];
+							this.personal.InvoiceTitleId = res.returnValue[idx].invoiceTitleId;
+							this.personal.InvoiceTitleType = res.returnValue[idx].invoiceTitleType;
+							this.personal.ShipToTelephone = res.returnValue[idx].shipTo_Telephone;
+							this.personal.ShipToEmail = res.returnValue[idx].shipTo_Email;
+						}
+						if(index!=-1){							
+							this.company = res.returnValue[index];
+							this.company.InvoiceTitleId = res.returnValue[index].invoiceTitleId;
+							this.company.InvoiceTitleType = res.returnValue[index].invoiceTitleType;
+							this.company.ShipToTelephone = res.returnValue[index].shipTo_Telephone;
+							this.company.ShipToEmail = res.returnValue[index].shipTo_Email;
+							this.company.TaxpayerCode = res.returnValue[index].taxpayerCode;
+							this.company.BankName = res.returnValue[index].bankName;
+							this.company.BankAccountNo = res.returnValue[index].bankAccountNo;
+						}
 					}
 				})
 			},
