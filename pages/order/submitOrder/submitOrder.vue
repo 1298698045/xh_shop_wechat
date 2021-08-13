@@ -171,7 +171,8 @@
 				orderNode:'', //备注
 				PickupInStore:0,// 是否自提
 				isInvoice:false,
-				invoiceTitleId:''
+				invoiceTitleId:'',
+				ShippingFee:0
 			}
 		},
 		computed:{
@@ -199,6 +200,8 @@
 				this.shopaddress();
 				this.queryAddress();
 				this.queryCartData().then(res=>{
+					console.log('购物车商品数据',res);
+					this.queryFreight(res.returnValue)
 					// this.getSubmitOrder();
 				});
 			}
@@ -236,7 +239,11 @@
 				});
 			},
 			hideisEcpress(){
-				this.isExpress = false;
+				if(this.paramsAddress.id==''){
+					this.tui.toast('请选择自提地址')
+				}else {
+					this.isExpress = false;
+				}
 			},
 			changeExtraction(e){
 				console.log(e);
@@ -256,6 +263,9 @@
 					customerId:this.userId
 				}).then(res=>{
 					this.addressList = res.returnValue;
+					if(this.addressList==''){
+						this.$store.commit('setAddress',{});
+					}
 					this.addressList.forEach(item=>{
 						if(item.isDefault==1){
 							this.$store.commit('setAddress',item);
@@ -282,13 +292,50 @@
 					})   
 				})
 			},
+			// 获取运费（
+			queryFreight(list){
+				let obj = {};
+				list.forEach(item=>{
+					obj['product_'+item.id] = item.quantity
+				})
+				console.log(obj,'obj')
+				let provinceName = '河北';
+				let data = '\r\n--XXX'
+				for(var key in obj){
+					if(obj[key]){
+						data+=
+							'\r\nContent-Disposition: form-data; name="'+key+'"'+
+							'\r\n'+
+							'\r\n'+obj[key]+
+							'\r\n--XXX' 
+					}
+				}
+				data+=
+					'\r\nContent-Disposition: form-data; name="provinceName"'+
+					'\r\n'+
+					'\r\n'+provinceName+
+					'\r\n--XXX';
+				data += '--';
+				let url = '/Checkout/order/ShipFee?customerId='+this.userId
+				this.$http.getFreight(
+					url,data
+				).then(res=>{
+					this.ShippingFee = res.returnValue.shippingFee;
+					this.totalPrice = Number(this.totalPrice) + Number(this.ShippingFee);
+					console.log(this.totalPrice)
+					console.log(this.ShippingFee)
+				})
+			},
 			chooseAddr() {
 				uni.navigateTo({
 					url: "/pages/my/address/address?isAddress=1"
 				})
 			},
 			btnPay() {
-				if(!this.isExpress&&(JSON.stringify(this.currenAddress)!="{}")){
+				if(!this.isExtraction && (JSON.stringify(this.currenAddress)!="{}")){
+					this.getSubmitOrder();
+					this.show = true;
+				}else if(this.isExtraction && this.paramsAddress.id!=''){
 					this.getSubmitOrder();
 					this.show = true;
 				}else {
@@ -298,7 +345,7 @@
 			getSubmitOrder(){
 				let obj = {
 					customerId:this.userId,
-					shippingAddressId:this.currenAddress.id,
+					shippingAddressId:this.currenAddress.id || '',
 					orderNode:this.orderNode
 				}
 				let ids = this.getCheckAttr();
@@ -324,6 +371,11 @@
 				data += '\r\nContent-Disposition: form-data; name="PickupAddressId"'+
 							'\r\n'+
 							'\r\n'+this.paramsAddress.id+
+							'\r\n--XXX'
+							
+				data += '\r\nContent-Disposition: form-data; name="ShippingFee"'+
+							'\r\n'+
+							'\r\n'+this.ShippingFee+
 							'\r\n--XXX'
 				if(this.isInvoice){
 					data += '\r\nContent-Disposition: form-data; name="invoiceTitleId"'+

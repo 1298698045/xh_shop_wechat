@@ -239,6 +239,30 @@ class api{
 		})
 		return res;
 	}
+	//  在线反馈 feedback
+	async feedbackSubmit(url,data){
+		const res = await https({
+			method:"post",
+			url:url,
+			header: {
+				'content-type': 'multipart/form-data; boundary=XXX'
+			},
+			data: data,
+		})
+		return res;
+	}
+	// 获取运费shopapi/Checkout/order/getordershippingamount
+	async getFreight(url,data){
+		const res = await https({
+			method:"post",
+			url:url,
+			header: {
+				'content-type': 'multipart/form-data; boundary=XXX'
+			},
+			data: data,
+		})
+		return res;
+	}
 }
 
 export default new api()

@@ -53,7 +53,7 @@
 						</view>
 					</view>
 					<view class="after_sale" v-if="orderDetail.paymentStatusId==30">
-						<tui-button v-if="orderDetail.isRefunded" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</tui-button>
+						<tui-button v-if="item.isRefunded" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</tui-button>
 						<tui-button v-else type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
 					</view>
 				</tui-list-cell>
@@ -295,9 +295,9 @@
 			// 倒计时结束时间回调
 			changeEnd(e){
 				console.log(1);
+				this.status = 5;
 				this.isCountDown = false;
 				// this.getQuery();
-				// this.status = 5;
 			},
 			getQuery(){
 				this.$http.getSingleOrder(

@@ -8,8 +8,8 @@
 			 v-model="desc" />
 			<view class="textarea-counter">{{descNum}}/500</view>
 	    </view> 
-	    <view class="title top64">联系邮箱</view>
-	    <input class="tui-input"  placeholder-class="phcolor" placeholder="请输入邮箱" v-model="email" maxlength="20"></input>
+	    <view class="title top64">联系电话</view>
+	    <input class="tui-input"  placeholder-class="phcolor" placeholder="请输入手机号" v-model="telPhone" maxlength="11"></input>
 	     <view class="tui-ptop">
 			 <tui-button type="danger" shadow height="88rpx" shape="circle" @click="submit">提交反馈</tui-button>
 	    </view>
@@ -23,6 +23,9 @@
 		computed:{
 			descNum:function(){
 				return this.desc.length
+			},
+			userId(){
+				return this.$store.state.userId;
 			}
 		},
 		onLoad(options) {
@@ -32,41 +35,78 @@
 			return {
 				desc:"",
 				email:"",
-				subject:""
+				subject:"",
+				telPhone:""
 			}
 		},
 		methods: {
 			submit(){
 				let rules = [{
+					name: "subject",
+					rule: ["required", "minLength:1", "maxLength:500"],
+					msg: ["请输入标题", "问题描述必须1个或以上字符", "请输入正确标题"]
+				},{
 					name: "desc",
 					rule: ["required", "minLength:8", "maxLength:500"],
 					msg: ["请输入问题描述", "问题描述必须8个或以上字符", "问题描述不能超过500个字符"]
 				}, {
-					name: "email",
-					rule: ["required", "isEmail"],
-					msg: ["请输入邮箱", "请输入正确的邮箱"]
+					name: "telPhone",
+					rule: ["required", "isMobile"],
+					msg: ["请输入手机号", "请输入正确的手机号"]
 				}];
 				let formData = {
+					subject:this.subject,
 					desc:this.desc,
-					email:this.email
+					telPhone:this.telPhone
 				}
 				let checkRes = form.validation(formData, rules);
 				if (!checkRes) {
-					this.tui.request("/Home/AddFeedBack","POST",{
-						Name: this.email,
-						Subject: "问题反馈",
-						Email: this.email,
-						Message: this.desc
-					}).then((res)=>{
+					// this.tui.request("/Home/AddFeedBack","POST",{
+					// 	Name: this.email,
+					// 	Subject: "问题反馈",
+					// 	Email: this.email,
+					// 	Message: this.desc
+					// }).then((res)=>{
+					// 	console.log(res)
+					// 	if (res.code == 100) {
+					// 		this.tui.toast('提交成功');
+					// 		this.desc="";
+					// 		this.email="";
+					// 	} else {
+					// 		this.tui.toast(res.message);
+					// 	}
+					// }).catch((res)=>{})
+					let obj = {
+						FeedbackTitle:this.subject,
+						FeedbackContent:this.desc,
+						ContactInfo:this.telPhone
+					}
+					let data = '';
+					let url = '/AppSetting/AppSeeting/feedback?CustomerId='+this.userId
+					for(var key in obj){
+							data+=
+								'\r\nContent-Disposition: form-data; name="'+key+'"' +
+								'\r\n' +
+								'\r\n'+obj[key]+
+								'\r\n--XXX' 
+					}
+					data += '--';
+					this.$http.feedbackSubmit(url,data).then(res=>{
 						console.log(res)
-						if (res.code == 100) {
-							this.tui.toast('提交成功');
-							this.desc="";
-							this.email="";
-						} else {
-							this.tui.toast(res.message);
+						var that = this;
+						if(res.state=='SUCCESS'){
+							that.$message.toast({
+								title:'提交成功',
+								icon:'success',
+								duration:2000,
+								deltaTime:1,
+								delta:1,
+								success(){
+									
+								}
+							})
 						}
-					}).catch((res)=>{})
+					})
 				} else {
 					this.tui.toast(checkRes)
 				}

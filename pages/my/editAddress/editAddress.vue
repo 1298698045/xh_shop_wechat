@@ -74,7 +74,8 @@
 					name:"",
 					city:"",
 					address:"",
-					phone:""
+					phone:"",
+					province:''
 				},
 				idx:1,
 				listData:[],
@@ -105,6 +106,7 @@
 				this.setRowData.city = paramsData.city;
 				this.isDefault = paramsData.isDefault;
 				this.text = paramsData.city;
+				this.setRowData.province = paramsData.province; // 省份
 				let arr = paramsData.city.split(' ');
 				console.log(this.multiArray[0],this.selectList,arr[0])
 				let provice = this.multiArray[0].findIndex((item)=>item==arr[0]);
@@ -125,6 +127,7 @@
 					// this.selectList[value[0]].children[value[1]].children[value[2]].value
 					this.text = provice + " " + city + " " + district;
 					this.setRowData.city = this.text;
+					this.setRowData.province = provice;
 				}
 			},
 			changeSettingDefault(e){
@@ -178,7 +181,8 @@
 						city:this.setRowData.city,
 						address1:this.setRowData.address,
 						zipPostalCode:'',
-						phoneNumber:this.setRowData.phone
+						phoneNumber:this.setRowData.phone,
+						stateProvince:this.setRowData.province
 					}
 				}
 				obj = JSON.stringify(obj);
@@ -203,7 +207,8 @@
 							city:this.setRowData.city,
 							address1:this.setRowData.address,
 							phoneNumber:this.setRowData.phone,
-							isDefault:this.isDefault
+							isDefault:this.isDefault,
+							stateProvince:this.setRowData.province
 						}
 					).then(res=>{
 						console.log(res);
