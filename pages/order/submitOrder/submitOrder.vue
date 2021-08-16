@@ -67,7 +67,7 @@
 				<tui-list-cell :hover="false">
 					<view class="tui-padding tui-flex">
 						<view>配送费</view>
-						<view>￥0.00</view>
+						<view>￥{{ShippingFee}}.00</view>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false" :lineLeft="false" padding="0">
@@ -81,7 +81,7 @@
 						<view class="tui-flex-end tui-color-red">
 							<view class="tui-black">合计： </view>
 							<view class="tui-size-26">￥</view>
-							<view class="tui-price-large">{{totalPrice}}</view>
+							<view class="tui-price-large">{{totalPriceAll}}</view>
 							<!-- <view class="tui-size-26">.00</view> -->
 						</view>
 					</view>
@@ -103,14 +103,14 @@
 			<view class="tui-flex-end tui-color-red tui-pr-20">
 				<view class="tui-black">实付金额: </view>
 				<view class="tui-size-26">￥</view>
-				<view class="tui-price-large">{{totalPrice}}</view>
+				<view class="tui-price-large">{{totalPriceAll}}</view>
 				<!-- <view class="tui-size-26">.00</view> -->
 			</view>
 			<view class="tui-pr25">
 				<tui-button width="200rpx" height="70rpx" :size="28" type="danger" shape="circle" @click="btnPay">确认支付</tui-button>
 			</view>
 		</view>
-		<t-pay-way :show="show" @close="popupClose" :totalPrice='totalPrice' :orderId='orderId'></t-pay-way>
+		<t-pay-way :show="show" @close="popupClose" :totalPrice='totalPriceAll' :orderId='orderId'></t-pay-way>
 		<t-select-coupons :show="couponShow" @close="couponClose"></t-select-coupons>
 		<!-- 底部配送自取弹层 -->
 		<tui-bottom-popup :show="isExpress" @close="hideisEcpress">
@@ -159,7 +159,7 @@
 				cartIds:[], // 购物车已选择的id
 				cartDataList:[], // 购物车数据
 				listData:[], // 订单数据
-				totalPrice:"", // 合计金额
+				// totalPrice:"", // 合计金额
 				addressList:[],
 				isExtraction:0,
 				isExpress:false,
@@ -172,7 +172,8 @@
 				PickupInStore:0,// 是否自提
 				isInvoice:false,
 				invoiceTitleId:'',
-				ShippingFee:0
+				ShippingFee:0, // 运费
+				totalPriceAll: 0 // 运费+商品总金额
 			}
 		},
 		computed:{
@@ -183,6 +184,10 @@
 			userId(){
 				return this.$store.state.userId;
 			},
+			// 购买商品金额（不包含运费）
+			totalPrice(){
+				return this.$store.state.totalPrice;
+			}
 			// 发票id
 			// invoiceTitleId(){
 			// 	return this.$store.state.invoiceTitleId;
@@ -196,14 +201,14 @@
 			if(options.cartIds){
 				this.cartIds = JSON.parse(options.cartIds);
 				console.log(this.cartIds,'====')
-				this.totalPrice = options.totalPrice;
+				// this.totalPrice = options.totalPrice;
 				this.shopaddress();
 				this.queryAddress();
-				this.queryCartData().then(res=>{
-					console.log('购物车商品数据',res);
-					this.queryFreight(res.returnValue)
-					// this.getSubmitOrder();
-				});
+				// this.queryCartData().then(res=>{
+				// 	console.log('购物车商品数据',res);
+				// 	this.queryFreight(res.returnValue)
+				// 	// this.getSubmitOrder();
+				// });
 			}
 			
 		},
@@ -216,6 +221,11 @@
 			this.isInvoice = uni.getStorageSync('invoice');
 			this.invoiceTitleId = wx.getStorageSync('invoiceTitleId');
 			console.log(this.invoiceTitleId,'invoiceTitleId')
+			this.queryCartData().then(res=>{
+				console.log('购物车商品数据',res);
+				this.queryFreight(this.listData)
+				// this.getSubmitOrder();
+			});
 		},
 		methods: {
 			// 订单备注
@@ -243,6 +253,11 @@
 					this.tui.toast('请选择自提地址')
 				}else {
 					this.isExpress = false;
+					this.queryCartData().then(res=>{
+						console.log('购物车商品数据',res);
+						this.queryFreight(this.listData)
+						// this.getSubmitOrder();
+					});
 				}
 			},
 			changeExtraction(e){
@@ -257,6 +272,11 @@
 					this.isExpress = false;
 					this.PickupInStore = 0;
 				}
+				this.queryCartData().then(res=>{
+					console.log('购物车商品数据',res);
+					this.queryFreight(this.listData)
+					// this.getSubmitOrder();
+				});
 			},
 			queryAddress(){
 				this.$http.queryAddress({
@@ -279,6 +299,7 @@
 					this.$http.getShoppingCart({
 						customerId:this.userId
 					}).then((res)=>{
+						this.listData = [];
 						this.cartDataList = res.returnValue;
 						this.cartDataList.forEach(item=>{
 							this.cartIds.forEach(v=>{
@@ -296,10 +317,10 @@
 			queryFreight(list){
 				let obj = {};
 				list.forEach(item=>{
-					obj['product_'+item.id] = item.quantity
+					obj['product_'+item.productId] = item.quantity
 				})
 				console.log(obj,'obj')
-				let provinceName = '河北';
+				let provinceName = this.currenAddress.stateProvince;
 				let data = '\r\n--XXX'
 				for(var key in obj){
 					if(obj[key]){
@@ -320,8 +341,13 @@
 				this.$http.getFreight(
 					url,data
 				).then(res=>{
-					this.ShippingFee = res.returnValue.shippingFee;
-					this.totalPrice = Number(this.totalPrice) + Number(this.ShippingFee);
+					this.ShippingFee = 0;
+					if(!this.isExtraction){
+						this.ShippingFee = res.returnValue.shippingFee;
+						this.totalPriceAll = Number(this.totalPrice) + Number(this.ShippingFee);
+					}else {
+						this.totalPriceAll = Number(this.totalPrice);
+					}
 					console.log(this.totalPrice)
 					console.log(this.ShippingFee)
 				})

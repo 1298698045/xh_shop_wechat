@@ -19,7 +19,8 @@ const store = new Vuex.Store({
 		isOnline: false,
 		userId:uni.getStorageSync("userId"),
 		currenAddress:{},
-		invoiceTitleId:"" // 发票id
+		invoiceTitleId:"", // 发票id
+		totalPrice:0 // 购买商品金额（不包含邮费）
 	},
 	mutations: {
 		login(state, payload) {
@@ -32,6 +33,9 @@ const store = new Vuex.Store({
 			state.mobile = ""
 			state.isLogin = false
 			state.returnUrl = ""
+		},
+		setTotalPrice(state,price){
+			state.totalPrice = price;
 		},
 		setReturnUrl(state, returnUrl) {
 			state.returnUrl = returnUrl

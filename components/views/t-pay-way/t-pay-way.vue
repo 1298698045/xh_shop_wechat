@@ -4,7 +4,7 @@
 			<tui-list-cell :hover="false">
 				<view class="tui-pay-item__title">
 					<view>请选择支付方式</view>
-					<view>支付金额：<text class="tui-pay-amuont">￥{{totalPrice}}</text></view>
+					<view>支付金额：<text class="tui-pay-amuont">￥{{getFixed(totalPrice)}}</text></view>
 				</view>
 			</tui-list-cell>
 			<radio-group>
@@ -78,6 +78,10 @@
 			}
 		},
 		methods: {
+			getFixed(str){
+				str = Number(str);
+				return str.toFixed(2)
+			},
 			close() {
 				this.$emit("close",{})
 			},

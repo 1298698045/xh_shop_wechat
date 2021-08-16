@@ -72,9 +72,10 @@
 				<view class="tui-padding">
 					<!-- <view class="tui-sub-title tui-size tui-gray">此商品将于2019-06-28,10点结束闪购特卖，时尚美饰联合专场</view> -->
 					<view class="tui-sale-info tui-size tui-gray">
-						<view>快递：0.00</view>
+						<view>运费：{{12}}元起，自提不收取运费</view>
 						<!-- <view>月销2000</view>
 						<view>浙江杭州</view> -->
+						<view>库存：{{shopDetail.stockQuantity}}</view>
 					</view>
 				</view>
 			</view>
@@ -129,6 +130,11 @@
 					</view>
 					<view class="tui-right">
 						<!-- <tui-icon name="more-fill" :size="20" color="#666"></tui-icon> -->
+					</view>
+				</view>
+				<view class="tui-guarantee">
+					<view class="tui-guarantee-item">
+						<text class="tui-pl">联系我们：咨询商品、订单问题请拨打010-69159408。工作时间：9:30~17:30</text>
 					</view>
 				</view>
 				<!-- <view class="tui-list-cell tui-last">
@@ -453,7 +459,8 @@
 				cartTotal:'',
 				isExpress:false,
 				shopaddressList:[],
-				paramsAddress:{}
+				paramsAddress:{},
+				ShippingFee:0 // 运费
 			};
 		},
 		computed:{
@@ -541,6 +548,35 @@
 					this.attrCurrenId = this.getCheckAttr(0);
 				})
 			},
+			// 获取运费（
+			queryFreight(){
+				let obj = {};
+				obj['product_'+this.id] = 1;
+				console.log('currenAddress',this.currenAddress);
+				let provinceName = this.currenAddress.stateProvince || '北京';
+				let data = '\r\n--XXX'
+				for(var key in obj){
+					if(obj[key]){
+						data+=
+							'\r\nContent-Disposition: form-data; name="'+key+'"'+
+							'\r\n'+
+							'\r\n'+obj[key]+
+							'\r\n--XXX' 
+					}
+				}
+				data+=
+					'\r\nContent-Disposition: form-data; name="provinceName"'+
+					'\r\n'+
+					'\r\n'+provinceName+
+					'\r\n--XXX';
+				data += '--';
+				let url = '/Checkout/order/ShipFee?customerId='+this.userId
+				this.$http.getFreight(
+					url,data
+				).then(res=>{
+					this.ShippingFee = res.returnValue.shippingFee;
+				})
+			},
 			queryAddress(){
 				this.$http.queryAddress({
 					customerId:this.userId
@@ -551,6 +587,7 @@
 							this.$store.commit('setAddress',item);
 						}
 					})
+					this.queryFreight()
 				})
 			},
 			// 购物车数量

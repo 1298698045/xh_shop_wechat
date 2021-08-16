@@ -58,11 +58,15 @@ export default {
 			isModal:false,
 			noNumber:"",
 			id:"",
-			name:""
+			name:"",
+			returnRequestStatusId:"",
+			orderIdItemId:""
 		};
 	},
 	onLoad(options) {
 		this.orderId = options.orderId;
+		this.returnRequestStatusId = options.returnRequestStatusId;
+		this.orderIdItemId = options.shopId;
 		this.getQuery();
 	},
 	computed:{
@@ -79,7 +83,8 @@ export default {
 				{
 					customerId:this.userId,
 					orderId:this.orderId,
-					ReturnRequestStatus:''
+					ReturnRequestStatus:this.returnRequestStatusId,
+					ItemId: this.orderIdItemId
 				}
 			).then(res=>{
 				this.list = res.returnValue;

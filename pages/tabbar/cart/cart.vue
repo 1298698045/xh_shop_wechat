@@ -35,8 +35,8 @@
 										<tui-icon name="arrowdown" :size="16" color="#333"></tui-icon>
 									</view> -->
 									<view class="tui-price-box">
-										<view class="tui-goods-price">￥{{item.unitPrice}}</view>
-										<tui-numberbox :value="item.quantity" :height="36" :width="64" :min="1" :index="index" @change="changeNum($event,item)"></tui-numberbox>
+										<view class="tui-goods-price">￥{{getFixed(item.unitPrice)}}</view>
+										<tui-numberbox :value="item.quantity" :max="item.stockQuantity" :height="36" :width="64" :min="1" :index="index" @change="changeNum($event,item)"></tui-numberbox>
 									</view>
 								</view>
 							</view>
@@ -316,6 +316,10 @@
 					url:'/pages/index/login/login'
 				})
 			},
+			getFixed(str){
+				str = Number(str);
+				return str.toFixed(2)
+			},
 			getQuery(){
 				this.$http.getShoppingCart({
 					customerId:this.userId
@@ -356,10 +360,15 @@
 			},
 			changeNum: function(e,item) {
 				this.dataList[e.index].quantity = e.value
-				item.quantity = e.value;
-				this.calcHandle().then(res=>{
-					this.handleQuantity(item.id,e.value);
-				})
+				if(e.value<=item.stockQuantity){
+					item.quantity = e.value;
+					this.calcHandle().then(res=>{
+						this.handleQuantity(item.id,e.value);
+					})
+				}else {
+					this.tui.toast('库存数量不足')
+					return false;
+				}
 			},
 			handleQuantity(id,quantity){
 				this.$http.changeQuantity({
@@ -399,6 +408,7 @@
 					}
 				});
 				// console.log(this.cartIds,this.totalPrice);
+				this.$store.commit('setTotalPrice',this.totalPrice);
 				let cartIds = JSON.stringify(this.cartIds);
 				uni.navigateTo({
 					url: '/pages/order/submitOrder/submitOrder?cartIds='+cartIds+'&totalPrice='+this.totalPrice

@@ -53,15 +53,15 @@
 						</view>
 					</view>
 					<view class="after_sale" v-if="orderDetail.paymentStatusId==30">
-						<tui-button v-if="item.isRefunded" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</tui-button>
-						<tui-button v-else type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
+						<tui-button v-if="item.isRefund&&item.returnRequestStatusId!=50" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</tui-button>
+						<tui-button v-if="(!item.isRefund)||(item.isRefund&&item.returnRequestStatusId==50)" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
 					</view>
 				</tui-list-cell>
 			</block>
 			<view class="tui-goods-info">
 				<view class="tui-price-flex tui-size24">
 					<view>商品总额</view>
-					<view>￥{{orderDetail.orderTotal}}</view>
+					<view>￥{{getFixed(orderDetail.orderTotal)}}</view>
 				</view>
 				<!-- <view class="tui-price-flex  tui-size24">
 					<view>优惠券</view>
@@ -75,7 +75,7 @@
 					<view class="tui-flex-shrink">合计</view>
 					<view class="tui-goods-price">
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">{{orderDetail.orderTotal}}</view>
+						<view class="tui-price-large">{{getFixed(orderDetail.orderTotal)}}</view>
 						<!-- <view class="tui-size-24">.00</view> -->
 					</view>
 				</view>
@@ -83,7 +83,7 @@
 					<view class="tui-flex-shrink">实付款</view>
 					<view class="tui-goods-price tui-primary-color">
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">{{orderDetail.orderTotal}}</view>
+						<view class="tui-price-large">{{getFixed(orderDetail.orderTotal)}}</view>
 						<!-- <view class="tui-size-24">.00</view> -->
 					</view>
 				</view>
@@ -299,6 +299,11 @@
 				this.isCountDown = false;
 				// this.getQuery();
 			},
+			// 保留两位小数点
+			getFixed(str){
+				str = Number(str);
+				return str.toFixed(2);
+			},
 			getQuery(){
 				this.$http.getSingleOrder(
 					{
@@ -411,7 +416,7 @@
 				this.tui.href("/pages/my/refund/refund?shopId="+item.id+'&orderId='+this.orderId);
 			},
 			refundList(item){
-				this.tui.href("/pages/my/refundList/refundList?shopId="+item.id+'&orderId='+this.orderId);
+				this.tui.href("/pages/my/refundList/refundList?shopId="+item.id+'&orderId='+this.orderId+'&returnRequestStatusId='+item.returnRequestStatusId);
 			}
 		}
 	}

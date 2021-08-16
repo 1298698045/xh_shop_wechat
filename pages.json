@@ -105,19 +105,6 @@
 		"root":"pages/index",
 		"pages":[
 			{
-				"path":"coupon/coupon",
-				"style": {
-					"navigationBarTitleText": "领券中心",
-					"backgroundColorTop": "#F5F5F5",
-					"backgroundColorBottom": "#F5F5F5",
-					"enablePullDownRefresh": true,
-					"onReachBottomDistance": 50,
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			},
-			{
 			    "path" : "login/login",
 			    "style" :                                                                                    
 			    {
@@ -164,49 +151,6 @@
 				}
 			},
 			{
-				"path": "seckillList/seckillList",
-				"style": {
-					// #ifdef H5
-					"titleNView": false,
-					// #endif 
-					"navigationBarTitleText": "限时秒杀",
-					"navigationBarBackgroundColor": "#fff",
-					"navigationBarTextStyle": "black",
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			
-			},
-			{
-				"path": "seckillDetail/seckillDetail",
-				"style": {
-					"navigationBarTitleText": "",
-					"navigationBarBackgroundColor": "#fff",
-					"navigationBarTextStyle": "black",
-					"navigationStyle": "custom",
-					"app-plus": {
-						"titleNView": false,
-						"bounce": "vertical"
-					},
-					"mp-alipay":{
-						"transparentTitle": "always",
-						"titlePenetrate":"YES"
-					}
-				}
-			
-			},
-			{
-				"path": "groupList/groupList",
-				"style": {
-					"navigationBarTitleText": "拼团专区",
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			
-			},
-			{
 				"path": "groupDetail/groupDetail",
 				"style": {
 					"navigationBarTitleText": "",
@@ -232,24 +176,6 @@
 			
 			},
 			{
-				"path": "shop/shop",
-				"style": {
-					"navigationBarTitleText": "店铺",
-					"navigationBarBackgroundColor": "#18293d",
-					"navigationBarTextStyle": "white",
-					"backgroundColorTop": "#18293d",
-					"navigationStyle": "custom",
-					"app-plus": {
-						"titleNView": false,
-						"bounce": "vertical"
-					},
-					"mp-alipay":{
-						"transparentTitle": "always",
-						"titlePenetrate":"YES"
-					}
-				}
-			},
-			{
 				"path": "video/video",
 				"style": {
 					"navigationBarTitleText": "",
@@ -273,40 +199,6 @@
 				}
 			
 			},
-			{
-				"path": "shopDetail/shopDetail",
-				"style": {
-					"navigationBarTitleText": "店铺详情",
-					"navigationBarBackgroundColor": "#18293d",
-					"backgroundColorTop": "#18293d",
-					"navigationBarTextStyle": "white",
-					"app-plus": {
-						// #ifdef APP-PLUS
-						"titleNView": {
-							"padding-right": "12px",
-							"buttons": [{
-								"float": "right",
-								"width": "36px",
-								"type": "share"
-							}]
-						},
-						// #endif 
-						"bounce": "vertical"
-			
-					}
-				}
-			
-			},
-			{
-				"path": "groupMore/groupMore",
-				"style": {
-					"navigationBarTitleText": "更多拼团",
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			
-			}, 
 			{
 				"path": "evaluateDetail/evaluateDetail",
 				"style": {
@@ -349,14 +241,6 @@
 					"app-plus": {
 						"bounce": "vertical"
 					}
-				}
-			},
-			{
-				"path":"check-out/check-out",
-				"style" :
-				{
-				    "navigationBarTitleText": "收银台",
-				    "enablePullDownRefresh": false
 				}
 			},
 			{
@@ -419,26 +303,6 @@
 				}
 			},
 			{
-				"path": "myCoupon/myCoupon",
-				"style": {
-					"navigationBarTitleText": "我的优惠券",
-					"enablePullDownRefresh": true,
-					"onReachBottomDistance": 50,
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			},
-			{
-				"path": "myGroup/myGroup",
-				"style": {
-					"navigationBarTitleText": "我的拼团",
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			},
-			{
 				"path": "refundList/refundList",
 				"style": {
 					"navigationBarTitleText": "退款/售后",
@@ -478,15 +342,6 @@
 				"path": "notice/notice",
 				"style": {
 					"navigationBarTitleText": "消息提醒设置",
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			}, 
-			{
-				"path": "myGroupDetail/myGroupDetail",
-				"style": {
-					"navigationBarTitleText": "拼团详情",
 					"app-plus": {
 						"bounce": "vertical"
 					}
@@ -581,52 +436,11 @@
 						"disableScroll": true
 					}
 				}
-			},
-			{
-				"path": "wallet/wallet",
-				"style": {
-					"navigationBarTitleText": "我的钱包",
-					"app-plus": {
-						"titleNView": {
-							"padding-right": "15px",
-							"buttons": [{
-								"text": "账单",
-								"float": "right",
-								"width": "38px",
-								"fontSize": "15px",
-								"color": "#333"
-								
-							}]
-						},
-						"bounce": "vertical"
-					}
-				}
-			},
-			{
-				"path": "recharge/recharge",
-				"style": {
-					"navigationBarTitleText": "充值确认",
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			},
-			{
-				"path": "records/records",
-				"style": {
-					"navigationBarTitleText": "交易记录",
-					"enablePullDownRefresh": true,
-					"onReachBottomDistance": 50,
-					"app-plus": {
-						"bounce": "vertical"
-					}
-				}
-			},
-			{
-			    "path" : "bankCard/bankCard",
+			},{
+			    "path" : "contactUs/contactUs",
 			    "style" :                                                                                    
 			    {
-			        "navigationBarTitleText": "银行卡",
+			        "navigationBarTitleText": "联系我们",
 			        "app-plus": {
 			        	"bounce": "vertical"
 			        }

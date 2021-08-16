@@ -30,7 +30,7 @@
 					<view class="tui-goods-price">
 						<view>共{{item.items.length}}件商品 合计：</view>
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">{{item.orderTotal}}</view>
+						<view class="tui-price-large">{{getFixed(item.orderTotal)}}</view>
 						<!-- <view class="tui-size-24">.00</view> -->
 					</view>
 				</tui-list-cell>
@@ -162,7 +162,7 @@
 			getQuery(){
 				this.$http.getMyoder(
 					{
-						customerId:this.userId,
+						customerId:this.userId, 
 						orderStatus:this.orderStatus, 
 						searchWord:"",
 						pageNumber:1
@@ -170,6 +170,10 @@
 				).then(res=>{
 					this.listData = res.returnValue;
 				})
+			},
+			getFixed(str){
+				str = Number(str);
+				return str.toFixed(2);
 			},
 			getConfirmSign(item){
 				this.$http.confirmSign({

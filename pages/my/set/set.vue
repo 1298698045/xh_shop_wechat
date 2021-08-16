@@ -49,6 +49,11 @@
 					在线反馈
 				</view>
 			</tui-list-cell>
+			<tui-list-cell padding="0" :lineLeft="false" :arrow="true" @click="href(8)">
+				<view class="tui-list-cell">
+					联系我们
+				</view>
+			</tui-list-cell>
 		</view>
 
 	<!-- 	<view class="tui-exit">
@@ -95,6 +100,9 @@
 						break;
 					case 6:
 						url = "/pages/common/pvivacy/pvivacy"
+						break;
+					case 8:
+						url = "/pages/my/contactUs/contactUs"
 						break;
 					default:
 						break;

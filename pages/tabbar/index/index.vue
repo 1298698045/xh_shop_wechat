@@ -15,7 +15,7 @@
 				</swiper>
 			</view>
 		</view>
-		<!--header-->
+		<!--header--> 
 		<view class="tui-header-banner">
 	<!-- 		<view class="tui-hot-search">
 				<view>热搜</view>
@@ -32,13 +32,16 @@
 					<swiper :indicator-dots="true" :autoplay="true" :interval="5000" :duration="150" class="tui-banner-swiper"
 					 :circular="true" indicator-color="rgba(255, 255, 255, 0.8)" indicator-active-color="#fff">
 						<swiper-item v-for="(item, index) in banners" :key="index">
-							<image src="../../../static/images/banner1.jpg" class="tui-slide-image" mode="scaleToFill" />
+							<image :src="item" class="tui-slide-image" mode="scaleToFill" />
 						</swiper-item>
+						
 					</swiper>
 				</view>
 			</view>
 		</view>
-
+		<view class="notice">
+			<uni-notice-bar showIcon="true" single="true" scrollable="true" text="系统公测，产品发货时间以实际情况为准，敬请谅解！"></uni-notice-bar>
+		</view> 
 		
 		<!-- <image src="https://thorui.cn/images/mall/activity/img_coupon_banner.png" class="tui-img__coupon" @tap="coupon"></image> -->
 		
@@ -98,13 +101,19 @@
 	</view>
 </template>
 <script>
+	import uniNoticeBar from '../../../uni_modules/uni-notice-bar/components/uni-notice-bar/uni-notice-bar.vue';
 	export default {
+		components:{
+			uniNoticeBar
+		},
 		data() {
 			return {
 				hotSearch: ['休闲零食', '自热火锅', '小冰箱迷你'],
 				// banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
 				banners:[
-					'banner1.jpg'
+					'https://cbt.pumchit.cn/images/uploaded/banner2.jpg',
+					'https://cbt.pumchit.cn/images/uploaded/banner1.jpg',
+					'https://cbt.pumchit.cn/images/uploaded/banner3.jpg'
 				],
 				category: [
 				],
@@ -114,7 +123,8 @@
 				pageIndex: 1,
 				loadding: false,
 				pullUpOn: true,
-				opacity: 1
+				opacity: 1,
+				content:''
 			};
 		},
 		onLoad(){
@@ -156,10 +166,10 @@
 					url: '/pages/common/search/search'
 				});
 			},
-			seckill(type) {
-				let url = type == 1 ? '/pages/index/seckillList/seckillList' : '/pages/index/seckillDetail/seckillDetail';
-				this.tui.href(url);
-			},
+			// seckill(type) {
+			// 	let url = type == 1 ? '/pages/index/seckillList/seckillList' : '/pages/index/seckillDetail/seckillDetail';
+			// 	this.tui.href(url);
+			// },
 			group(type) {
 				let url = type == 1 ? '/pages/index/groupList/groupList' : '/pages/index/groupDetail/groupDetail';
 				this.tui.href(url);
@@ -463,7 +473,7 @@
 	}
 
 	.tui-product-box {
-		margin-top: 80rpx;
+		/* margin-top: 80rpx; */
 		padding: 0 25rpx;
 		box-sizing: border-box;
 	}
@@ -795,5 +805,8 @@
 		padding-top: 10rpx;
 		font-size: 24rpx;
 		color: #656565;
+	}
+	.notice{
+		margin-top: 100rpx;
 	}
 </style>

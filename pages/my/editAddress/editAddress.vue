@@ -106,7 +106,7 @@
 				this.setRowData.city = paramsData.city;
 				this.isDefault = paramsData.isDefault;
 				this.text = paramsData.city;
-				this.setRowData.province = paramsData.province; // 省份
+				this.setRowData.province = paramsData.stateProvince; // 省份
 				let arr = paramsData.city.split(' ');
 				console.log(this.multiArray[0],this.selectList,arr[0])
 				let provice = this.multiArray[0].findIndex((item)=>item==arr[0]);
