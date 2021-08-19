@@ -21,7 +21,7 @@
 		<view class="tui-mybg-box">
 			<image :src="webURL + '/static/images/mall/my/img_bg_3x.png'" class="tui-my-bg" mode="widthFix"></image>
 			<view class="tui-header-center">
-				<image src="/static/images/my/mine_def_touxiang_3x.png" class="tui-avatar" @tap="href(3)"></image>
+				<image src="/static/images/my/mine_def_touxiang_3x.png" class="tui-avatar"></image>
 				<view class="tui-info" v-if="isLogin">
 					<view class="tui-nickname">
 						{{info.nickName}}

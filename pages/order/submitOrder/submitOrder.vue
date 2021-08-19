@@ -359,69 +359,87 @@
 			},
 			btnPay() {
 				if(!this.isExtraction && (JSON.stringify(this.currenAddress)!="{}")){
-					this.getSubmitOrder();
-					this.show = true;
+					this.getSubmitOrder().then(res=>{
+						if(res.state=='SUCCESS'){
+							this.show = true;
+						}
+					});
 				}else if(this.isExtraction && this.paramsAddress.id!=''){
-					this.getSubmitOrder();
-					this.show = true;
+					this.getSubmitOrder().then(res=>{
+						if(res.state=='SUCCESS'){
+							this.show = true;
+						}
+					});
 				}else {
 					this.tui.toast('请选择地址!')
 				}
 			},
 			getSubmitOrder(){
-				let obj = {
-					customerId:this.userId,
-					shippingAddressId:this.currenAddress.id || '',
-					orderNode:this.orderNode
-				}
-				let ids = this.getCheckAttr();
-				// console.log('id:',ids);
-				var data = '\r\n--XXX'
-				for(var item in ids){
-					if(ids[item]){						
-						data+=
-							'\r\nContent-Disposition: form-data; name="'+item+'"'+
-							'\r\n'+
-							'\r\n'+ids[item]+
-							'\r\n--XXX' 
+				return new Promise((resolve,reject)=>{
+					let obj = {
+						customerId:this.userId,
+						shippingAddressId:this.currenAddress.id || '',
+						orderNode:this.orderNode
 					}
-				}
-				data += '\r\nContent-Disposition: form-data; name="orderNode"'+
-							'\r\n'+
-							'\r\n'+obj.orderNode+
-							'\r\n--XXX'
-				data += '\r\nContent-Disposition: form-data; name="PickupInStore"'+
-							'\r\n'+
-							'\r\n'+this.PickupInStore+
-							'\r\n--XXX'
-				data += '\r\nContent-Disposition: form-data; name="PickupAddressId"'+
-							'\r\n'+
-							'\r\n'+this.paramsAddress.id+
-							'\r\n--XXX'
-							
-				data += '\r\nContent-Disposition: form-data; name="ShippingFee"'+
-							'\r\n'+
-							'\r\n'+this.ShippingFee+
-							'\r\n--XXX'
-				if(this.isInvoice){
-					data += '\r\nContent-Disposition: form-data; name="invoiceTitleId"'+
+					let ids = this.getCheckAttr();
+					// console.log('id:',ids);
+					var data = '\r\n--XXX'
+					for(var item in ids){
+						if(ids[item]){						
+							data+=
+								'\r\nContent-Disposition: form-data; name="'+item+'"'+
 								'\r\n'+
-								'\r\n'+this.invoiceTitleId+
+								'\r\n'+ids[item]+
+								'\r\n--XXX' 
+						}
+					}
+					data += '\r\nContent-Disposition: form-data; name="orderNode"'+
+								'\r\n'+
+								'\r\n'+obj.orderNode+
 								'\r\n--XXX'
-				}
-				data += '--';
-				uni.request({
-				    url: 'https://cbt.pumchit.cn/shopapi/Checkout/order/confirm?customerId='+obj.customerId+'&shippingAddressId='+obj.shippingAddressId,
-				    header: {
-				        'content-type': 'multipart/form-data; boundary=XXX', 
-				    },
-					method:'POST',
-				    data:data,	
-				    success: (res) => {
-						console.log(res,'res')
-						this.orderId = res.data.returnValue.id;
-				    }
-				});
+					data += '\r\nContent-Disposition: form-data; name="PickupInStore"'+
+								'\r\n'+
+								'\r\n'+this.PickupInStore+
+								'\r\n--XXX'
+					data += '\r\nContent-Disposition: form-data; name="PickupAddressId"'+
+								'\r\n'+
+								'\r\n'+this.paramsAddress.id+
+								'\r\n--XXX'
+								
+					data += '\r\nContent-Disposition: form-data; name="ShippingFee"'+
+								'\r\n'+
+								'\r\n'+this.ShippingFee+
+								'\r\n--XXX'
+					if(this.isInvoice){
+						data += '\r\nContent-Disposition: form-data; name="invoiceTitleId"'+
+									'\r\n'+
+									'\r\n'+this.invoiceTitleId+
+									'\r\n--XXX'
+					}
+					data += '--';
+					uni.request({
+						url: 'https://cbt.pumchit.cn/shopapi/Checkout/order/confirm?customerId='+obj.customerId+'&shippingAddressId='+obj.shippingAddressId,
+						header: {
+							'content-type': 'multipart/form-data; boundary=XXX', 
+						},
+						method:'POST',
+						data:data,	
+						success: (res) => {
+							console.log(res,'res')
+							if(res.data.state=='SUCCESS'){
+								this.orderId = res.data.returnValue.id;
+							}else {
+								let title = res.data.error[0]||'生成订单失败';
+								uni.showToast({
+									title:title,
+									icon:'none',
+									duration:2000
+								})
+							}
+							resolve(res.data)
+						}
+					});
+				})
 			},
 			getCheckAttr(){
 				var temp = {};

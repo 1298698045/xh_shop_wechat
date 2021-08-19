@@ -275,7 +275,7 @@
 						</blcok>
 						<view class="tui-number-box tui-bold tui-attr-title">
 							<view class="tui-attr-title">数量</view>
-							<tui-numberbox :max="99" :min="1" :value="productNum" @change="change"></tui-numberbox>
+							<tui-numberbox :disabled="shopDetail.stockQuantity==0?true:false" :max="shopDetail.stockQuantity" :min="1" :value="productNum" @change="change"></tui-numberbox>
 						</view>
 						<!-- <view class="tui-bold tui-attr-title">尺寸</view>
 						<view class="tui-attr-box">
@@ -648,6 +648,13 @@
 									that.popupShow = false;
 									that.getCartNumTotal();
 								}
+							})
+						}else {
+							let title = res.data.resultMessage;
+							uni.showToast({
+								title:title,
+								icon:'none',
+								duration:2000
 							})
 						}
 				    }

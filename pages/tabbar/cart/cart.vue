@@ -34,7 +34,7 @@
 										<view class="tui-model-text">{{index%2==0?"440ml;10件;套装":"500ml;2支"}}</view>
 										<tui-icon name="arrowdown" :size="16" color="#333"></tui-icon>
 									</view> -->
-									<view class="tui-price-box">
+									<view class="tui-price-box" @click.stop>
 										<view class="tui-goods-price">￥{{getFixed(item.unitPrice)}}</view>
 										<tui-numberbox :value="item.quantity" :max="item.stockQuantity" :height="36" :width="64" :min="1" :index="index" @change="changeNum($event,item)"></tui-numberbox>
 									</view>

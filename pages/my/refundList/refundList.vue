@@ -16,7 +16,7 @@
 						</view>
 						<view class="tui-price-right">
 							<view>￥{{shop.unitPrice}}</view>
-							<view>x{{shop.quantity}}</view>
+							<view>x{{item.quantity}}</view>
 						</view>
 					</view>
 				</tui-list-cell>

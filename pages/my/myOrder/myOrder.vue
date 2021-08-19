@@ -7,7 +7,7 @@
 			<view class="tui-order-item" v-for="(item,orderIndex) in listData" :key="orderIndex">
 				<tui-list-cell :hover="false" :lineLeft="false">
 					<view class="tui-goods-title">
-						<view>订单号：{{item.customOrderNumber}}</view>
+						<view @click.stop="handleCopeOrder(item.customOrderNumber)">订单号：{{item.customOrderNumber}}</view>
 						<view class="tui-order-status">{{item.orderStatus}}</view>
 					</view>
 				</tui-list-cell>
@@ -159,6 +159,24 @@
 			this.getQuery();
 		},
 		methods: {
+			// 复制订单号
+			handleCopeOrder(orderNumber){
+				uni.setClipboardData({
+					data:orderNumber,
+					success:res=>{
+						uni.getClipboardData({
+							success:res=>{
+								console.log('复制：', res);
+								uni.showToast({
+									title:'订单号已复制',
+									icon:'success',
+									duration:2000
+								})
+							}
+						})
+					}
+				})
+			},
 			getQuery(){
 				this.$http.getMyoder(
 					{

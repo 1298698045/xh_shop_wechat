@@ -52,7 +52,7 @@
 							<view>x{{item.quantity}}</view>
 						</view>
 					</view>
-					<view class="after_sale" v-if="orderDetail.paymentStatusId==30">
+					<view class="after_sale" v-if="orderDetail.paymentStatusId!=10">
 						<tui-button v-if="item.isRefund&&item.returnRequestStatusId!=50" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</tui-button>
 						<tui-button v-if="(!item.isRefund)||(item.isRefund&&item.returnRequestStatusId==50)" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
 					</view>
@@ -67,9 +67,9 @@
 					<view>优惠券</view>
 					<view>￥0.00</view>
 				</view> -->
-				<view class="tui-price-flex  tui-size24">
-					<view>配送费</view>
-					<view>￥0.00</view>
+				<view class="tui-price-flex  tui-size24" v-if="orderDetail.shippingFee>0">
+					<view>运费</view>
+					<view>￥{{orderDetail.shippingFee}}</view>
 				</view>
 				<view class="tui-price-flex tui-size32 tui-pbtm20">
 					<view class="tui-flex-shrink">合计</view>
@@ -97,7 +97,7 @@
 				</view>
 			</tui-list-cell>
 			<view class="tui-order-content">
-				<view class="tui-order-flex">
+				<view class="tui-order-flex" @click="handleCopeOrder(orderDetail.customOrderNumber)">
 					<view class="tui-item-title">订单号:</view>
 					<view class="tui-item-content">{{orderDetail.customOrderNumber || ''}}</view>
 				</view>
@@ -292,6 +292,24 @@
 			this.getQuery();
 		},
 		methods: {
+			// 复制订单号
+			handleCopeOrder(orderNumber){
+				uni.setClipboardData({
+					data:orderNumber,
+					success:res=>{
+						uni.getClipboardData({
+							success:res=>{
+								console.log('复制：', res);
+								uni.showToast({
+									title:'订单号已复制',
+									icon:'success',
+									duration:2000
+								})
+							}
+						})
+					}
+				})
+			},
 			// 倒计时结束时间回调
 			changeEnd(e){
 				console.log(1);
@@ -332,13 +350,13 @@
 						this.status = 1;
 					}else if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10&&!this.isCountDown){
 						this.status = 5;
-					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==20){
+					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==20){
 						this.status = 2; // 付款成功，待发货
-					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==30){
+					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==30){
 						this.status = 3;
-					}else if(this.orderDetail.orderStatusId==30&&this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==40){
+					}else if(this.orderDetail.orderStatusId==30&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==40){
 						this.status = 4;
-					}else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==10){
+					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==10){
 						this.status = 3; // 不需要发货
 					}
 					
