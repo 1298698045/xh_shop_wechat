@@ -37,8 +37,14 @@
 				code:'',
 				serverAgreement:false,
 				userAgreement:false,
-				isRead:false
+				isRead:false,
+				shopId:'',
+				sign:''
 			}
+		},
+		onLoad(options){
+			this.sign = options.sign;
+			this.shopId = options.id;
 		},
 		onShow(){
 			this.serverAgreement =  uni.getStorageSync('serverAgreement');

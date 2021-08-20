@@ -219,6 +219,15 @@
 				}
 			
 			}
+			,{
+				"path" : "qrCodeProductDetail/qrCodeProductDetail",
+				"style" :                                                                                    
+				{
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+				
+			}
 			
 		]
 	},
@@ -258,6 +267,14 @@
 					"navigationBarTitleText": "电子发票",
 					"enablePullDownRefresh": false
 				}
+			},{
+				"path" : "qrCodeSubmitOrder/qrCodeSubmitOrder",
+				"style" :                                                                                    
+				{
+					"navigationBarTitleText": "提交订单",
+					"enablePullDownRefresh": false
+				}
+				
 			}
 		]
 	},

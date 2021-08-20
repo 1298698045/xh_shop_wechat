@@ -164,6 +164,15 @@ class api{
 		})
 		return res
 	}
+	// 二维码页支付
+	async qrCodeOrderCreate(data){
+		const res = await https({
+			method: "get", // 请求方式
+			url: '/WechatPay/transaction/directcreate', // 请求url
+			data: data,// 参数
+		})
+		return res
+	}
 	// 支付成功之后确认接口transaction/pay/status
 	async paymentSubmit(data){
 		const res = await https({
@@ -262,6 +271,22 @@ class api{
 			data: data,
 		})
 		return res;
+	}
+	// 购物商品登记信息 Customer/customeradd/person
+	async registerInfo(url,data){
+		const res = await https({
+			method:"post",
+			url:url,
+			header: {
+				'content-type': 'multipart/form-data; boundary=XXX'
+			},
+			data:data
+		})
+		return res;
+	}
+	// 扫码点击生成订单
+	async qrCodeConfirm(url,data){
+		
 	}
 }
 
