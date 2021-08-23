@@ -408,19 +408,28 @@
 			},
 			async btnPay() {
 				if(this.isLogin){
+					let isCardId = this.isCardNo(this.info.cardId);
+					let isPhone = this.validatePhoneNum(this.info.phone);
 					if(this.info.name==''){
 						this.tui.toast('请输入姓名');
 						return false;
-					}else if(this.info.phone==''){
+					}else if(this.info.phone==''&&!isPhone){
 						this.tui.toast('请输入手机号');
 						return false;
-					}else if(this.info.cardId==''){
+					}else if(this.info.cardId==''&&!isCardId){
 						this.tui.toast('请输入身份证号');
+						return false;
+					}else if(!isPhone){
+						this.tui.toast('请输入正确手机号');
+						return false;
+					}else if(!isCardId){
+						this.tui.toast('请输入正确身份证号');
 						return false;
 					}else{
 						var ret = await this.register();
-						console.log('123123123123')
-						this.getSubmitOrder().then(res=>{
+						console.log('ret:', ret);
+						var CustomerItem = ret.returnValue;
+						this.getSubmitOrder(CustomerItem).then(res=>{
 							if(res.state=='SUCCESS'){
 								this.show = true;
 							}
@@ -431,10 +440,70 @@
 				}
 				
 			},
+			/**
+			 * 校验身份证号格式(简单位数格式校验)
+			 * @param card 身份证号
+			 * @returns true格式正确，false格式错误
+			 */
+			isCardNo(card) {
+			    // 身份证号码为15位或者18位，15位时全为数字，18位前17位为数字，最后一位是校验位，可能为数字或字符X  
+			    var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
+			    if (reg.test(card)) {
+			        return true
+			    }
+			    return false
+			},
+			 /**
+			   * @desc 校验身份证号是否合法
+			   * @param {String} idCardNum 18 位身份证号
+			   * @return {Boolean}
+			   */
+			validateIdCardNum (idCardNum) {
+			    // 非法字符串
+			    if (typeof idCardNum !== 'string') return false
+			    // 所有身份证前两位代表的是地区
+			    const city = { 11: '北京', 12: '天津', 13: '河北', 14: '山西', 15: '内蒙古', 21: '辽宁', 22: '吉林', 23: '黑龙江 ', 31: '上海', 32: '江苏', 33: '浙江', 34: '安徽', 35: '福建', 36: '江西', 37: '山东', 41: '河南', 42: '湖北 ', 43: '湖南', 44: '广东', 45: '广西', 46: '海南', 50: '重庆', 51: '四川', 52: '贵州', 53: '云南', 54: '西藏 ', 61: '陕西', 62: '甘肃', 63: '青海', 64: '宁夏', 65: '新疆', 71: '台湾', 81: '香港', 82: '澳门', 91: '国外' }
+			    const birthday = idCardNum.substr(6, 4) + '/' + Number(idCardNum.substr(10, 2)) + '/' + Number(idCardNum.substr(12, 2))
+			    const d = new Date(birthday)
+			    const newBirthday = d.getFullYear() + '/' + Number(d.getMonth() + 1) + '/' + Number(d.getDate())
+			    const currentTime = new Date().getTime()
+			    const time = d.getTime()
+			    // 身份证系数列表
+			    const arrInt = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
+			    // 设定身份证通过相加运算得到值对应的身份证最后一位的列表
+			    const arrCh = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2']
+			    let sum = 0
+			    // 非法身份证
+			    if (!/^\d{17}(\d|x)$/i.test(idCardNum)) return false
+			    // 非法地区 非法地区
+			    if (city[idCardNum.substr(0, 2)] === undefined) return false
+			    // 非法生日
+			    if (time >= currentTime || birthday !== newBirthday) return false
+			
+			    // 计算当前身份证最后一位的值
+			    for (let i = 0; i < 17; i++) {
+			      sum += idCardNum.substr(i, 1) * arrInt[i]
+			    }
+			
+			    const residue = arrCh[sum % 11]
+			    // 非法身份证哦
+			    if (residue !== idCardNum.substr(17, 1)) return false
+			
+			    return true
+			  },
+			  /**
+			     * @desc 校验国内手机号是否合法
+			     * @param {String} phoneNum 手机号
+			     * @return {Boolean}
+			     */
+			validatePhoneNum (phoneNum) {
+			  const reg = /^1[0-9]{10}$/
+			  return reg.test(phoneNum)
+			},
 			// 定制商品购买人员登记信息
 			register(){
 				return new Promise((resolve,reject)=>{
-					let url = '/Order/updateContact?customerId='+this.userId;
+					let url = '/Order/addCustomerItem?customerId='+this.userId;
 					let obj = {
 						str:'',
 						phone:this.info.phone,
@@ -456,7 +525,7 @@
 					})
 				})
 			},
-			getSubmitOrder(){
+			getSubmitOrder(CustomerItem){
 				return new Promise((resolve,reject)=>{
 					let obj = {
 						customerId:this.userId,
@@ -491,6 +560,10 @@
 								'\r\n'+this.invoiceTitleId+
 								'\r\n--XXX'
 					}
+					data += '\r\nContent-Disposition: form-data; name="CustomerItem"'+
+								'\r\n'+
+								'\r\n'+CustomerItem+
+								'\r\n--XXX'
 					data += '--';
 					uni.request({
 						url: 'https://cbt.pumchit.cn/shopapi/Checkout/order/directconfirm?customerId='+obj.customerId+'&shippingAddressId='+obj.shippingAddressId,
@@ -860,6 +933,6 @@
 		margin-right: 10rpx;
 	}
 	.label{
-		width: 52px;
+		width: 66px;
 	}
 </style>

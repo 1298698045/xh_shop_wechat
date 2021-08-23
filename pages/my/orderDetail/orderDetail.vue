@@ -23,7 +23,7 @@
 				</view>
 			</view>
 		</tui-list-cell> -->
-		<tui-list-cell unlined :hover="false">
+		<tui-list-cell unlined :hover="false" v-if="!orderDetail.isQRCodeSubmit">
 			<view class="tui-flex-box">
 				<image :src="webURL+'img_order_address3x.png'" class="tui-icon-img"></image>
 				<view class="tui-addr">
@@ -117,11 +117,11 @@
 					<view class="tui-item-title">发货时间:</view>
 					<view class="tui-item-content">{{self.shippedDate}}</view>
 				</view>
-				<view class="tui-order-flex">
+				<view class="tui-order-flex" v-if="!orderDetail.isQRCodeSubmit">
 					<view class="tui-item-title">配送方式:</view>
 					<view class="tui-item-content">{{orderDetail.pickupInStore?'自提':'配送'}}</view>
 				</view>
-				<view class="tui-order-flex">
+				<view class="tui-order-flex" v-if="!orderDetail.isQRCodeSubmit&&orderDetail.pickupAddress.address1!=null">
 					<view class="tui-item-title">自提地点:</view>
 					<view class="tui-item-content" v-if="orderDetail.pickupInStore">{{orderDetail.pickupAddress.address1 || ''}}</view>
 				</view>
@@ -138,6 +138,27 @@
 					</view>
 				</tui-list-cell>
 			</tui-list-view> -->
+		</view>
+		<view class="tui-order-info">
+			<tui-list-cell :hover="false">
+				<view class="tui-order-title">
+					登记信息
+				</view>
+			</tui-list-cell>
+			<view class="tui-order-content">
+				<view class="tui-order-flex">
+					<view class="tui-item-title">姓名:</view>
+					<view class="tui-item-content">{{orderDetail.personName || ''}}</view>
+				</view>
+				<view class="tui-order-flex">
+					<view class="tui-item-title">身份证号:</view>
+					<view class="tui-item-content">{{orderDetail.personCardID || ''}}</view>
+				</view>
+				<view class="tui-order-flex">
+					<view class="tui-item-title">手机号:</view>
+					<view class="tui-item-content">{{orderDetail.personPhone || ''}}</view>
+				</view>
+			</view>
 		</view>
 		<view class="tui-order-info" v-if="orderDetail.invoiceTitleId!=''&&orderDetail.invoiceTitleId!='00000000-0000-0000-0000-000000000000'">
 			<tui-list-cell :hover="false">

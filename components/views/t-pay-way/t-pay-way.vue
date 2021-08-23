@@ -106,7 +106,11 @@
 						success: function (res) {
 							console.log('success:' + JSON.stringify(res));
 							uni.removeStorageSync('invoice');
-							that.paymentSubmit();
+							that.$parent.show = false;
+							uni.navigateTo({
+								url: "/pages/order/success/success"
+							})
+							// that.paymentSubmit();
 						},
 						fail: function (err) {
 							console.log('fail:' + JSON.stringify(err));
