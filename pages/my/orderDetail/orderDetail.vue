@@ -139,7 +139,7 @@
 				</tui-list-cell>
 			</tui-list-view> -->
 		</view>
-		<view class="tui-order-info">
+		<view class="tui-order-info" v-if="orderDetail.isQRCodeSubmit">
 			<tui-list-cell :hover="false">
 				<view class="tui-order-title">
 					登记信息
@@ -292,7 +292,8 @@
 					timeStr:''
 				},
 				timer:null,
-				isCountDown:true
+				isCountDown:true,
+				isRefunQuantity:false // 库存 
 			}
 		},
 		computed:{
@@ -366,19 +367,21 @@
 							return item;
 						})
 					}
-					
+					this.isRefunQuantity = this.orderDetail.items.some(item=>item.refunQuantity==0)
 					if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10&&this.isCountDown){
 						this.status = 1;
 					}else if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10&&!this.isCountDown){
 						this.status = 5;
 					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==20){
 						this.status = 2; // 付款成功，待发货
-					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==30){
+					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&(this.orderDetail.shippingStatusId==30||this.orderDetail.shippingStatusId==25)){
 						this.status = 3;
 					}else if(this.orderDetail.orderStatusId==30&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==40){
 						this.status = 4;
 					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==10){
 						this.status = 3; // 不需要发货
+					}else if(this.orderDetail.orderStatusId==40&&this.orderDetail.paymentStatusId==40&&this.orderDetail.shippingStatusId==20){
+						this.status = 5;
 					}
 					
 					// if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10){
@@ -446,7 +449,12 @@
 				this.tui.href("/pages/my/logistics/logistics")
 			},
 			btnPay() {
+				// console.log(this.isRefunQuantity)
+				// if(this.isRefunQuantity){
+				// 	this.tui.toast('商品库存不足！');
+				// }else {
 				this.show = true
+				// }
 			},
 			popupClose() {
 				this.show = false

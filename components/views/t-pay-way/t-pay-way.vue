@@ -93,36 +93,42 @@
 					orderId:this.orderId
 				}).then(res=>{
 					console.log(res);
-					let data = res.returnValue;
-					let that = this;
-					uni.requestPayment({
-						provider:'wxpay',
-						appid:data.appid,
-						timeStamp:String(data.timeStamp),
-						nonceStr:data.nonceStr,
-						package:data.package,
-						signType: data.signType,
-						paySign:data.paySign,
-						success: function (res) {
-							console.log('success:' + JSON.stringify(res));
-							uni.removeStorageSync('invoice');
-							that.$parent.show = false;
-							uni.navigateTo({
-								url: "/pages/order/success/success"
-							})
-							// that.paymentSubmit();
-						},
-						fail: function (err) {
-							console.log('fail:' + JSON.stringify(err));
-							uni.showToast({
-								title:'已取消支付',
-								duration:3000,
-								icon:'success'
-							})
-							that.$parent.show = false;
-							// that.paymentSubmit();
-						}
-					})
+					if(res.state=='Failure'){
+						// 库存不足
+						this.tui.toast(res.error[0])
+						return false;
+					}else {						
+						let data = res.returnValue;
+						let that = this;
+						uni.requestPayment({
+							provider:'wxpay',
+							appid:data.appid,
+							timeStamp:String(data.timeStamp),
+							nonceStr:data.nonceStr,
+							package:data.package,
+							signType: data.signType,
+							paySign:data.paySign,
+							success: function (res) {
+								console.log('success:' + JSON.stringify(res));
+								uni.removeStorageSync('invoice');
+								that.$parent.show = false;
+								uni.navigateTo({
+									url: "/pages/order/success/success"
+								})
+								// that.paymentSubmit();
+							},
+							fail: function (err) {
+								console.log('fail:' + JSON.stringify(err));
+								uni.showToast({
+									title:'已取消支付',
+									duration:3000,
+									icon:'success'
+								})
+								that.$parent.show = false;
+								// that.paymentSubmit();
+							}
+						})
+					}
 				})
 				
 				// this.close();
