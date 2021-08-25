@@ -95,7 +95,9 @@ export default {
 				'发票问题',
 				'卖家发错货'
 			],
-			reasonIdx:0
+			reasonIdx:0,
+			shippingFee: 0, // 运费，
+			isShippingFee:false // 是否包含运费
 		};
 	},
 	computed:{
@@ -103,15 +105,40 @@ export default {
 			return this.$store.state.userId;
 		},
 		refundPrice(){
-			return this.number * this.shopInfo.unitPrice;
+			if(!this.isShippingFee){
+				return this.number * this.shopInfo.unitPrice;
+			}else {
+				return this.number * this.shopInfo.unitPrice + this.shippingFee;
+			}
 		}
 	},
 	onLoad(options){
 		this.orderId = options.orderId;
 		this.shopId = options.shopId;
+		this.getShippingFee().then(res=>{
+			let list = res.returnValue;
+			var row = list.find(item=>item.orderItemID==this.shopId);
+			this.shippingFee = row.shippingFee;
+			var temp = list.filter(item=>item.orderItemID!=this.shopId); // 其他商品
+			this.isShippingFee = temp.every(item=>item.keTuiQuantity==0);
+			console.log(temp,this.shippingFee,this.isShippingFee,'------');
+		});
 		this.getQuery();
 	},
 	methods: {
+		// 获取运费
+		async getShippingFee(){
+			let response
+			await this.$http.refundShippingFee({
+				customerId:this.userId,
+				orderId:this.orderId,
+				orderItemId:this.shopId
+			}).then(res=>{
+				console.log('运费：', res);
+				response = res;
+			})
+			return response;
+		},
 		// 订单详情
 		getQuery(){
 			this.$http.getSingleOrder(

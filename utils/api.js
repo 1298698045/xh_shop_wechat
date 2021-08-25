@@ -288,6 +288,24 @@ class api{
 	async qrCodeConfirm(url,data){
 		
 	}
+	// /Order/verifyquantity 支付前确认库存数量
+	async payConfirmQuantity(data){
+		const res = await https({
+			method:"get",
+			url:"/Order/verifyquantity",
+			data: data,
+		})
+		return res;
+	}
+	// 退单算运费/Order/isRefundShippingFee
+	async refundShippingFee(data){
+		const res = await https({
+			method:"get",
+			url:"/Order/isRefundShippingFee",
+			data: data,
+		})
+		return res;
+	}
 }
 
 export default new api()

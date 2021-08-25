@@ -141,7 +141,7 @@
 				return this.$store.state.userId;
 			}
 		},
-		onLoad(){
+		onLoad(options){
 			this.getQuery(); 
 		},
 		methods: {

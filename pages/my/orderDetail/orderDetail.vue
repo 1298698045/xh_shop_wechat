@@ -256,6 +256,9 @@
 			<!-- <view class="tui-btn-mr">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="refund">申请售后</tui-button>
 			</view> -->
+		<!-- 	<view class="tui-btn-mr">
+				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="handleApplyInvoicing">申请开票</tui-button>
+			</view> -->
 			<view class="tui-btn-mr" v-if="orderDetail.orderStatusId==10&&status!=5">
 				<tui-button type="danger" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="btnPay">立即支付</tui-button>
 			</view>
@@ -314,6 +317,12 @@
 			this.getQuery();
 		},
 		methods: {
+			// 开发票
+			handleApplyInvoicing(){
+				uni.navigateTo({
+					url:'../../order/invoice/invoice'
+				})
+			},
 			// 复制订单号
 			handleCopeOrder(orderNumber){
 				uni.setClipboardData({
@@ -448,13 +457,31 @@
 			logistics() {
 				this.tui.href("/pages/my/logistics/logistics")
 			},
-			btnPay() {
+			async btnPay() {
 				// console.log(this.isRefunQuantity)
 				// if(this.isRefunQuantity){
 				// 	this.tui.toast('商品库存不足！');
 				// }else {
-				this.show = true
+				// this.show = true
 				// }
+				const ret = await this.payConfirmQuantity();
+				if(ret.state=='SUCCESS'){
+					this.show = true;
+				}else {
+					let toast = ret.error[0];
+					this.tui.toast(toast);
+				}
+			},
+			async payConfirmQuantity(){
+				let response
+				await this.$http.payConfirmQuantity({
+					customerId:this.userId,
+					orderId:this.orderId
+				}).then(res=>{
+					console.log(res);
+					response = res;
+				})
+				return response;
 			},
 			popupClose() {
 				this.show = false
