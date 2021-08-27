@@ -133,7 +133,10 @@
 					ShipToEmail:'',
 					description:''
 				},
-				invoiceTitleType:0
+				invoiceTitleType:0,
+				afterInvoice:'',
+				orderId:'',
+				invoiceTitleId:''
 			};
 		},
 		computed:{
@@ -142,6 +145,8 @@
 			}
 		},
 		onLoad(options){
+			this.afterInvoice = options.afterInvoice;
+			this.orderId = options.orderId;
 			this.getQuery(); 
 		},
 		methods: {
@@ -296,7 +301,41 @@
 					}).then(res=>{
 						console.log(res.invoiceTitleId);
 						// this.$store.dispatch('setInvoice',res.invoiceTitleId);
-						uni.setStorageSync('invoiceTitleId',res.invoiceTitleId)
+						this.invoiceTitleId = res.invoiceTitleId;
+						if(this.orderId){
+							// 更新发票
+							this.orderApplyInvoice();
+						}else {
+							uni.setStorageSync('invoiceTitleId',res.invoiceTitleId)
+							wx.showToast({
+								title:'添加成功',
+								icon:'success',
+								duration:2000,
+								success:res=>{
+									uni.setStorageSync('invoice',true)
+									setTimeout(()=>{								
+										uni.navigateBack({
+											delta:1
+										})
+									},1000)
+								}
+							})
+						}
+					})
+				}else {
+					uni.setStorageSync('invoice',false);
+					uni.navigateBack({
+						delta:1
+					})
+				}
+			},
+			orderApplyInvoice(){
+				this.$http.orderApplyInvoice({
+					customerId:this.userId,
+					orderId:this.orderId,
+					InvoiceTitleId:this.invoiceTitleId
+				}).then(res=>{
+					if(res.state=='SUCCESS'){						
 						wx.showToast({
 							title:'添加成功',
 							icon:'success',
@@ -310,13 +349,8 @@
 								},1000)
 							}
 						})
-					})
-				}else {
-					uni.setStorageSync('invoice',false);
-					uni.navigateBack({
-						delta:1
-					})
-				}
+					}
+				})
 			}
 		}
 	};

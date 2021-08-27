@@ -306,6 +306,25 @@ class api{
 		})
 		return res;
 	}
+	// 订单完成后申请发票
+	// /shopapi/Order/orderApplyInvoice
+	async orderApplyInvoice(data){
+		const res = await https({
+			method:"get",
+			url:"/Order/orderApplyInvoice",
+			data: data,
+		})
+		return res;
+	}
+	// /Order/getOrderInvoice
+	async previewInvoice(data){
+		const res = await https({
+			method:"get",
+			url:"/Order/getOrderInvoice",
+			data: data,
+		})
+		return res;
+	}
 }
 
 export default new api()

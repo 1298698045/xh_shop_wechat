@@ -201,7 +201,7 @@
 					cardId:""
 				},
 				loginPopup:false,
-				PickupAddressId:''
+				PickupAddressId:5 // 无
 			}
 		},
 		computed:{

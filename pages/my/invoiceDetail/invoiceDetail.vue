@@ -2,7 +2,7 @@
 	<view class="container">
 		<view class="tui-block__box tui-mtop__20">
 			<text>发票状态</text>
-			<text class="tui-color__red">已开票</text>
+			<text class="tui-color__red">{{status?'已开票':'正在开票中'}}</text>
 		</view>
 		<view class="tui-block__box tui-mtop__24">
 			<view>
@@ -11,11 +11,11 @@
 			</view>
 			<view class="tui-ptop__20">
 				<text>订单编号</text>
-				<text class="tui-color__black">109943209010</text>
+				<text class="tui-color__black">{{orderDetail.customOrderNumber}}</text>
 			</view>
 			<view class="tui-ptop__20">
 				<text>下单时间</text>
-				<text class="tui-color__black">2020-01-01 13:18:21</text>
+				<text class="tui-color__black">{{orderDetail.createdOn}}</text>
 			</view>
 			<view class="tui-ptop__20">
 				<text>发票类型</text>
@@ -32,16 +32,17 @@
 					<text>发票内容</text>
 					<text class="tui-color__black">商品明细</text>
 				</view>
+				<!-- <tui-button type="black" plain shape="circle" width="162rpx" height="52rpx" :size="24" @click="handleDown">下载发票</tui-button> -->
 				<tui-button type="black" plain shape="circle" width="162rpx" height="52rpx" :size="24" @click="view">查看发票</tui-button>
 			</view>
 			<view class="tui-ptop__20">
 				<text>发票抬头</text>
-				<text class="tui-color__black">个人</text>
+				<text class="tui-color__black">{{invoiceTitleType==0?'个人':invoiceTitleType==1?'公司':''}}</text>
 			</view>
 		</view>
-		<view class="tui-btn__box">
+		<!-- <view class="tui-btn__box">
 			<tui-button type="danger" shape="circle" height="88rpx" @click="sendEmail">发送至邮箱</tui-button>
-		</view>
+		</view> -->
 		<tui-modal :show="modal" @cancel="cancel" :custom="true" fadeIn>
 			<view class="tui-modal-custom">
 				<view class="tui-prompt-title">请确认邮箱地址</view>
@@ -63,14 +64,75 @@
 	export default {
 		data() {
 			return {
-				modal: false
+				modal: false,
+				orderId:"",
+				file:"",
+				orderDetail:{},
+				status:false,
+				invoiceTitleType:0
 			};
 		},
+		computed:{
+			userId(){
+				return this.$store.state.userId;
+			}
+		},
+		onLoad(options){
+			this.orderId = options.orderId;
+			this.getDetail();
+			this.getQuery();
+		},
 		methods: {
-			view() {
-				uni.previewImage({
-					urls: ['https://thorui.cn/images/mall/img_invoice.jpg']
+			getDetail(){
+				this.$http.getSingleOrder(
+					{
+						customerId:this.userId,
+						orderId:this.orderId
+					}
+				).then(res=>{
+					this.orderDetail = res.returnValue;
+					this.orderDetail.createdOn = res.returnValue.createdOn.replace('T',' ')
 				})
+			},
+			getQuery(){
+				this.$http.previewInvoice({
+					customerId:4560,
+					orderId:583
+				}).then(res=>{
+					console.log(res);
+					if(res.state=='SUCCESS'){
+						this.status = true;
+					}else {
+						this.status = false;
+					}
+					this.file = res.returnValue[0].localPdfPath;
+					this.invoiceTitleType = res.returnValue[0].invoiceTitleType;
+				})
+			},
+			view() {
+				// uni.previewImage({
+				// 	urls: ['https://thorui.cn/images/mall/img_invoice.jpg']
+				// })
+				uni.downloadFile({
+				  url: this.file, //仅为示例，并非真实的资源
+				  success (res) {
+					  console.log(res);
+					  if (res.statusCode === 200) {
+						var filePath = res.tempFilePath
+					  }
+						uni.openDocument({
+							filePath: filePath,
+							fileType: 'pdf',
+							showMenu:true,
+							success: function(res) {
+								console.log('打开文档成功')
+							}
+						})
+				  }
+				})
+			},
+			handleDown(){
+					
 			},
 			sendEmail() {
 				this.modal = true
