@@ -41,12 +41,12 @@
 						同时也为各位呈上美味可口，具有较高营养价值、干净卫生的协和定制款月饼，其口味为广式月饼口味，品种系列包括五仁金腿系列月饼、蛋黄莲蓉系列月饼、水果系列月饼等。
 						欢迎各位持续关注和积极参与。
 					</p>
-					<div class="qrCode">
+					<!-- <div class="qrCode">
 						<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/t4.jpg" mode="widthFix"></image>
 					</div>
 					<div class="qrCode_text">
 						长按识别图中二维码
-					</div>
+					</div> -->
 				</div>
 				<div class="moocake">
 					<p class="icon"></p>
@@ -95,16 +95,17 @@
 						</div>
 						<div class="sectionBorder">
 							<div class="shopWrap">							
-								<div class="shopBox" v-for="(val,idx) in item.children" :key="idx">
+								<div class="shopBox" v-for="(val,idx) in item.children" :key="idx" @click="handleDetail(val)">
 									<div class="shopImg">
-										<image :src="val.imgUrl" mode="widthFix"></image>
+										<image :src="val.thumbImageUrl" mode="widthFix"></image>
 									</div>
 									<div class="shop_name">
 										-{{val.name}}-
 									</div>
 									<div class="price">价格：{{val.price}}/盒</div>
 									<div class="iconText">
-										扫码购买
+										<!-- 扫码购买 -->
+										预订入口
 										<p class="icon"></p>
 									</div>
 								</div>
@@ -130,7 +131,7 @@
 				中秋花好月又圆，协和祝您两团圆。
 			</p>
 		</div>
-		<div class="shareWrap">
+		<!-- <div class="shareWrap">
 			<p class="tips_desc">这次中秋活动可远远不止这些哦！</p>
 			<p class="text">长按识别图中二维码即可查看更多商品活动</p>
 			<p class="imgs">
@@ -139,7 +140,7 @@
 		</div>
 		<div class="share">
 			<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/fot.jpg" mode="widthFix"></image>
-		</div>
+		</div> -->
 	</view>
 </template>
 
@@ -153,12 +154,12 @@
 							{
 								name:"五仁金腿600克",
 								price:'168',
-								imgUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿600克.jpg'
+								thumbImageUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿600克.jpg'
 							},
 							{
 								name:"五仁金腿1斤",
 								price:'128',
-								imgUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿1斤.jpg'
+								thumbImageUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿1斤.jpg'
 							}
 						]
 					},
@@ -167,12 +168,12 @@
 							{
 								name:"五仁金腿2斤",
 								price:'258',
-								imgUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿2斤.jpg'
+								thumbImageUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿2斤.jpg'
 							},
 							{
 								name:"五仁金腿3斤",
 								price:'360',
-								imgUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿1斤或者2斤.jpg'
+								thumbImageUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿1斤或者2斤.jpg'
 							}
 						]
 					},
@@ -181,20 +182,44 @@
 							{
 								name:"五仁金腿4斤",
 								price:'450',
-								imgUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿1斤或者2斤1.jpg'
+								thumbImageUrl:'https://cbt.pumchit.cn/images/mooncake/五仁金腿1斤或者2斤1.jpg'
 							},
 							{
 								name:"蛋黄豆沙月饼2斤",
 								price:'180',
-								imgUrl:'https://cbt.pumchit.cn/images/mooncake/蛋黄豆沙600克2.jpg'
+								thumbImageUrl:'https://cbt.pumchit.cn/images/mooncake/蛋黄豆沙600克2.jpg'
 							}
 						]
 					}
 				]
 			}
 		},
+		onLoad(){
+			this.getShopList();
+		},
 		methods: {
-			
+			handleDetail(val){
+				uni.navigateTo({
+					url:'../../index/productDetail/productDetail?id='+val.id
+				})
+			},
+			getShopList(){
+				this.$http.getShopList({
+					categoryId:1068,
+					descOrName:"协和美食"
+				}).then(res=>{
+					console.log(res);
+					let data = res.returnValue;
+					var result = [];
+					for(var i=0;i<data.length;i+=2){
+					    result.push({
+							children:data.slice(i,i+2)
+						});
+					}
+					this.listData = result;
+					console.log(result,'result')
+				})
+			}
 		},
 		onShareAppMessage(res){
 		    return {

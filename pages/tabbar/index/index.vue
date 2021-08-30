@@ -175,9 +175,9 @@
 				this.tui.href(url);
 			},
 			handleDetail(){
-				// uni.navigateTo({
-				// 	url:'../../my/leaflet/leaflet'
-				// })
+				uni.navigateTo({
+					url:'../../my/leaflet/leaflet'
+				})
 			}
 		},
 		onPullDownRefresh: function() {

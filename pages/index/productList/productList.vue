@@ -585,6 +585,9 @@ export default {
 				this.arrowTop = obj.top ? obj.top + (obj.height - 32) / 2 : res.statusBarHeight + 6;
 				this.searchKey = options.searchKey || '';
 				this.id = options.id || '';
+				if(this.id==1068){
+					this.searchKey = '协和美食';
+				}
 				//略小，避免误差带来的影响
 				this.dropScreenH = (this.height * 750) / res.windowWidth + 132;
 				this.drawerH = res.windowHeight - uni.upx2px(100) - this.height;

@@ -274,7 +274,7 @@
 			shopaddress(){
 				this.$http.shopaddress().then(res=>{
 					this.shopaddressList = res.returnValue;
-					this.PickupAddressId = res.returnValue[0].id; // 自提地址默认第一个id
+					// this.PickupAddressId = res.returnValue[0].id; // 自提地址默认第一个id
 				})
 			},
 			// 选择自提地点
