@@ -2,7 +2,8 @@
 	<view class="container">
 		<view class="tui-block__box tui-mtop__20">
 			<text>发票状态</text>
-			<text class="tui-color__red">{{status?'已开票':'正在开票中'}}</text>
+			<text class="tui-color__red">{{status?'已开票':'正在开票中，预计2~4小时开票完成'}}</text>
+			
 		</view>
 		<view class="tui-block__box tui-mtop__24">
 			<view>
@@ -16,6 +17,14 @@
 			<view class="tui-ptop__20">
 				<text>下单时间</text>
 				<text class="tui-color__black">{{orderDetail.createdOn}}</text>
+			</view>
+			<view class="tui-ptop__20" v-if="status">
+				<text>申请时间</text>
+				<text class="tui-color__black">{{invoiceDetail.createDateTime}}</text>
+			</view>
+			<view class="tui-ptop__20" v-if="status">
+				<text>开票时间</text>
+				<text class="tui-color__black">{{invoiceDetail.invoiceDateTime}}</text>
 			</view>
 			<view class="tui-ptop__20">
 				<text>发票类型</text>
@@ -33,7 +42,7 @@
 					<text class="tui-color__black">商品明细</text>
 				</view>
 				<!-- <tui-button type="black" plain shape="circle" width="162rpx" height="52rpx" :size="24" @click="handleDown">下载发票</tui-button> -->
-				<tui-button type="black" plain shape="circle" width="162rpx" height="52rpx" :size="24" @click="view">查看发票</tui-button>
+				<tui-button v-if="status" type="black" plain shape="circle" width="162rpx" height="52rpx" :size="24" @click="view">查看发票</tui-button>
 			</view>
 			<view class="tui-ptop__20">
 				<text>发票抬头</text>
@@ -69,7 +78,8 @@
 				file:"",
 				orderDetail:{},
 				status:false,
-				invoiceTitleType:0
+				invoiceTitleType:0,
+				invoiceDetail:{}
 			};
 		},
 		computed:{
@@ -96,8 +106,8 @@
 			},
 			getQuery(){
 				this.$http.previewInvoice({
-					customerId:4560,
-					orderId:583
+					customerId:this.userId,
+					orderId:this.orderId
 				}).then(res=>{
 					console.log(res);
 					if(res.state=='SUCCESS'){
@@ -105,6 +115,9 @@
 					}else {
 						this.status = false;
 					}
+					this.invoiceDetail = res.returnValue[0];
+					this.invoiceDetail.createDateTime = res.returnValue[0].createDateTime.replace('T',' ')
+					this.invoiceDetail.invoiceDateTime = res.returnValue[0].invoiceDateTime.replace('T',' ')
 					this.file = res.returnValue[0].localPdfPath;
 					this.invoiceTitleType = res.returnValue[0].invoiceTitleType;
 				})

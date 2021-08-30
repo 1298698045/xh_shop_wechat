@@ -67,7 +67,7 @@
 					<view class="tui-title tui-bold">收票人信息</view>
 					<view class="tui-input__item">
 						<view class="tui-input__title">收票人手机</view>
-						<input placeholder="可通过手机号在发票服务平台查询" @input="changePhone" v-model="personal.shipTo_Telephone" placeholder-class="tui-placeholder" value="188****0088" />
+						<input placeholder="可通过手机号在发票服务平台查询" @input="changePhone" maxlength="11" v-model="personal.ShipToTelephone" placeholder-class="tui-placeholder" value="188****0088" />
 					</view>
 					<view class="tui-input__item">
 						<view class="tui-input__title">收票人邮箱</view>
@@ -78,7 +78,7 @@
 					<view class="tui-title tui-bold">收票人信息</view>
 					<view class="tui-input__item">
 						<view class="tui-input__title">收票人手机</view>
-						<input placeholder="可通过手机号在发票服务平台查询" @input="changePhone" v-model="company.shipTo_Telephone" placeholder-class="tui-placeholder" value="188****0088" />
+						<input placeholder="可通过手机号在发票服务平台查询" @input="changePhone"  maxlength="11" v-model="company.ShipToTelephone" placeholder-class="tui-placeholder" value="188****0088" />
 					</view>
 					<view class="tui-input__item">
 						<view class="tui-input__title">收票人邮箱</view>
@@ -227,6 +227,26 @@
 					}
 				})
 			},
+			/**
+			     * @desc 校验国内手机号是否合法
+			     * @param {String} phoneNum 手机号
+			     * @return {Boolean}
+			     */
+			// validatePhoneNum (phoneNum) {
+			//   const reg = /^1[0-9]{10}$/
+			//   return reg.test(phoneNum)
+			// },
+			validatePhoneNum(TEL) {
+			    var strTemp = /^1[3|4|5|6|7|8|9][0-9]{9}$/
+			    if (strTemp.test(TEL)) {
+			        return true
+			    }
+			    return false
+			},
+			// 验证邮箱
+			isEmail(s){
+			    return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(s)
+			},
 			getSubmit(){
 				if(this.type==1){
 					if(this.invoiceTitleType==0){
@@ -248,6 +268,21 @@
 						}else if(ShipToEmail==''){
 							uni.showToast({
 								title:'邮箱不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}else if(ShipToTelephone!=''&&!this.validatePhoneNum(ShipToTelephone)){
+							uni.showToast({
+								title:'请输入正确手机号',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}
+						else if(ShipToEmail!=''&&!this.isEmail(ShipToEmail)){
+							uni.showToast({
+								title:'请输入正确邮箱',
 								icon:'none',
 								duration:2000
 							})
@@ -280,6 +315,21 @@
 						}else if(TaxpayerCode==''){
 							uni.showToast({
 								title:'税号不能为空',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}else if(ShipToTelephone!=''&&!this.validatePhoneNum(ShipToTelephone)){
+							uni.showToast({
+								title:'请输入正确手机号',
+								icon:'none',
+								duration:2000
+							})
+							return false;
+						}
+						else if(ShipToEmail!=''&&!this.isEmail(ShipToEmail)){
+							uni.showToast({
+								title:'请输入正确邮箱',
 								icon:'none',
 								duration:2000
 							})

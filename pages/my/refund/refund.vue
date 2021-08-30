@@ -55,11 +55,31 @@
 				<view class="tui-line-cell">
 					<view class="tui-title">
 						<text class="tui-color__red">*</text>
-						<text>退款金额</text>
+						<text>商品金额</text>
 					</view>
 					<input placeholder-class="tui-phcolor" class="tui-input"   type="text"  :value="refundPrice" disabled/>
 				</view>
 			</tui-list-cell>
+			<tui-list-cell :hover="false" padding="0">
+				<view class="tui-line-cell">
+					<view class="tui-title">
+						<text class="tui-color__red">*</text>
+						<text>运费金额</text>
+					</view>
+					<input placeholder-class="tui-phcolor" class="tui-input"  v-if="isShippingFee"  type="text"  :value="shippingFee" disabled/>
+					<input placeholder-class="tui-phcolor" class="tui-input"  v-else type="text"  :value="'0'" disabled/>
+				</view>
+			</tui-list-cell>
+			<tui-list-cell :hover="false" padding="0">
+				<view class="tui-line-cell">
+					<view class="tui-title">
+						<text class="tui-color__red">*</text>
+						<text>退款金额</text>
+					</view>
+					<input placeholder-class="tui-phcolor" class="tui-input" type="text"  :value="refundPriceTotalAll" disabled/>
+				</view>
+			</tui-list-cell>
+			
 			<tui-list-cell :hover="false" padding="0">
 				<view class="tui-line-cell">
 					<view class="tui-title">
@@ -105,12 +125,19 @@ export default {
 		userId(){
 			return this.$store.state.userId;
 		},
-		refundPrice(){
+		refundPriceTotalAll(){
 			if(!this.isShippingFee){
 				return this.number * this.shopInfo.unitPrice;
 			}else {
 				return this.number * this.shopInfo.unitPrice + this.shippingFee;
 			}
+		},
+		refundPrice(){
+			// if(!this.isShippingFee){
+			return this.number * this.shopInfo.unitPrice;
+			// }else {
+				// return this.number * this.shopInfo.unitPrice + this.shippingFee;
+			// }
 		}
 	},
 	onLoad(options){

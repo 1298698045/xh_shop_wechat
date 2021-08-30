@@ -61,7 +61,7 @@
 			<view class="tui-goods-info">
 				<view class="tui-price-flex tui-size24">
 					<view>商品总额</view>
-					<view>￥{{getFixed(orderDetail.orderTotal)}}</view>
+					<view>￥{{getFixed(orderDetail.orderTotal-orderDetail.shippingFee)}}</view>
 				</view>
 				<!-- <view class="tui-price-flex  tui-size24">
 					<view>优惠券</view>
@@ -227,7 +227,7 @@
 								{{orderDetail.orderTotal}}
 							</span>
 						</div>
-						<div class="box">
+					<!-- 	<div class="box">
 							<span class="label">
 								开票时间
 							</span>
@@ -242,7 +242,7 @@
 							<span class="val">
 								
 							</span>
-						</div>
+						</div> -->
 					</div>
 					<div class="right"></div>
 				</div>
@@ -268,6 +268,9 @@
 			</view>
 			<view class="tui-btn-mr" v-else-if="orderDetail.orderStatusId==40||status==5">
 				<tui-button type="danger" disabled="true" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle">交易关闭</tui-button>
+			</view>
+			<view class="tui-btn-mr" v-else-if="isShipping&&status==3">
+				<tui-button type="danger" :plain="false" width="152rpx" height="56rpx" :size="26" shape="circle" @click="handleConfirmShop">确认收货</tui-button>
 			</view>
 			<view class="tui-btn-mr" v-else>
 				<tui-button type="danger" disabled="true" :plain="true" width="200rpx" height="56rpx" :size="26" shape="circle">{{orderDetail.shippingStatus}}</tui-button>
@@ -300,7 +303,8 @@
 				},
 				timer:null,
 				isCountDown:true,
-				isRefunQuantity:false // 库存 
+				isRefunQuantity:false, // 库存 
+				isShipping:false
 			}
 		},
 		computed:{
@@ -321,6 +325,26 @@
 			this.getQuery();
 		},
 		methods: {
+			// 确认收货
+			handleConfirmShop(){
+				this.$http.confirmSign({
+					customerId:this.userId,
+					orderId:this.orderId
+				}).then(res=>{
+					console.log(res);
+					let that = this;
+					uni.showToast({
+						title:res.state,
+						icon:'none',
+						duration:2000,
+						success: () => {
+							setTimeout(()=>{
+								that.getQuery();
+							},300)
+						}
+					})
+				})	
+			},
 			// 开发票
 			handleApplyInvoicing(){
 				uni.navigateTo({
@@ -398,10 +422,15 @@
 						this.status = 4;
 					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==10){
 						this.status = 3; // 不需要发货
+						this.isShipping = true; // 已付款，自提
 					}else if(this.orderDetail.orderStatusId==40&&this.orderDetail.paymentStatusId==40&&this.orderDetail.shippingStatusId==20){
 						this.status = 5;
+					}else if(this.orderDetail.orderStatusId==30&&this.orderDetail.paymentStatusId==40&&this.orderDetail.shippingStatusId==40){
+						this.status = 5;
+					}else if(this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==10){
+						this.isShipping = true; // 已付款，自提
 					}
-					
+					console.log(this.isShipping,'siShipping')
 					// if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10){
 					// 	this.status = 1;
 					// }else if(this.orderDetail.orderStatusId==20&&this.orderDetail.paymentStatusId==20&&this.orderDetail.shippingStatusId==20){

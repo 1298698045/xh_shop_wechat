@@ -31,7 +31,7 @@
 				<view class="tui-banner-box">
 					<swiper :indicator-dots="true" :autoplay="true" :interval="5000" :duration="150" class="tui-banner-swiper"
 					 :circular="true" indicator-color="rgba(255, 255, 255, 0.8)" indicator-active-color="#fff">
-						<swiper-item v-for="(item, index) in banners" :key="index">
+						<swiper-item v-for="(item, index) in banners" :key="index" @click="handleDetail">
 							<image :src="item" class="tui-slide-image" mode="scaleToFill" />
 						</swiper-item>
 						
@@ -173,6 +173,11 @@
 			group(type) {
 				let url = type == 1 ? '/pages/index/groupList/groupList' : '/pages/index/groupDetail/groupDetail';
 				this.tui.href(url);
+			},
+			handleDetail(){
+				// uni.navigateTo({
+				// 	url:'../../my/leaflet/leaflet'
+				// })
 			}
 		},
 		onPullDownRefresh: function() {

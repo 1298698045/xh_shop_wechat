@@ -118,7 +118,7 @@
 				<p class="title">自提地点</p>
 				<div class="bd">
 					<div class="right">
-						<div class="box" v-for="(item,index) in shopaddressList" :key="index" @click="getCheckShopaddress(item,index)">
+						<div class="box" v-if="!item.deleted" v-for="(item,index) in shopaddressList" :key="index" @click="getCheckShopaddress(item,index)">
 							<div class="iconBox">
 								<tui-icon name="circle-fill" :color="number==index?'#3399ff':'#ccc'" :size="26"></tui-icon>
 							</div>
