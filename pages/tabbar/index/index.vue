@@ -31,7 +31,7 @@
 				<view class="tui-banner-box">
 					<swiper :indicator-dots="true" :autoplay="true" :interval="5000" :duration="150" class="tui-banner-swiper"
 					 :circular="true" indicator-color="rgba(255, 255, 255, 0.8)" indicator-active-color="#fff">
-						<swiper-item v-for="(item, index) in banners" :key="index" @click="handleDetail">
+						<swiper-item v-for="(item, index) in banners" :key="index" @click="handleDetail(index)">
 							<image :src="item" class="tui-slide-image" mode="scaleToFill" />
 						</swiper-item>
 						
@@ -111,6 +111,7 @@
 				hotSearch: ['休闲零食', '自热火锅', '小冰箱迷你'],
 				// banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
 				banners:[
+					'https://cbt.pumchit.cn/images/uploaded/banner4.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner2.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner1.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner3.jpg'
@@ -174,10 +175,16 @@
 				let url = type == 1 ? '/pages/index/groupList/groupList' : '/pages/index/groupDetail/groupDetail';
 				this.tui.href(url);
 			},
-			handleDetail(){
-				uni.navigateTo({
-					url:'../../my/leaflet/leaflet'
-				})
+			handleDetail(index){
+				if(index==0){
+					wx.previewImage({
+					  current: '', // 当前显示图片的http链接
+					  urls: ['https://cbt.pumchit.cn/objimgs/verifies/百年协和襄明月，一切为民共团圆.jpg'] // 需要预览的图片http链接列表
+					})
+					// uni.navigateTo({
+					// 	url:'../../my/leaflet/leaflet'
+					// })
+				}
 			}
 		},
 		onPullDownRefresh: function() {

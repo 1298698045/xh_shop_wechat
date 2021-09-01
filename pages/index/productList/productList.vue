@@ -562,10 +562,12 @@ export default {
 			loadding: false,
 			pullUpOn: true,
 			listData:[],
-			id:""
+			id:"",
+			qrCode:""
 		};
 	},
 	onLoad: function(options) {
+		console.log(options);
 		let obj = {};
 		// #ifdef MP-WEIXIN
 		obj = wx.getMenuButtonBoundingClientRect();
@@ -585,6 +587,7 @@ export default {
 				this.arrowTop = obj.top ? obj.top + (obj.height - 32) / 2 : res.statusBarHeight + 6;
 				this.searchKey = options.searchKey || '';
 				this.id = options.id || '';
+				this.qrCode = options['amp;qrCode'] || '';
 				if(this.id==1068){
 					this.searchKey = '协和美食';
 				}
@@ -700,10 +703,16 @@ export default {
 			this.drawer = false;
 		},
 		back: function() {
-			if (this.drawer) {
-				this.closeDrawer();
-			} else {
-				uni.navigateBack();
+			if(this.qrCode==1){
+				uni.switchTab({
+					url:'../../tabbar/classify/classify'
+				})
+			}else {				
+				if (this.drawer) {
+					this.closeDrawer();
+				} else {
+					uni.navigateBack();
+				}
 			}
 		},
 		search: function() {

@@ -7,7 +7,7 @@
 			<div class="tips">
 				<div class="text">
 					<p class="cont">
-						百年协和，团圆中秋，一切为民，为病人提供更有质量、更有温度的服务是协和人永恒的价值追求。在迎接协和百年的特殊日子里，围绕“以人民为中心、一切为了患者”的主题，开展协和中秋月饼活动，具有特殊的意义。
+						百年协和襄明月，一切为民共团圆，为病人提供更有质量、更有温度的服务是协和人永恒的价值追求。在迎接协和百年的特殊日子里，围绕“以人民为中心、一切为了患者”的主题，开展协和中秋月饼活动，具有特殊的意义。
 					</p>
 				</div>
 				<p class="tips_icon"></p>
@@ -29,7 +29,7 @@
 						<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/t3.png"></image>
 						<p class="title min">活动时间</p>
 					</div>
-					<div class="subject">本次活动将于<span class="color">2021年8月-2021年9月</span>举行</div>
+					<div class="subject">本次活动将于<span class="color">2021年9月1日 - 9月15日</span>举行</div>
 				</div>
 				<div class="box">
 					<div class="imgs">
@@ -37,9 +37,9 @@
 						<p class="title min">活动内容</p>
 					</div>
 					<p class="subject desc">
-						主要目的是以服务患者，方便患者为基础，给患者提供一个高质量、更温暖的中秋佳节。活动期间将为住院患者及家属提供祝福语留言、送货上门等便利服务，
-						同时也为各位呈上美味可口，具有较高营养价值、干净卫生的协和定制款月饼，其口味为广式月饼口味，品种系列包括五仁金腿系列月饼、蛋黄莲蓉系列月饼、水果系列月饼等。
-						欢迎各位持续关注和积极参与。
+						主要目的是以服务患者，方便患者为基础，给患者提供一个高质量、更温暖的中秋佳节。						活动期间将为住院患者及家属提供祝福语留言、送货上门等便利服务，同时也为各位呈上美味可口，
+						具有较高营养价值、干净卫生的协和定制款月饼，其口味为广式月饼口味，品种系列包括五仁金腿系列月饼、
+						蛋黄莲蓉系列月饼。欢迎各位持续关注和积极参与。
 					</p>
 					<!-- <div class="qrCode">
 						<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/t4.jpg" mode="widthFix"></image>
@@ -56,26 +56,29 @@
 								<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/t6.jpg" mode=""></image>
 							</div>
 							<div class="desc">
-								广式月饼的制饼技术起源于上世纪九十年代，迄
-								今已有二十多年的历史，制饼商一直把研究传统伍仁金腿月饼为已任，
-								承传了中国月饼之乡广东800多年历史的传统制饼精髓，
-								将传统文化融入了现代生活，让大众更好地享受到月饼这一“国粹”食品。
+								广式月饼的制饼技术起源于上世纪九十年代，迄今已有二十多年的历史，制饼商一直把研究传统伍仁金腿月饼为已任，
+								承传了中国月饼之乡广东800多年历史的传统制饼精髓，将传统文化融入了现代生活，让大众更好地享受到月饼这一“国粹”食品。
 							</div>
-							<div class="mainText">本次活动主要是为患者及家属提供温暖中秋的便民服务，</div>
-							<div class="gifImg">
-								<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/t2.gif" mode=""></image>
+							<div class="mainText">本次活动主要是为患者及家属提供温暖中秋的便民服务</div>
+							<div style="display: flex;justify-content: center;">								
+								<div class="gifImg">
+									<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/t2.gif" mode=""></image>
+								</div>
+								<div class="gifImg">
+									<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/t2.gif" mode=""></image>
+								</div>
 							</div>
 							<div class="tipsText">
 								预订方式如下////
 							</div>
-							<div class="numText"><span>01.</span>通过扫描病房床头二维码</div>
-							<div class="numText"><span>02.</span>在公众号上进行预订并留下祝福语言</div>
-							<div class="numText"><span>03.</span>通过院内各营业超市进行预订</div>
-							<div class="numText"><span>04.</span>通过“协和百年文创商城”微信小程序进行预订并留言备注祝福语言</div>
-							<div class="mainText">本院职工需预订，请移步至外科楼等候厅超市现场预订，
-							会有更多惊喜等着您！！！ 
+							<!-- <div class="numText"><span>01.</span>通过扫描病房床头二维码</div> -->
+							<!-- <div class="numText"><span>02.</span>在公众号上进行预订并留下祝福语言</div> -->
+							<div class="numText">患者家属及本院职工</div>
+							<div class="numText" style="font-size: 28rpx;">请前往<span style="color:#dd3202;font-size: 28rpx;">14楼平台</span>或<span style="color:#dd3202;font-size: 28rpx;">外科楼一层等候厅</span>进行选购！</div>
+							<!-- <div class="numText"><span>02.</span>通过“协和百年文创商城”微信小程序进行预订并留言备注祝福语言</div> -->
+							<div class="mainText">本院职工需预订，请移步至外科楼等候厅超市现场预订，会有更多惊喜等着您！！！
 							</div>
-							<div class="time">预订截止时间9月16日</div>
+							<div class="time">预订截止时间9月15日 </div>
 							<div class="afterText">
 								现将价格及优惠活动公布如下
 							</div>
@@ -103,11 +106,10 @@
 										-{{val.name}}-
 									</div>
 									<div class="price">价格：{{val.price}}/盒</div>
-									<div class="iconText">
-										<!-- 扫码购买 -->
+									<!-- <div class="iconText">
 										预订入口
 										<p class="icon"></p>
-									</div>
+									</div> -->
 								</div>
 							</div>
 						</div>
@@ -139,7 +141,9 @@
 			</p>
 		</div>
 		<div class="share">
-			<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/fot.jpg" mode="widthFix"></image>
+			<div class="qrCodeImg">
+				<image src="https://cbt.pumchit.cn/images/uploaded/leaflet/t4.jpg" mode="widthFix"></image>
+			</div>
 		</div> -->
 	</view>
 </template>
@@ -199,9 +203,10 @@
 		},
 		methods: {
 			handleDetail(val){
-				uni.navigateTo({
-					url:'../../index/productDetail/productDetail?id='+val.id
-				})
+				return false;
+				// uni.navigateTo({
+				// 	url:'../../index/productDetail/productDetail?id='+val.id
+				// })
 			},
 			getShopList(){
 				this.$http.getShopList({
@@ -383,23 +388,22 @@
 		height: 100%;
 	}
 	.moocake .sectionBorder .desc{
-		text-align: center;
+		text-align: left;
 		font-size: 28rpx;
 		line-height: 2;
 		color: #333;
 		margin-top: 20rpx;
 	}
 	.moocake .sectionBorder .mainText {
-		text-align: center;
+		text-align: left;
 		margin-top: 30rpx;
 		font-size: 28rpx;
 		line-height: 2;
 		color: #333;
 	}
 	.moocake .sectionBorder .gifImg{
-		width: 200rpx;
-		height: 50rpx;
-		margin: 30rpx auto;
+		width: 130rpx;
+		height: 45rpx;
 	}
 	.moocake .sectionBorder .gifImg image{
 		width: 100%;
@@ -416,7 +420,7 @@
 	}
 	.moocake .sectionBorder .numText span{
 		font-size: 32rpx;
-		padding-right: 20rpx;
+		/* padding-right: 20rpx; */
 	}
 	.moocake .sectionBorder .numText{
 		text-align: center;
@@ -452,8 +456,8 @@
 		margin-left: 20rpx;
 	}
 	.xinGif{
-		width: 300rpx;
-		height: 50rpx;
+		width: 150rpx;
+		height: 20rpx;
 		margin: 0 auto;
 		padding-bottom: 50rpx;
 	}
@@ -610,8 +614,19 @@
 	}
 	.share{
 		width: 100%;
+		height: 536rpx;
+		background: url('https://cbt.pumchit.cn/images/uploaded/leaflet/footer.jpg') no-repeat;
+		background-size: 100% 100%;
+		text-align: center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
-	.share image{
+	.share .qrCodeImg{
+		width: 300rpx;
+		height: 300rpx;
+	}
+	.share .qrCodeImg image{
 		width: 100%;
 	}
 </style>

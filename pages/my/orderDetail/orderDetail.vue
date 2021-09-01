@@ -125,6 +125,11 @@
 					<view class="tui-item-title">自提地点:</view>
 					<view class="tui-item-content" v-if="orderDetail.pickupInStore">{{orderDetail.pickupAddress.address1 || ''}}</view>
 				</view>
+				<view class="tui-order-flex" v-if="!orderDetail.isQRCodeSubmit&&orderDetail.pickupAddress.address1!=null&&status==3">
+					<view class="tui-item-title">自提码:</view>
+					<view class="tui-item-content" style="color:#EB0909;font-size: 30rpx;" v-if="orderDetail.pickupInStore">{{orderDetail.fetchCode || ''}}</view>
+					&nbsp;请在取货时向店员提供自提码
+				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">订单备注:</view>
 					<view class="tui-item-content">{{orderDetail.orderNotes.length>=1?orderDetail.orderNotes[0].note:''}}</view>
