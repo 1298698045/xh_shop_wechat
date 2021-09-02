@@ -268,6 +268,7 @@
 			<view class="tui-btn-mr" v-else-if="orderDetail.isApplayInvoice&&status==4">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="previewInvoice">查看发票</tui-button>
 			</view>
+			<!-- orderDetail.orderStatusId==10&&status!=5 -->
 			<view class="tui-btn-mr" v-if="orderDetail.orderStatusId==10&&status!=5">
 				<tui-button type="danger" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="btnPay">立即支付</tui-button>
 			</view>
@@ -282,6 +283,10 @@
 			</view>
 		</view>
 		<t-pay-way :show="show" :totalPrice="orderDetail.orderTotal" :orderId='orderId' @close="popupClose"></t-pay-way>
+		<!-- 购买提示信息 -->
+		<tui-alert :show="tipsShow" @click="hideAlert">
+			{{tipsText}}
+		</tui-alert>
 	</view>
 </template>
 
@@ -309,7 +314,9 @@
 				timer:null,
 				isCountDown:true,
 				isRefunQuantity:false, // 库存 
-				isShipping:false
+				isShipping:false,
+				tipsShow: false,
+				tipsText:""
 			}
 		},
 		computed:{
@@ -511,8 +518,14 @@
 				if(ret.state=='SUCCESS'){
 					this.show = true;
 				}else {
-					let toast = ret.error[0];
-					this.tui.toast(toast);
+					// let toast = ret.error[0];
+					// this.tui.toast(toast);
+					const tipsText = ret.error[0];
+					this.tipsText = tipsText;
+					this.tipsShow = true;
+					setTimeout(()=>{
+						this.tipsShow = false;
+					},2000)
 				}
 			},
 			async payConfirmQuantity(){

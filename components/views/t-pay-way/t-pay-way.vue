@@ -41,6 +41,9 @@
 				<tui-button height="88rpx" type="danger" shape="circle" shadow @click="btnPay">去付款</tui-button>
 			</view>
 		</tui-bottom-popup>
+		<tui-alert :show="tipsShow" @click="hideAlert">
+			{{tipsText}}
+		</tui-alert>
 	</view>
 </template>
 
@@ -66,7 +69,8 @@
 		},
 		data() {
 			return {
-
+				tipsShow: false,
+				tipsText:""
 			};
 		},
 		computed:{
@@ -95,7 +99,13 @@
 					console.log(res);
 					if(res.state=='Failure'){
 						// 库存不足
-						this.tui.toast(res.error[0])
+						const tipsText = res.error[0];
+						// this.tui.toast(res.error[0])
+						this.tipsText = tipsText;
+						this.tipsShow = true;
+						setTimeout(()=>{
+							this.tipsShow = false;
+						},2000)
 						return false;
 					}else {						
 						let data = res.returnValue;

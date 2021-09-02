@@ -138,6 +138,9 @@
 				</div>
 			</div>
 		</tui-bottom-popup>
+		<tui-alert :show="tipsShow" @click="hideAlert">
+			{{tipsText}}
+		</tui-alert>
 	</view>
 </template>
 
@@ -173,7 +176,9 @@
 				isInvoice:false,
 				invoiceTitleId:'',
 				ShippingFee:0, // 运费
-				totalPriceAll: 0 // 运费+商品总金额
+				totalPriceAll: 0, // 运费+商品总金额
+				tipsShow: false,
+				tipsText:""
 			}
 		},
 		computed:{
@@ -430,16 +435,24 @@
 								this.orderId = res.data.returnValue.id;
 							}else {
 								let title = res.data.error[0]||'生成订单失败';
-								uni.showToast({
-									title:title,
-									icon:'none',
-									duration:2000
-								})
+								// uni.showToast({
+								// 	title:title,
+								// 	icon:'none',
+								// 	duration:2000
+								// })
+								this.tipsText = title;
+								this.tipsShow = true;
+								setTimeout(()=>{
+									this.tipsShow = false;
+								},2000)
 							}
 							resolve(res.data)
 						}
 					});
 				})
+			},
+			hideAlert(){
+				this.tipsShow = false;
 			},
 			getCheckAttr(){
 				var temp = {};
