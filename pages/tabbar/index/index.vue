@@ -40,7 +40,7 @@
 			</view>
 		</view>
 		<view class="notice">
-			<uni-notice-bar showIcon="true" single="true" scrollable="true" text="系统公测，产品发货时间以实际情况为准，敬请谅解！"></uni-notice-bar>
+			<uni-notice-bar showIcon="true" single="true" scrollable="true" :text="tipsText"></uni-notice-bar>
 		</view> 
 		
 		<!-- <image src="https://thorui.cn/images/mall/activity/img_coupon_banner.png" class="tui-img__coupon" @tap="coupon"></image> -->
@@ -111,7 +111,7 @@
 				hotSearch: ['休闲零食', '自热火锅', '小冰箱迷你'],
 				// banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
 				banners:[
-					'https://cbt.pumchit.cn/images/uploaded/banner4.jpg',
+					// 'https://cbt.pumchit.cn/images/uploaded/banner4.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner2.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner1.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner3.jpg'
@@ -128,7 +128,19 @@
 				content:''
 			};
 		},
+		computed:{
+			tipsText(){
+				if(this.productList.length>0){
+					return '系统公测，产品发货时间以实际情况为准，敬请谅解！'
+				}else {
+					return '本商城营业时间06:00开始'
+				}
+			}
+		},
 		onLoad(){
+			// this.getQuery();
+		},
+		onShow(){
 			this.getQuery();
 		},
 		methods: {
@@ -176,15 +188,15 @@
 				this.tui.href(url);
 			},
 			handleDetail(index){
-				if(index==0){
-					wx.previewImage({
-					  current: '', // 当前显示图片的http链接
-					  urls: ['https://cbt.pumchit.cn/objimgs/verifies/百年协和襄明月，一切为民共团圆.jpg'] // 需要预览的图片http链接列表
-					})
+				// if(index==0){
+					// wx.previewImage({
+					//   current: '', // 当前显示图片的http链接
+					//   urls: ['https://cbt.pumchit.cn/objimgs/verifies/百年协和襄明月，一切为民共团圆.jpg'] // 需要预览的图片http链接列表
+					// })
 					// uni.navigateTo({
 					// 	url:'../../my/leaflet/leaflet'
 					// })
-				}
+				// }
 			}
 		},
 		onPullDownRefresh: function() {

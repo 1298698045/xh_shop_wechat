@@ -1,7 +1,76 @@
 <template>
 	<view class="container">
 		<view class="tui-box">
-			<tui-list-cell :arrow="true" unlined :radius="true" @click="chooseAddr">
+			<tui-list-cell :hover="false" :lineLeft="false">
+				<view class="tui-goods-title">
+					配送方式
+				</view>
+			</tui-list-cell>
+			<radio-group @change="handleChange">
+				<!-- <label class="uni-list-cell uni-list-cell-pd" v-for="(item, index) in items" :key="item.value">
+					<view>
+						<radio :value="item.value" :checked="index === current" />
+					</view>
+					<view>{{item.name}}</view>
+				</label> -->
+				
+				<tui-list-cell :arrow="true" unlined :radius="true">
+					<view class="flex_cell">
+						<radio :value="0" :checked="modeIdx==0"  />
+						 <!-- @click="chooseAddr" -->
+						<view class="tui-address" @click="chooseAddr">
+							<view v-if="currenAddress.address1" style="margin-left: 50rpx;">
+								<view class="tui-userinfo">
+									<text class="tui-name">{{currenAddress.contactName ||''}}</text> {{currenAddress.phoneNumber || ''}}
+								</view>
+								<view class="tui-addr">
+									<view class="tui-addr-tag">{{currenAddress.isDefault==1?'默认':'其他'}}</view>
+									<text>{{currenAddress.city + currenAddress.address1 || ''}}</text>
+								</view>
+							</view>
+							<view class="tui-none-addr" v-else>
+								<image src="/static/images/index/map.png" class="tui-addr-img" mode="widthFix"></image>
+								<text>选择收货地址</text>
+							</view>
+						</view>
+						<view class="tui-bg-img"></view>
+					</view>
+				</tui-list-cell>
+				<tui-list-cell :arrow="true" unlined :radius="true">
+					<label class="flex_cell">						
+						<radio :value="1" :checked="modeIdx==1" />
+						<view class="tui-address" @click="handleOpenSelfmention">
+							<view v-if="paramsAddress.id" style="margin-left: 50rpx;">
+								<!-- <view class="tui-userinfo">
+									<text class="tui-name">{{paramsAddress.contactName ||''}}</text> {{paramsAddress.phoneNumber || ''}}
+								</view> -->
+								<view class="tui-addr">
+									<!-- <view class="tui-addr-tag">{{currenAddress.isDefault==1?'默认':'其他'}}</view> -->
+									<text>{{ paramsAddress.address1 }}</text>
+								</view>
+							</view>
+							<view class="tui-none-addr" v-else>
+								<image src="/static/images/index/map.png" class="tui-addr-img" mode="widthFix"></image>
+								<text>自提</text>
+							</view>
+						</view>
+						<view class="tui-bg-img"></view>
+					</label>
+				</tui-list-cell>
+				<!-- <tui-list-cell :hover="true">
+					<view class="tui-padding tui-flex">
+					<radio :value="1" :checked="index === current" />
+						<view>自提</view>
+						<switch :checked='isExtraction' color="#19be6b" class="tui-switch-small" @change="changeExtraction" />
+					</view>
+				</tui-list-cell> -->
+			</radio-group>
+			<tui-list-cell :hover="false" :lineLeft="false">
+				<view class="tui-goods-title" style="color:#E41F19;">
+					注意：如想自提，请先录入地址
+				</view>
+			</tui-list-cell>
+			<!-- <tui-list-cell :arrow="true" unlined :radius="true" @click="chooseAddr">
 				<view class="tui-address">
 					<view v-if="currenAddress.address1">
 						<view class="tui-userinfo">
@@ -19,6 +88,12 @@
 				</view>
 				<view class="tui-bg-img"></view>
 			</tui-list-cell>
+			<tui-list-cell :hover="true">
+				<view class="tui-padding tui-flex">
+					<view>自提</view>
+					<switch :checked='isExtraction' color="#19be6b" class="tui-switch-small" @change="changeExtraction" />
+				</view>
+			</tui-list-cell> -->
 			<view class="tui-top tui-goods-info">
 				<tui-list-cell :hover="false" :lineLeft="false">
 					<view class="tui-goods-title">
@@ -52,12 +127,7 @@
 						<view :class="{'tui-color-red':hasCoupon}">{{hasCoupon?"满5减1":'没有可用优惠券'}}</view>
 					</view>
 				</tui-list-cell> -->
-				<tui-list-cell :hover="true">
-					<view class="tui-padding tui-flex">
-						<view>自提</view>
-						<switch :checked='isExtraction==0?false:true' color="#19be6b" class="tui-switch-small" @change="changeExtraction" />
-					</view>
-				</tui-list-cell>
+				
 				<tui-list-cell :hover="true" :arrow="true" @click="invoice">
 					<view class="tui-padding tui-flex">
 						<view>发票</view>
@@ -164,7 +234,7 @@
 				listData:[], // 订单数据
 				// totalPrice:"", // 合计金额
 				addressList:[],
-				isExtraction:0,
+				// isExtraction:false,
 				isExpress:false,
 				shopaddressList:[], // 自提地点
 				number:-1,
@@ -178,7 +248,8 @@
 				ShippingFee:0, // 运费
 				totalPriceAll: 0, // 运费+商品总金额
 				tipsShow: false,
-				tipsText:""
+				tipsText:"",
+				modeIdx:-1
 			}
 		},
 		computed:{
@@ -192,11 +263,20 @@
 			// 购买商品金额（不包含运费）
 			totalPrice(){
 				return this.$store.state.totalPrice;
-			}
+			},
 			// 发票id
 			// invoiceTitleId(){
 			// 	return this.$store.state.invoiceTitleId;
 			// }
+			isExtraction(){
+				if(this.modeIdx==0){
+					this.PickupInStore = 0;
+					return false;
+				}else {
+					this.PickupInStore = 1;
+					return true;
+				}
+			}
 		},
 		onLoad(options){
 			Object.assign(this.$data, this.$options.data());
@@ -254,21 +334,59 @@
 				});
 			},
 			hideisEcpress(){
-				if(this.paramsAddress.id==''){
-					this.tui.toast('请选择自提地址')
-				}else {
+				if(this.paramsAddress.id){
 					this.isExpress = false;
-					this.queryCartData().then(res=>{
-						console.log('购物车商品数据',res);
-						this.queryFreight(this.listData)
-						// this.getSubmitOrder();
-					});
+					if(this.currenAddress.id){						
+						this.queryCartData().then(res=>{
+							console.log('购物车商品数据',res);
+							this.queryFreight(this.listData)
+							// this.getSubmitOrder();
+						});
+					}else {
+						// uni.showModal({
+						//     title: '个人信息',
+						//     content: '请先去录入地址',
+						//     success: function (res) {
+						//         if (res.confirm) {
+						//             console.log('用户点击确定');
+						//         } else if (res.cancel) {
+						//             console.log('用户点击取消');
+						//         }
+						//     }
+						// });
+					}
+				}else {
+					this.tui.toast('请选择自提地址')
 				}
 			},
+			handleOpenSelfmention(){
+				this.isExpress = true;
+				this.PickupInStore = 1;
+			},
+			// 选择配送方式
+			handleChange(e){
+				// console.log(e);
+				this.modeIdx = e.mp.detail.value;
+				if(this.modeIdx==1){
+					this.isExpress = true;
+					this.PickupInStore = 1;
+				}else {
+					this.paramsAddress = {};
+					this.number = -1;
+					this.isExpress = false;
+					this.PickupInStore = 0;
+					// this.chooseAddr();
+				}
+				this.queryCartData().then(res=>{
+					console.log('购物车商品数据',res);
+					this.queryFreight(this.listData)
+					// this.getSubmitOrder();
+				});
+			},
+			// 自提开关
 			changeExtraction(e){
-				console.log(e);
 				this.isExtraction = e.detail.value;
-				if(this.isExtraction!=0){
+				if(this.isExtraction){
 					this.isExpress = true;
 					this.PickupInStore = 1;
 				}else {
@@ -348,7 +466,9 @@
 				).then(res=>{
 					this.ShippingFee = 0;
 					if(!this.isExtraction){
-						this.ShippingFee = res.returnValue.shippingFee;
+						if(res.state=='SUCCESS'){							
+							this.ShippingFee = res.returnValue.shippingFee;
+						}
 						this.totalPriceAll = Number(this.totalPrice) + Number(this.ShippingFee);
 					}else {
 						this.totalPriceAll = Number(this.totalPrice);
@@ -363,20 +483,23 @@
 				})
 			},
 			btnPay() {
+				if(this.modeIdx==-1){
+					this.tui.toast('请选择配送方式!')
+				}else 
 				if(!this.isExtraction && (JSON.stringify(this.currenAddress)!="{}")){
 					this.getSubmitOrder().then(res=>{
 						if(res.state=='SUCCESS'){
 							this.show = true;
 						}
 					});
-				}else if(this.isExtraction && this.paramsAddress.id!=''){
+				}else if(this.isExtraction && this.paramsAddress.id!='' && this.currenAddress.id){
 					this.getSubmitOrder().then(res=>{
 						if(res.state=='SUCCESS'){
 							this.show = true;
 						}
 					});
 				}else {
-					this.tui.toast('请选择地址!')
+					this.tui.toast('请选择录入地址!')
 				}
 			},
 			getSubmitOrder(){
@@ -477,6 +600,10 @@
 </script>
 
 <style>
+	.flex_cell{
+		display: flex;
+		align-items: center;
+	}
 	.container {
 		padding-bottom: 98rpx;
 	}

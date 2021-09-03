@@ -152,17 +152,18 @@
 	export default {
 		data() {
 			return {
-				dataList: [{
-					id: "t2020003120",
-					buyNum: 2,
-					price: 299.5,
-					selected: false
-				}, {
-					id: 't1020003120',
-					buyNum: 1,
-					price: 499,
-					selected: false
-				}],
+				// dataList: [{
+				// 	id: "t2020003120",
+				// 	buyNum: 2,
+				// 	price: 299.5,
+				// 	selected: false
+				// }, {
+				// 	id: 't1020003120',
+				// 	buyNum: 1,
+				// 	price: 499,
+				// 	selected: false
+				// }],
+				dataList: [],
 				isAll: false,
 				totalPrice: 0,
 				buyNum: 0,

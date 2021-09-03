@@ -356,15 +356,17 @@
 					</div>
 					<div class="right">
 						<p class="tips">
-							共有两个门店支持自提：
+							共有{{shopaddressList.length}}个门店支持自提：
 						</p>
-						<div class="box" v-for="(item,index) in shopaddressList" :key="index">							
-							<p class="local">
-								{{item.address1}}
-							</p>
-							<p class="local" @click="handlePhone(1)">电话：{{item.phoneNumber}}</p>
-							<p class="local">营业时间：{{item.openTime}}</p>
-							<p class="local">备注：{{item.description}}</p>
+						<div class="box" v-for="(item,index) in shopaddressList" :key="index">
+							<div v-if="!item.deleted">								
+								<p class="local">
+									{{item.address1}}
+								</p>
+								<p class="local" @click="handlePhone(1)">电话：{{item.phoneNumber}}</p>
+								<p class="local">营业时间：{{item.openTime}}</p>
+								<p class="local">备注：{{item.description}}</p>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -514,6 +516,7 @@
 			shopaddress(){
 				this.$http.shopaddress().then(res=>{
 					this.shopaddressList = res.returnValue;
+					this.shopaddressList = this.shopaddressList.filter(item=>item.deleted==false)
 				})
 			},
 			// 拨打电话
@@ -645,8 +648,10 @@
 								duration:2000,
 								icon:'success',
 								success:res=>{
-									that.popupShow = false;
-									that.getCartNumTotal();
+									setTimeout(()=>{										
+										that.popupShow = false;
+										that.getCartNumTotal();
+									},500)
 								}
 							})
 						}else {
