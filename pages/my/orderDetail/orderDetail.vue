@@ -54,7 +54,7 @@
 					</view>
 					<view class="after_sale" v-if="orderDetail.paymentStatusId!=10">
 						<tui-button v-if="item.isRefund&&item.returnRequestStatusId!=50" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</tui-button>
-						<tui-button v-if="(!item.isRefund)||(item.isRefund&&item.returnRequestStatusId==50)" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
+						<tui-button v-if="(!item.isRefund&&!orderDetail.pickupInStore)||(item.isRefund&&item.returnRequestStatusId==50)||(orderDetail.shippingStatusId!=40&&orderDetail.pickupInStore&&!item.isRefund)&&isAfter7Sale" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
 					</view>
 				</tui-list-cell>
 			</block>
@@ -116,6 +116,10 @@
 				<view class="tui-order-flex" v-if="orderDetail.shipments!=''" v-for="(self,i) in orderDetail.shipments" :key="i">
 					<view class="tui-item-title">发货时间:</view>
 					<view class="tui-item-content">{{self.shippedDate}}</view>
+				</view>
+				<view class="tui-order-flex" v-if="orderDetail.deliveryDate">
+					<view class="tui-item-title">收货时间:</view>
+					<view class="tui-item-content">{{orderDetail.deliveryDate}}</view>
 				</view>
 				<view class="tui-order-flex" v-if="!orderDetail.isQRCodeSubmit">
 					<view class="tui-item-title">配送方式:</view>
@@ -262,7 +266,7 @@
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="refund">申请售后</tui-button>
 			</view> -->
 			<!-- 订单已完成未申请开票的可以重新申请开票 -->
-			<view class="tui-btn-mr" v-if="!orderDetail.isApplayInvoice&&status==4">
+			<view class="tui-btn-mr" v-if="!orderDetail.isApplayInvoice&&status==4&&is30Invoice">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="handleApplyInvoicing">申请开票</tui-button>
 			</view>
 			<view class="tui-btn-mr" v-else-if="orderDetail.isApplayInvoice&&status==4">
@@ -292,6 +296,7 @@
 
 <script>
 	import tPayWay from "@/components/views/t-pay-way/t-pay-way"
+	import {timeForMat,formatDate,dateRange} from '../../../utils/momentDate.js';
 	export default {
 		components: {
 			tPayWay
@@ -316,7 +321,9 @@
 				isRefunQuantity:false, // 库存 
 				isShipping:false,
 				tipsShow: false,
-				tipsText:""
+				tipsText:"",
+				isAfter7Sale:true,
+				is30Invoice:true
 			}
 		},
 		computed:{
@@ -407,6 +414,21 @@
 				).then(res=>{
 					this.orderDetail = res.returnValue;
 					this.orderDetail.createdOn = res.returnValue.createdOn.replace('T',' ')
+					if(res.returnValue.deliveryDate){
+						this.orderDetail.deliveryDate = formatDate(this.orderDetail.deliveryDate,1);
+						var endTime = new Date(this.orderDetail.deliveryDate);
+						const day7 = endTime.getTime() + 7 * 24 * 60 * 60 * 1000; // 7天 范围内可以申请售后
+						const day30 = endTime.getTime() + 30 * 24 * 60 * 60 * 1000; // 30天 范围内可以申请发票
+						const day7endTime = formatDate(parseInt(day7),1)
+						const day30endTime = formatDate(parseInt(day30),1);
+						console.log('endTime:', endTime);
+						console.log('day30endTime:',day7endTime,day30endTime)
+						let isAfter7Sale = dateRange.isDuringDate(this.orderDetail.deliveryDate, day7endTime);
+						let is30Invoice = dateRange.isDuringDate(this.orderDetail.deliveryDate, day30endTime);
+						this.isAfter7Sale = isAfter7Sale;
+						this.is30Invoice = is30Invoice;
+						console.log(isAfter7Sale, is30Invoice, '售后-开票');
+					}
 					let date = new Date(this.orderDetail.createdOn.replace(/-/g,'/')).getTime();
 					let min = 30 * 60 * 1000;
 					this.endOrderTimeStr = date+min;
@@ -434,13 +456,13 @@
 						this.status = 4;
 					}else if(this.orderDetail.orderStatusId==20&&(this.orderDetail.paymentStatusId==30||this.orderDetail.paymentStatusId==35)&&this.orderDetail.shippingStatusId==10){
 						this.status = 3; // 不需要发货
-						this.isShipping = true; // 已付款，自提
+						// this.isShipping = true; // 已付款，自提
 					}else if(this.orderDetail.orderStatusId==40&&this.orderDetail.paymentStatusId==40&&this.orderDetail.shippingStatusId==20){
 						this.status = 5;
 					}else if(this.orderDetail.orderStatusId==30&&this.orderDetail.paymentStatusId==40&&this.orderDetail.shippingStatusId==40){
 						this.status = 5;
 					}else if(this.orderDetail.paymentStatusId==30&&this.orderDetail.shippingStatusId==10){
-						this.isShipping = true; // 已付款，自提
+						// this.isShipping = true; // 已付款，自提
 					}
 					console.log(this.isShipping,'siShipping')
 					// if(this.orderDetail.orderStatusId==10&&this.orderDetail.paymentStatusId==10){

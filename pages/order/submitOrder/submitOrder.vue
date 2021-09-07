@@ -13,29 +13,6 @@
 					</view>
 					<view>{{item.name}}</view>
 				</label> -->
-				
-				<tui-list-cell :arrow="true" unlined :radius="true">
-					<view class="flex_cell">
-						<radio :value="0" :checked="modeIdx==0"  />
-						 <!-- @click="chooseAddr" -->
-						<view class="tui-address" @click="chooseAddr">
-							<view v-if="currenAddress.address1" style="margin-left: 50rpx;">
-								<view class="tui-userinfo">
-									<text class="tui-name">{{currenAddress.contactName ||''}}</text> {{currenAddress.phoneNumber || ''}}
-								</view>
-								<view class="tui-addr">
-									<view class="tui-addr-tag">{{currenAddress.isDefault==1?'默认':'其他'}}</view>
-									<text>{{currenAddress.city + currenAddress.address1 || ''}}</text>
-								</view>
-							</view>
-							<view class="tui-none-addr" v-else>
-								<image src="/static/images/index/map.png" class="tui-addr-img" mode="widthFix"></image>
-								<text>选择收货地址</text>
-							</view>
-						</view>
-						<view class="tui-bg-img"></view>
-					</view>
-				</tui-list-cell>
 				<tui-list-cell :arrow="true" unlined :radius="true">
 					<label class="flex_cell">						
 						<radio :value="1" :checked="modeIdx==1" />
@@ -45,6 +22,7 @@
 									<text class="tui-name">{{paramsAddress.contactName ||''}}</text> {{paramsAddress.phoneNumber || ''}}
 								</view> -->
 								<view class="tui-addr">
+									自提：
 									<!-- <view class="tui-addr-tag">{{currenAddress.isDefault==1?'默认':'其他'}}</view> -->
 									<text>{{ paramsAddress.address1 }}</text>
 								</view>
@@ -57,6 +35,30 @@
 						<view class="tui-bg-img"></view>
 					</label>
 				</tui-list-cell>
+				<tui-list-cell :arrow="true" unlined :radius="true">
+					<view class="flex_cell">
+						<radio :value="0" :checked="modeIdx==0"  />
+						 <!-- @click="chooseAddr" -->
+						<view class="tui-address" @click="chooseAddr">
+							<view v-if="currenAddress.address1" style="margin-left: 50rpx;">
+								<view class="tui-userinfo">
+									<text class="tui-name">{{currenAddress.contactName ||''}}</text> {{currenAddress.phoneNumber || ''}}
+								</view>
+								<view class="tui-addr">
+									配送：
+									<view class="tui-addr-tag">{{currenAddress.isDefault==1?'默认':'其他'}}</view>
+									<text>{{currenAddress.city + currenAddress.address1 || ''}}</text>
+								</view>
+							</view>
+							<view class="tui-none-addr" v-else>
+								<image src="/static/images/index/map.png" class="tui-addr-img" mode="widthFix"></image>
+								<text>选择收货地址</text>
+							</view>
+						</view>
+						<view class="tui-bg-img"></view>
+					</view>
+				</tui-list-cell>
+				
 				<!-- <tui-list-cell :hover="true">
 					<view class="tui-padding tui-flex">
 					<radio :value="1" :checked="index === current" />
@@ -186,6 +188,7 @@
 		<tui-bottom-popup :show="isExpress" @close="hideisEcpress">
 			<div class="locationBox">
 				<p class="title">自提地点</p>
+				<p class="tips" style="text-align: center;padding-top: 20rpx;color:#E41F19;font-size: 32rpx;">注意：自提仅限本院员工凭工牌自取</p>
 				<div class="bd">
 					<div class="right">
 						<div class="box" v-if="!item.deleted" v-for="(item,index) in shopaddressList" :key="index" @click="getCheckShopaddress(item,index)">
@@ -288,7 +291,7 @@
 				console.log(this.cartIds,'====')
 				// this.totalPrice = options.totalPrice;
 				this.shopaddress();
-				this.queryAddress();
+				// this.queryAddress();
 				// this.queryCartData().then(res=>{
 				// 	console.log('购物车商品数据',res);
 				// 	this.queryFreight(res.returnValue)
@@ -306,6 +309,7 @@
 			this.isInvoice = uni.getStorageSync('invoice');
 			this.invoiceTitleId = wx.getStorageSync('invoiceTitleId');
 			console.log(this.invoiceTitleId,'invoiceTitleId')
+			this.queryAddress();
 			this.queryCartData().then(res=>{
 				console.log('购物车商品数据',res);
 				this.queryFreight(this.listData)
@@ -409,11 +413,17 @@
 					if(this.addressList==''){
 						this.$store.commit('setAddress',{});
 					}
-					this.addressList.forEach(item=>{
-						if(item.isDefault==1){
-							this.$store.commit('setAddress',item);
-						}
-					})
+					let row = this.addressList.findIndex(item=>item.id==this.currenAddress.id);
+					if(row!=-1){
+						let rowContent = this.addressList.find(item=>item.id==this.currenAddress.id);
+						this.$store.commit('setAddress',rowContent);
+					}else {
+						this.addressList.forEach(item=>{
+							if(item.isDefault==1){
+								this.$store.commit('setAddress',item);
+							}
+						})						
+					}
 				})
 			},
 			// 获取购物车数据all
@@ -618,6 +628,7 @@
 		padding: 10rpx 0;
 		box-sizing: border-box;
 		position: relative;
+		flex: 1;
 	}
 
 	.tui-userinfo {
