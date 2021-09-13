@@ -24,7 +24,7 @@
 					<view class="tui-goods-price">
 						<view>共{{item.orderItems.length}}件商品 合计：</view>
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">{{totalPrice(item.orderItems,item.quantity)}}</view>
+						<view class="tui-price-large">{{totalPrice(item.orderItems,item.quantity,item.LastRefundShippFee)}}</view>
 						<!-- <view class="tui-size-24">.00</view> -->
 					</view>
 				</tui-list-cell>
@@ -69,14 +69,14 @@ export default {
 		this.orderId = options.orderId;
 		this.returnRequestStatusId = options.returnRequestStatusId;
 		this.orderIdItemId = options.shopId;
-		this.getShippingFee().then(res=>{
-			let list = res.returnValue;
-			var row = list.find(item=>item.orderItemID==this.orderIdItemId);
-			this.shippingFee = row.shippingFee;
-			var temp = list.filter(item=>item.orderItemID!=this.orderIdItemId); // 其他商品
-			this.isShippingFee = temp.every(item=>item.keTuiQuantity==0);
-			console.log(temp,this.shippingFee,this.isShippingFee,'------');
-		});
+		// this.getShippingFee().then(res=>{
+		// 	let list = res.returnValue;
+		// 	var row = list.find(item=>item.orderItemID==this.orderIdItemId);
+		// 	this.shippingFee = row.shippingFee;
+		// 	var temp = list.filter(item=>item.orderItemID!=this.orderIdItemId); // 其他商品
+		// 	this.isShippingFee = temp.every(item=>item.keTuiQuantity==0);
+		// 	console.log(temp,this.shippingFee,this.isShippingFee,'------');
+		// });
 		this.getQuery();
 	},
 	computed:{
@@ -93,8 +93,7 @@ export default {
 				{
 					customerId:this.userId,
 					orderId:this.orderId,
-					ReturnRequestStatus:this.returnRequestStatusId,
-					ItemId: this.orderIdItemId
+					ReturnRequestStatus:this.returnRequestStatusId
 				}
 			).then(res=>{
 				this.list = res.returnValue;
@@ -147,17 +146,18 @@ export default {
 			}
 			return ['等待','已收到','退货授权','货物已更换','货物已退款','拒绝请求','已取消'][idx];
 		},
-		totalPrice(list,quantity){
+		totalPrice(list,quantity,LastRefundShippFee){
 			let price = '';
-			if(this.isShippingFee){
-				list.map(item=>{
-					price += (item.unitPrice * quantity)+this.shippingFee;
-				})
-			}else{				
-				list.map(item=>{
-					price += item.unitPrice * quantity;
-				})
-			}
+			// if(this.isShippingFee){
+			// 	list.map(item=>{
+			// 		price += (item.unitPrice * quantity)+this.shippingFee;
+			// 	})
+			// }else{				
+			// 	list.map(item=>{
+			// 		price += item.unitPrice * quantity;
+			// 	})
+			// }
+			price += (item.unitPrice * quantity) + LastRefundShippFee
 			return price;
 		},
 		// 填写物流单号
