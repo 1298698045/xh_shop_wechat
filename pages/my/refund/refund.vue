@@ -144,12 +144,19 @@ export default {
 		this.orderId = options.orderId;
 		this.shopId = options.shopId;
 		this.getShippingFee().then(res=>{
-			let list = res.returnValue;
-			var row = list.find(item=>item.orderItemID==this.shopId);
-			this.shippingFee = row.shippingFee;
-			var temp = list.filter(item=>item.orderItemID!=this.shopId); // 其他商品
-			this.isShippingFee = temp.every(item=>item.keTuiQuantity==0);
-			console.log(temp,this.shippingFee,this.isShippingFee,'------');
+			if(res.returnValue.keTuiQuantity==0){
+				this.isShippingFee = true;
+				this.shippingFee = res.returnValue.shippingFee;
+			}else {
+				this.isShippingFee = false;
+				this.shippingFee = 0;
+			}
+			// let list = res.returnValue;
+			// var row = list.find(item=>item.orderItemID==this.shopId);
+			// this.shippingFee = row.shippingFee;
+			// var temp = list.filter(item=>item.orderItemID!=this.shopId); // 其他商品
+			// this.isShippingFee = temp.every(item=>item.keTuiQuantity==0);
+			// console.log(temp,this.shippingFee,this.isShippingFee,'------');
 		});
 		this.getQuery();
 	},
@@ -160,7 +167,8 @@ export default {
 			await this.$http.refundShippingFee({
 				customerId:this.userId,
 				orderId:this.orderId,
-				orderItemId:this.shopId
+				orderItemId:this.shopId,
+				refundnum:this.number
 			}).then(res=>{
 				console.log('运费：', res);
 				response = res;
@@ -182,6 +190,15 @@ export default {
 		},
 		change(e){
 			this.number = e.value;
+			this.getShippingFee().then(res=>{
+				if(res.returnValue.keTuiQuantity==0){
+					this.isShippingFee = true;
+					this.shippingFee = res.returnValue.shippingFee;
+				}else {
+					this.isShippingFee = false;
+					this.shippingFee = 0;
+				}
+			});
 		},
 		bindPickerChange(e){
 			this.index = e.mp.detail.value;

@@ -53,8 +53,14 @@
 						</view>
 					</view>
 					<view class="after_sale" v-if="orderDetail.paymentStatusId!=10">
-						<tui-button v-if="item.isRefund&&item.returnRequestStatusId!=50" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</tui-button>
-						<tui-button v-if="(!item.isRefund&&!orderDetail.pickupInStore)||(item.isRefund&&item.returnRequestStatusId==50)||(orderDetail.shippingStatusId!=40&&orderDetail.pickupInStore&&!item.isRefund)&&isAfter7Sale" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</tui-button>
+						<view class="btn">							
+							<span v-if="(!item.isRefund&&!orderDetail.pickupInStore)||
+							(item.isRefund&&item.returnRequestStatusId==50)||
+							(orderDetail.shippingStatusId!=40&&orderDetail.pickupInStore&&!item.isRefund)&&(isAfter7Sale)||(item.canRefunQuantity>0)" type="black" 
+							:plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</span>
+							<span v-if="item.isRefund&&item.returnRequestStatusId!=50" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</span>
+							<!-- <span v-if="true" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</span> -->
+						</view>
 					</view>
 				</tui-list-cell>
 			</block>
@@ -712,8 +718,20 @@
 	.after_sale{
 		padding: 0 30rpx 20rpx 30rpx;
 	}
-	.after_sale button{
-		margin-left: auto!important;
+	.after_sale .btn{
+		text-align: right;
+	}
+	.after_sale span:first-child{
+		margin-right: 10rpx!important;
+	}
+	.after_sale span{
+		width: 150rpx!important;
+		height: 50rpx;
+		border: 1rpx solid #333;
+		display: inline-block;
+		text-align: center;
+		line-height: 50rpx;
+		border-radius: 10rpx;
 	}
 	.tui-goods-img {
 		width: 180rpx;
