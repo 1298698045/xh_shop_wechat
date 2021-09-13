@@ -24,7 +24,7 @@
 					<view class="tui-goods-price">
 						<view>共{{item.orderItems.length}}件商品 合计：</view>
 						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">{{totalPrice(item.orderItems,item.quantity,item.LastRefundShippFee)}}</view>
+						<view class="tui-price-large">{{totalPrice(item.orderItems,item.quantity,item.lastRefundShippFee)}}</view>
 						<!-- <view class="tui-size-24">.00</view> -->
 					</view>
 				</tui-list-cell>
@@ -92,8 +92,7 @@ export default {
 			this.$http.refundList(
 				{
 					customerId:this.userId,
-					orderId:this.orderId,
-					ReturnRequestStatus:this.returnRequestStatusId
+					orderId:this.orderId
 				}
 			).then(res=>{
 				this.list = res.returnValue;
@@ -153,11 +152,10 @@ export default {
 			// 		price += (item.unitPrice * quantity)+this.shippingFee;
 			// 	})
 			// }else{				
-			// 	list.map(item=>{
-			// 		price += item.unitPrice * quantity;
-			// 	})
+			list.map(item=>{
+				price += (item.unitPrice * quantity) + LastRefundShippFee;
+			})
 			// }
-			price += (item.unitPrice * quantity) + LastRefundShippFee
 			return price;
 		},
 		// 填写物流单号

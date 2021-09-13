@@ -13,7 +13,7 @@
 						</view>
 						<view class="tui-price-right">
 							<view>￥{{shopInfo.unitPrice}}</view>
-							<view>x{{shopInfo.quantity}}</view>
+							<view>x{{shopInfo.canRefunQuantity}}</view>
 						</view>
 					</view>
 				</tui-list-cell>
@@ -26,7 +26,7 @@
 						<text class="tui-color__red">*</text>
 						<text>数量</text>
 					</view>
-					<tui-numberbox :value="number" :min="1" :max="shopInfo.quantity" @change="change"></tui-numberbox>
+					<tui-numberbox :value="number" :min="1" :max="shopInfo.canRefunQuantity" @change="change"></tui-numberbox>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="true" padding="0"arrow>
@@ -143,22 +143,24 @@ export default {
 	onLoad(options){
 		this.orderId = options.orderId;
 		this.shopId = options.shopId;
-		this.getShippingFee().then(res=>{
-			if(res.returnValue.keTuiQuantity==0){
-				this.isShippingFee = true;
-				this.shippingFee = res.returnValue.shippingFee;
-			}else {
-				this.isShippingFee = false;
-				this.shippingFee = 0;
-			}
-			// let list = res.returnValue;
-			// var row = list.find(item=>item.orderItemID==this.shopId);
-			// this.shippingFee = row.shippingFee;
-			// var temp = list.filter(item=>item.orderItemID!=this.shopId); // 其他商品
-			// this.isShippingFee = temp.every(item=>item.keTuiQuantity==0);
-			// console.log(temp,this.shippingFee,this.isShippingFee,'------');
-		});
-		this.getQuery();
+		this.getQuery().then(ret=>{			
+			this.getShippingFee().then(res=>{
+				if(res.returnValue.keTuiQuantity==0){
+					this.isShippingFee = true;
+					this.shippingFee = res.returnValue.shippingFee;
+				}else {
+					this.isShippingFee = false;
+					this.shippingFee = 0;
+				}
+				// let list = res.returnValue;
+				// var row = list.find(item=>item.orderItemID==this.shopId);
+				// this.shippingFee = row.shippingFee;
+				// var temp = list.filter(item=>item.orderItemID!=this.shopId); // 其他商品
+				// this.isShippingFee = temp.every(item=>item.keTuiQuantity==0);
+				// console.log(temp,this.shippingFee,this.isShippingFee,'------');
+			});
+		})
+		// this.getQuery();
 	},
 	methods: {
 		// 获取运费
@@ -176,8 +178,9 @@ export default {
 			return response;
 		},
 		// 订单详情
-		getQuery(){
-			this.$http.getSingleOrder(
+		async getQuery(){
+			let response
+			await this.$http.getSingleOrder(
 				{
 					customerId:this.userId,
 					orderId:this.orderId
@@ -185,8 +188,10 @@ export default {
 			).then(res=>{
 				this.orderDetail = res.returnValue;
 				this.shopInfo = this.orderDetail.items.find(item=>item.id==this.shopId);
-				this.number = this.shopInfo.quantity;
+				this.number = this.shopInfo.canRefunQuantity;
+				response = res;
 			})
+			return response;
 		},
 		change(e){
 			this.number = e.value;
