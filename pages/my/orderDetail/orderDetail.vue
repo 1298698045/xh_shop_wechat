@@ -54,11 +54,9 @@
 					</view>
 					<view class="after_sale" v-if="orderDetail.paymentStatusId!=10">
 						<view class="btn">							
-							<span v-if="(!item.isRefund&&!orderDetail.pickupInStore)||
-							(item.isRefund&&item.returnRequestStatusId==50)||
-							(orderDetail.shippingStatusId!=40&&orderDetail.pickupInStore&&!item.isRefund)&&(isAfter7Sale)||(item.canRefunQuantity>0)" type="black" 
-							:plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</span>
-							<span v-if="item.isRefund&&item.returnRequestStatusId!=50" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</span>
+							<span v-if="((!orderDetail.pickupInStore)||(orderDetail.shippingStatusId!=40&&orderDetail.pickupInStore))&&(isAfter7Sale)&&(item.canRefunQuantity>0)"
+							 @click.stop="refund(item)">申请售后</span>
+							<span v-if="item.isRefund" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</span>
 							<!-- <span v-if="true" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</span> -->
 						</view>
 					</view>

@@ -229,6 +229,7 @@ export default {
 					StoreId:1,
 					CustomNumber:'',
 					UploadedFileId:0,
+					LastRefundShippFee:this.shippingFee,
 					RequestedAction:this.array[this.index],
 					['OrderItemId_'+this.shopId]:this.number
 				};
