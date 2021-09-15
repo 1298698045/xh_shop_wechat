@@ -13,6 +13,7 @@
 						<image :src="shop.picture.thumbImageUrl" class="tui-goods-img"></image>
 						<view class="tui-goods-center">
 							<view class="tui-goods-name">{{shop.productName}}</view>
+							<view class="notes" v-if="item.staffNotes">审核回复：{{item.staffNotes||'暂无'}}</view>
 						</view>
 						<view class="tui-price-right">
 							<view>￥{{shop.unitPrice}}</view>
@@ -264,7 +265,10 @@ export default {
 	font-size: 26rpx;
 	line-height: 32rpx;
 }
-
+.notes{
+	color: #eb0909;
+	margin-top: 20rpx;
+}
 .tui-goods-attr {
 	font-size: 22rpx;
 	color: #888888;
