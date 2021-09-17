@@ -77,6 +77,9 @@
 						<view>浙江杭州</view> -->
 						<view>库存：{{shopDetail.stockQuantity}}</view>
 					</view>
+					<view style="margin-top:10rpx;font-size: 26rpx;line-height: 1.5;color:#FF6633;" v-if="shopDetail.shortDescription">
+						{{shopDetail.shortDescription}}
+					</view>
 				</view>
 			</view>
 			<!-- 领券 -->
@@ -117,7 +120,10 @@
 			<view class="tui-basic-info tui-mtop tui-radius-all">
 				<view class="tui-list-cell" @tap="showPopup">
 					<view class="tui-bold tui-cell-title">已选</view>
-					<view class="tui-selected-box">{{shopDetail.name}},{{productNum}}个</view>
+					<!-- <view class="tui-selected-box">{{shopDetail.name}},{{productNum}}个</view> -->
+					<view class="tui-selected-box">{{shopDetail.name}},{{productNum}}
+						<span v-if="shopDetail.measure">{{shopDetail.measure}}</span>
+					</view>
 					<view class="tui-ml-auto">
 						<tui-icon name="more-fill" :size="20" color="#666"></tui-icon>
 					</view>
