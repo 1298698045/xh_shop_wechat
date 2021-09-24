@@ -14,15 +14,16 @@
 				<image :src="getImg(status)" class="tui-status-img" mode="widthFix"></image>
 			</view>
 		</view>
-		<!-- <tui-list-cell arrow backgroundColor="#fefefe" @click="logistics">
+		<tui-list-cell v-if="orderDetail.shippingStatusId!=10&&orderDetail.shippingStatusId!=20&&orderDetail.pickupAddress.address1==null" arrow backgroundColor="#fefefe" @click="logistics">
 			<view class="tui-flex-box">
 				<image :src="webURL+'img_order_logistics3x.png'" class="tui-icon-img"></image>
 				<view class="tui-logistics">
-					<view class="tui-logistics-text">快递已到收货点，请注意查收哦! 投递员: echo. 联系电话: 17788849992</view>
-					<view class="tui-logistics-time">2019-06-03 12:02</view>
+					<!-- <view class="tui-logistics-text">快递已到收货点，请注意查收哦! 投递员: echo. 联系电话: 17788849992</view> -->
+					<view class="tui-logistics-text">查看物流信息</view>
+					<!-- <view class="tui-logistics-time">2019-06-03 12:02</view> -->
 				</view>
 			</view>
-		</tui-list-cell> -->
+		</tui-list-cell>
 		<tui-list-cell unlined :hover="false" v-if="!orderDetail.isQRCodeSubmit">
 			<view class="tui-flex-box">
 				<image :src="webURL+'img_order_address3x.png'" class="tui-icon-img"></image>
@@ -54,7 +55,8 @@
 					</view>
 					<view class="after_sale" v-if="orderDetail.paymentStatusId!=10">
 						<view class="btn">							
-							<span v-if="((!orderDetail.pickupInStore)||(orderDetail.shippingStatusId!=40&&orderDetail.pickupInStore))&&(isAfter7Sale)&&(item.canRefunQuantity>0)&&(!item.partReceive)"
+							<span v-if="((!orderDetail.pickupInStore)||(orderDetail.shippingStatusId!=40&&orderDetail.pickupInStore))&&(isAfter7Sale)&&(item.canRefunQuantity>0)
+							&&(!item.partReceive)&&(isReceiving)"
 							 @click.stop="refund(item)">申请售后</span>
 							<span v-if="item.isRefund" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refundList(item)">退货/退款</span>
 							<!-- <span v-if="true" type="black" :plain="true" width="152rpx" height="56rpx" :size="24" shape="circle" @click.stop="refund(item)">申请售后</span> -->
@@ -141,6 +143,17 @@
 				<view class="tui-order-flex">
 					<view class="tui-item-title">订单备注:</view>
 					<view class="tui-item-content">{{orderDetail.orderNotes.length>=1?orderDetail.orderNotes[0].note:''}}</view>
+				</view>
+				<view class="tui-order-flex">
+					<view class="tui-item-title">提示:</view>
+					<view class="tui-item-content">
+						<p>							
+							1、订单确认收货7天之内可申请售后。
+						</p>
+						<p>
+							2、请在订单确认收货30天之内申请开票。
+						</p>
+					</view>
 				</view>
 			</view>
 			<!-- <tui-list-view unlined="bottom">
@@ -270,7 +283,8 @@
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="refund">申请售后</tui-button>
 			</view> -->
 			<!-- 订单已完成未申请开票的可以重新申请开票 -->
-			<view class="tui-btn-mr" v-if="!orderDetail.isApplayInvoice&&status==4&&is30Invoice">
+			<!-- <view class="tui-btn-mr" v-if="!orderDetail.isApplayInvoice&&status==4&&is30Invoice"> -->
+			<view class="tui-btn-mr" v-if="!orderDetail.isApplayInvoice&&status==4">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="handleApplyInvoicing">申请开票</tui-button>
 			</view>
 			<view class="tui-btn-mr" v-else-if="orderDetail.isApplayInvoice&&status==4">
@@ -327,7 +341,8 @@
 				tipsShow: false,
 				tipsText:"",
 				isAfter7Sale:true,
-				is30Invoice:true
+				is30Invoice:true,
+				isReceiving: true // 是否确认收货
 			}
 		},
 		computed:{
@@ -370,9 +385,17 @@
 			},
 			// 开发票
 			handleApplyInvoicing(){
-				uni.navigateTo({
-					url:'../../order/invoice/invoice?afterInvoice=1&orderId='+this.orderId
-				})
+				if(!this.is30Invoice){
+					uni.showToast({
+						title:'申请开票已过期，请联系客服',
+						icon:'none',
+						duration:2000
+					})
+				}else {					
+					uni.navigateTo({
+						url:'../../order/invoice/invoice?afterInvoice=1&orderId='+this.orderId
+					})
+				}
 			},
 			previewInvoice(){
 				uni.navigateTo({
@@ -418,17 +441,18 @@
 				).then(res=>{
 					this.orderDetail = res.returnValue;
 					this.orderDetail.createdOn = res.returnValue.createdOn.replace('T',' ')
+					this.isReceiving = (this.orderDetail.shippingStatusId==30||this.orderDetail.shippingStatusId==25) && this.orderDetail.deliveryDate==null ? false : true
 					if(res.returnValue.deliveryDate){
 						this.orderDetail.deliveryDate = formatDate(this.orderDetail.deliveryDate,1);
-						var endTime = new Date(this.orderDetail.deliveryDate);
+						var endTime = new Date(this.orderDetail.deliveryDate.replace(/\-/g,'/'));
 						const day7 = endTime.getTime() + 7 * 24 * 60 * 60 * 1000; // 7天 范围内可以申请售后
 						const day30 = endTime.getTime() + 30 * 24 * 60 * 60 * 1000; // 30天 范围内可以申请发票
-						const day7endTime = formatDate(parseInt(day7),1)
-						const day30endTime = formatDate(parseInt(day30),1);
+						const day7endTime = formatDate(parseInt(day7),1).replace(/\-/g,'/')
+						const day30endTime = formatDate(parseInt(day30),1).replace(/\-/g,'/');
 						console.log('endTime:', endTime);
 						console.log('day30endTime:',day7endTime,day30endTime)
-						let isAfter7Sale = dateRange.isDuringDate(this.orderDetail.deliveryDate, day7endTime);
-						let is30Invoice = dateRange.isDuringDate(this.orderDetail.deliveryDate, day30endTime);
+						let isAfter7Sale = dateRange.isDuringDate(this.orderDetail.deliveryDate.replace(/\-/g,'/'), day7endTime);
+						let is30Invoice = dateRange.isDuringDate(this.orderDetail.deliveryDate.replace(/\-/g,'/'), day30endTime);
 						this.isAfter7Sale = isAfter7Sale;
 						this.is30Invoice = is30Invoice;
 						console.log(isAfter7Sale, is30Invoice, '售后-开票');
@@ -531,7 +555,7 @@
 				this.tui.toast("状态切换成功")
 			},
 			logistics() {
-				this.tui.href("/pages/my/logistics/logistics")
+				this.tui.href("/pages/my/logistics/logistics?orderId="+this.orderId+'&number='+this.orderDetail.customOrderNumber)
 			},
 			async btnPay() {
 				// console.log(this.isRefunQuantity)

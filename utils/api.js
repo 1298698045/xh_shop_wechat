@@ -325,6 +325,15 @@ class api{
 		})
 		return res;
 	}
+	// 查看物流 /shopapi/Shipment/shipment/getOrderShipment 
+	async getOrderShipment(data){
+		const res = await https({
+			method:"get",
+			url:"/Shipment/shipment/getOrderShipment",
+			data: data,
+		})
+		return res;
+	}
 }
 
 export default new api()

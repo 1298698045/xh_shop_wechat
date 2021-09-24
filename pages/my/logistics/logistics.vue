@@ -2,16 +2,15 @@
 	<view class="container">
 		<view class="tui-order-header">
 			<view class="tui-text">订单编号：
-				<text class="tui-bold">9136257866</text>
+				<text class="tui-bold">{{customOrderNumber}}</text>
 			</view>
-			<view class="tui-text">国内承运人：华南众包站</view>
+			<!-- <view class="tui-text">国内承运人：华南众包站</view>
 			<view class="tui-text">预计送达：
-				<text class="tui-bold">5</text>月<text class="tui-bold">1</text>日</view>
+			<text class="tui-bold">5</text>月<text class="tui-bold">1</text>日</view> -->
 		</view>
-		<view class="tui-order-tracking">
+		<view class="tui-order-tracking" v-if="item.tarilList!=''" v-for="item in listData">
 			<tui-time-axis>
-
-				<tui-timeaxis-item backgroundColor="transparent">
+				<!-- <tui-timeaxis-item backgroundColor="transparent">
 					<template v-slot:node>
 						<view class="tui-node" :style="{backgroundColor:backgroundColor}">
 							<tui-icon name="check" color="#fff" :size="14" :bold="true"></tui-icon>
@@ -39,9 +38,23 @@
 							<text class='tui-primary'>13822448855</text>），请您耐心等待。</view>
 						<view class="tui-order-time tui-gray">2019-05-01 16:29:07</view>
 					</template>
+				</tui-timeaxis-item> -->
+				<tui-timeaxis-item v-if="val.deliverCode==10" v-for="(val,idx) in item.tarilList" :key="idx" backgroundColor="transparent">
+					<template v-slot:node>
+						<view class="tui-node" :style="{backgroundColor:backgroundColor}">
+							<tui-icon name="check" color="#fff" :size="14" :bold="true"></tui-icon>
+						</view>
+					</template>
+				
+					<template v-slot:content>
+						<view>
+							<view class="tui-order-title">已签收</view>
+							<view class="tui-order-desc">{{val.opDesc}}</view>
+							<view class="tui-order-time tui-gray">{{val.opTime}}</view>
+						</view>
+					</template>
 				</tui-timeaxis-item>
-
-				<tui-timeaxis-item backgroundColor="transparent">
+				<tui-timeaxis-item v-if="val.deliverCode!=10" v-for="(val,idx) in item.tarilList" :key="idx" backgroundColor="transparent">
 					<template v-slot:node>
 						<view class="tui-node">
 							<tui-icon name="transport" color="#fff" :size="13"></tui-icon>
@@ -49,12 +62,12 @@
 					</template>
 					<template v-slot:content>
 						<view class="tui-order-title tui-gray">运输中</view>
-						<view class="tui-order-desc tui-light-gray">您的订单已到达XX【北京XX营业部】</view>
-						<view class="tui-order-time tui-gray">2019-05-01 16:17:32</view>
+						<view class="tui-order-desc tui-light-gray">{{val.opDesc}}</view>
+						<view class="tui-order-time tui-gray">{{val.opTime}}</view>
 					</template>
 				</tui-timeaxis-item>
 
-				<tui-timeaxis-item backgroundColor="transparent">
+				<!-- <tui-timeaxis-item backgroundColor="transparent">
 					<template v-slot:node>
 						<view class="tui-node-dot"></view>
 					</template>
@@ -125,7 +138,7 @@
 						<view class="tui-order-desc tui-light-gray">您提交了订单，请等待第三方卖家系统弄确认</view>
 						<view class="tui-order-time tui-gray">2019-05-01 02:04:16</view>
 					</template>
-				</tui-timeaxis-item>
+				</tui-timeaxis-item> -->
 
 			</tui-time-axis>
 		</view>
@@ -136,10 +149,32 @@
 	export default {
 		data() {
 			return {
-				backgroundColor: "#EB0909"
+				backgroundColor: "#EB0909",
+				orderId:'',
+				customOrderNumber: '',
+				listData: []
 			}
 		},
-		onLoad(options) {}
+		computed:{
+			userId(){
+				return this.$store.state.userId
+			}
+		},
+		onLoad(options) {
+			this.customOrderNumber = options.number;
+			this.orderId = options.orderId;
+			this.getQuery()
+		},
+		methods:{
+			getQuery(){
+				this.$http.getOrderShipment({
+					CustomerId:this.userId,
+					OrderId:this.orderId
+				}).then(res=>{
+					this.listData = res.returnValue;
+				})
+			}
+		}
 	}
 </script>
 
