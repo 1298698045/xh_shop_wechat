@@ -40,7 +40,7 @@
 			</view>
 		</view>
 		<view class="notice">
-			<uni-notice-bar showIcon="true" single="true" scrollable="true" :text="tipsText"></uni-notice-bar>
+			<uni-notice-bar speed="80" showIcon="true" single="true" scrollable="true" :text="tipsText"></uni-notice-bar>
 		</view> 
 		
 		<!-- <image src="https://thorui.cn/images/mall/activity/img_coupon_banner.png" class="tui-img__coupon" @tap="coupon"></image> -->
@@ -131,7 +131,7 @@
 		computed:{
 			tipsText(){
 				if(this.productList.length>0){
-					return '系统公测，产品发货时间以实际情况为准，敬请谅解！'
+					return '一、9.30日12时起，十一期间订单暂缓发货，10.9日起陆续发货 二、口罩订单（含混和订单），10.12起陆续发货'
 				}else {
 					return '本商城营业时间06:00开始'
 				}
