@@ -177,8 +177,21 @@
 			},
 			// 税号
 			changeCode(e){
-				this.company.taxpayerCode = e.mp.detail.value;
-				this.company.TaxpayerCode = e.mp.detail.value;
+				let value = (e.mp.detail.value || "").trim();
+				if(value){
+					const reg =  /[\u4e00-\u9fa5]/ig
+					if(reg.test(value)){
+						value = value.replace(reg, '')
+						// wx.showToast({
+						//   title: '不能输入中文噢！',
+						//   icon: "none"
+						// })
+					}
+					this.$nextTick(()=>{
+						this.company.taxpayerCode = value;
+						this.company.TaxpayerCode = value;
+					})
+				}
 			},
 			// 开户银行
 			changeBankName(e){

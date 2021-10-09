@@ -30,6 +30,7 @@ export function https(config) {
  let promise = new Promise(function(resolve, reject) {
      uni.request(config).then(res => {
 		 console.log(config,'config')
+		 console.log('返回的数据：',res)
          wx.hideLoading()      //隐藏loading
          if (res[0]) {
              uni.showToast({
