@@ -131,7 +131,7 @@
 		computed:{
 			tipsText(){
 				if(this.productList.length>0){
-					return '一、9.30日12时起，十一期间订单暂缓发货，10.9日起陆续发货 二、口罩订单（含混和订单），10.12起陆续发货'
+					return '因不可抗力因素影响口罩将延后至10.20号发货'
 				}else {
 					return '本商城营业时间06:00开始'
 				}
@@ -243,7 +243,9 @@
 	page {
 		background-color: #f7f7f7;
 	}
-
+	.uni-noticebar__content-text{
+		font-size: 16px!important;
+	}
 	.container {
 		padding-bottom: 100rpx;
 		color: #333;

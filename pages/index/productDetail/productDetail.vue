@@ -140,7 +140,16 @@
 				</view>
 				<view class="tui-guarantee">
 					<view class="tui-guarantee-item">
-						<text class="tui-pl">联系我们：咨询商品、订单问题请拨打010-69159408、69156289、69156296。工作时间：9:30~17:30</text>
+						<text class="tui-pl">联系我们：咨询商品、订单问题请拨打010-69159408、69156289、69156296。
+						</text>
+						<br/>
+						1、客服时间
+						<br/>
+						工作时间：9:30—17:30（仅法定工作日）
+						<br/>
+						2、自提时间
+						<br/>
+						营业时间：9:30—17:00（仅法定工作日）
 					</view>
 				</view>
 				<!-- <view class="tui-list-cell tui-last">
