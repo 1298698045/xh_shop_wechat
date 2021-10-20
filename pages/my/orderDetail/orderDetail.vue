@@ -284,10 +284,10 @@
 			</view> -->
 			<!-- 订单已完成未申请开票的可以重新申请开票 -->
 			<!-- <view class="tui-btn-mr" v-if="!orderDetail.isApplayInvoice&&status==4&&is30Invoice"> -->
-			<view class="tui-btn-mr" v-if="!orderDetail.isApplayInvoice&&status==4">
+			<view class="tui-btn-mr" v-if="(!orderDetail.isApplayInvoice&&status==4)||(status==4&&orderDetail.isInvoiceCreate==0)">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="handleApplyInvoicing">申请开票</tui-button>
 			</view>
-			<view class="tui-btn-mr" v-else-if="orderDetail.isApplayInvoice&&status==4">
+			<view class="tui-btn-mr" v-else-if="orderDetail.isApplayInvoice&&status==4&&orderDetail.isInvoiceCreate==1">
 				<tui-button type="black" :plain="true" width="152rpx" height="56rpx" :size="26" shape="circle" @click="previewInvoice">查看发票</tui-button>
 			</view>
 			<!-- orderDetail.orderStatusId==10&&status!=5 -->
