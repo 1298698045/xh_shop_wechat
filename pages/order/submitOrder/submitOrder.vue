@@ -13,17 +13,13 @@
 					</view>
 					<view>{{item.name}}</view>
 				</label> -->
-				<tui-list-cell :arrow="true" unlined :radius="true">
+				<!-- <tui-list-cell :arrow="true" unlined :radius="true">
 					<label class="flex_cell">						
 						<radio :value="1" :checked="modeIdx==1" />
 						<view class="tui-address" @click="handleOpenSelfmention">
 							<view v-if="paramsAddress.id" style="margin-left: 50rpx;">
-								<!-- <view class="tui-userinfo">
-									<text class="tui-name">{{paramsAddress.contactName ||''}}</text> {{paramsAddress.phoneNumber || ''}}
-								</view> -->
 								<view class="tui-addr">
 									自提：
-									<!-- <view class="tui-addr-tag">{{currenAddress.isDefault==1?'默认':'其他'}}</view> -->
 									<text>{{ paramsAddress.address1 }}</text>
 								</view>
 							</view>
@@ -34,7 +30,7 @@
 						</view>
 						<view class="tui-bg-img"></view>
 					</label>
-				</tui-list-cell>
+				</tui-list-cell> -->
 				<tui-list-cell :arrow="true" unlined :radius="true">
 					<view class="flex_cell">
 						<radio :value="0" :checked="modeIdx==0"  />
@@ -69,7 +65,8 @@
 			</radio-group>
 			<tui-list-cell :hover="false" :lineLeft="false">
 				<view class="tui-goods-title" style="color:#E41F19;">
-					注意：如想自提，请先录入地址
+					<!-- 注意：如想自提，请先录入地址 -->
+					注意：11.1日起线上不在提供自提选择服务，请您移步至线下门店购买，之前已选自提订单可到线下门店凭取货码取货。
 				</view>
 			</tui-list-cell>
 			<!-- <tui-list-cell :arrow="true" unlined :radius="true" @click="chooseAddr">

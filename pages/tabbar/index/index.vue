@@ -114,7 +114,8 @@
 					// 'https://cbt.pumchit.cn/images/uploaded/banner4.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner2.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner1.jpg',
-					'https://cbt.pumchit.cn/images/uploaded/banner3.jpg'
+					'https://cbt.pumchit.cn/images/uploaded/banner3.jpg',
+					'https://cbt.pumchit.cn/images/uploaded/banner5.jpg'
 				],
 				category: [
 				],
@@ -131,7 +132,7 @@
 		computed:{
 			tipsText(){
 				if(this.productList.length>0){
-					return '因不可抗力因素影响口罩（含混和订单）将延后至10.26号发货'
+					return '因不可抗力因素影响口罩（含混和订单）将延后至11.1号起发货'
 				}else {
 					return '本商城营业时间06:00开始'
 				}
