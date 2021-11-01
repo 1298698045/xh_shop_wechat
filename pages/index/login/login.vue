@@ -1,5 +1,10 @@
 <template>
 	<view class="wrap">
+		<tui-navigation-bar splitLine @init="initNavigation" @change="opacityChange" :scrollTop="scrollTop" backgroundColor="#fff" color="#333">
+			<view class="tui-header-icon" :style="{ marginTop: top + 'rpx' }">
+			  <tui-icon name="arrowleft" :color="opacity > 0.85 ? '#333' : '#fff'" @click="back"></tui-icon>
+			</view>
+		</tui-navigation-bar>
 		<image src="../../../static/images/loginBG.jpg" mode="scaleToFill" class="imgs"></image>
 		<div class="box">
 			<div class="boxChild">				
@@ -39,7 +44,8 @@
 				userAgreement:false,
 				isRead:false,
 				shopId:'',
-				sign:''
+				sign:'',
+				top:0
 			}
 		},
 		onLoad(options){
@@ -51,8 +57,18 @@
 			this.userAgreement = uni.getStorageSync('userAgreement');
 		},
 		methods: {
+			back(){
+				console.log(111)
+				uni.navigateBack({
+					delta:1
+				})
+			},
 			changeRead(e){
 				this.isRead = e.mp.detail.value[0]==1?true:false;
+			},
+			initNavigation(e){
+				console.log('1231231', e)
+				// this.top = e.top;
 			},
 			getHerf(i){
 				switch(i){
@@ -114,6 +130,19 @@
 					},
 					fail() {
 					  that.tui.toast('登录失败')
+					  uni.showToast({
+					  	title:'登陆失败',
+						icon:'none',
+						duration:2000,
+						success() {
+							setTimeout(()=>{
+								uni.navigateBack({
+									delta:1
+								})
+							},1000)
+						}
+					  })
+					  
 					}
 				})
 			},
