@@ -45,7 +45,7 @@
 						<view>
 							<text>￥</text>
 							<text class="tui-price">{{shopDetail.productPrice.priceValue}}</text>
-							<text>.00</text>
+							<text v-if="isDecimalPoint">.00</text>
 						</view>
 						<!-- <tui-tag padding="10rpx 20rpx" size="24rpx" plain type="high-green" shape="circle" :scaleMultiple="0.8">新品</tui-tag> -->
 					</view>
@@ -477,7 +477,8 @@
 				isExpress:false,
 				shopaddressList:[],
 				paramsAddress:{},
-				ShippingFee:0 // 运费
+				ShippingFee:0, // 运费
+				isDecimalPoint: false
 			};
 		},
 		computed:{
@@ -558,6 +559,7 @@
 					}
 				).then(res=>{
 					this.shopDetail = res.returnValue;
+					this.isDecimalPoint = String(this.shopDetail.productPrice.priceValue).indexOf('.')!=-1?false:true;
 					this.banner = this.shopDetail.pictureModels;
 					this.defaultAttribute.num = 0;
 					// this.defaultAttribute.price = this.shopDetail.productAttributes[0].values[0].priceAdjustment;

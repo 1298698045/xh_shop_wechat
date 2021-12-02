@@ -132,7 +132,7 @@
 		computed:{
 			tipsText(){
 				if(this.productList.length>0){
-					return '因不可抗力因素影响口罩（含混和订单）将延后至11.1号起发货'
+					return '协和百年限定口罩现已到货，请自提订单顾客前往线下门店自提'
 				}else {
 					return '本商城营业时间06:00开始'
 				}

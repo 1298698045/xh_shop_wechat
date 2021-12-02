@@ -446,7 +446,8 @@
 						this.orderDetail.deliveryDate = formatDate(this.orderDetail.deliveryDate,1);
 						var endTime = new Date(this.orderDetail.deliveryDate.replace(/\-/g,'/'));
 						const day7 = endTime.getTime() + 7 * 24 * 60 * 60 * 1000; // 7天 范围内可以申请售后
-						const day30 = endTime.getTime() + 30 * 24 * 60 * 60 * 1000; // 30天 范围内可以申请发票
+						// const day30 = endTime.getTime() + 30 * 24 * 60 * 60 * 1000; // 30天 范围内可以申请发票
+						const day30 = endTime.getTime() + 120 * 24 * 60 * 60 * 1000; // 120天 范围内可以申请发票
 						const day7endTime = formatDate(parseInt(day7),1).replace(/\-/g,'/')
 						const day30endTime = formatDate(parseInt(day30),1).replace(/\-/g,'/');
 						console.log('endTime:', endTime);
