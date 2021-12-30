@@ -115,7 +115,7 @@
 					'https://cbt.pumchit.cn/images/uploaded/banner2.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner1.jpg',
 					'https://cbt.pumchit.cn/images/uploaded/banner3.jpg',
-					'https://cbt.pumchit.cn/images/uploaded/banner5.jpg'
+					// 'https://cbt.pumchit.cn/images/uploaded/banner5.jpg'
 				],
 				category: [
 				],

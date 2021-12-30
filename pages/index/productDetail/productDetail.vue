@@ -140,7 +140,7 @@
 				</view>
 				<view class="tui-guarantee">
 					<view class="tui-guarantee-item">
-						<text class="tui-pl">联系我们：咨询商品、订单问题请拨打010-69159408、69156289、69156296。
+						<text class="tui-pl">联系我们：咨询商品、订单问题请拨打 010-69159408。
 						</text>
 						<br/>
 						1、客服时间
