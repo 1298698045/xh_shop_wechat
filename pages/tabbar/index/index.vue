@@ -40,7 +40,7 @@
 			</view>
 		</view>
 		<view class="notice">
-			<uni-notice-bar speed="80" showIcon="true" single="true" scrollable="true" :text="tipsText"></uni-notice-bar>
+			<uni-notice-bar speed="50" showIcon="true" single="true" scrollable="true" :text="tipsText"></uni-notice-bar>
 		</view> 
 		
 		<!-- <image src="https://thorui.cn/images/mall/activity/img_coupon_banner.png" class="tui-img__coupon" @tap="coupon"></image> -->
@@ -132,7 +132,7 @@
 		computed:{
 			tipsText(){
 				if(this.productList.length>0){
-					return '协和百年限定口罩现已到货，请自提订单顾客前往线下门店自提'
+					return '顾客您好本店定于1.30（腊月二十八）-2.7（正月初七）期间暂停发货。春节期间请顾客自助下单，春节前最晚发货时间为1月29日12:00，春节期间订单将于2月8日起陆续发出，请您耐心等待。'
 				}else {
 					return '本商城营业时间06:00开始'
 				}

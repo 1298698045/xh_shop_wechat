@@ -45,7 +45,7 @@
 						<view>
 							<text>￥</text>
 							<text class="tui-price">{{shopDetail.productPrice.priceValue}}</text>
-							<text>.00</text>
+							<text v-if="isDecimalPoint">.00</text>
 						</view>
 						<!-- <tui-tag padding="10rpx 20rpx" size="24rpx" plain type="high-green" shape="circle" :scaleMultiple="0.8">新品</tui-tag> -->
 					</view>
@@ -76,6 +76,9 @@
 						<!-- <view>月销2000</view>
 						<view>浙江杭州</view> -->
 						<view>库存：{{shopDetail.stockQuantity}}</view>
+					</view>
+					<view style="margin-top:10rpx;font-size: 26rpx;line-height: 1.5;color:#FF6633;" v-if="shopDetail.shortDescription">
+						{{shopDetail.shortDescription}}
 					</view>
 				</view>
 			</view>
@@ -115,20 +118,16 @@
 			</view> -->
 
 			<view class="tui-basic-info tui-mtop tui-radius-all">
-				<view class="tui-list-cell">
-					<view class="tui-bold tui-cell-title">数量</view>
-					<view class="tui-selected-box">{{shopDetail.name}},{{productNum}}个</view>
-					<view class="tui-ml-auto">
-						<tui-numberbox :disabled="shopDetail.stockQuantity==0?true:false" :max="shopDetail.stockQuantity" :min="1" :value="productNum" @change="change"></tui-numberbox>
-					</view>
-				</view>
-				<!-- <view class="tui-list-cell" @tap="showPopup">
+				<view class="tui-list-cell" @tap="showPopup">
 					<view class="tui-bold tui-cell-title">已选</view>
-					<view class="tui-selected-box">{{shopDetail.name}},{{productNum}}个</view>
+					<!-- <view class="tui-selected-box">{{shopDetail.name}},{{productNum}}个</view> -->
+					<view class="tui-selected-box">{{shopDetail.name}},{{productNum}}
+						<span v-if="shopDetail.measure">{{shopDetail.measure}}</span>
+					</view>
 					<view class="tui-ml-auto">
 						<tui-icon name="more-fill" :size="20" color="#666"></tui-icon>
 					</view>
-				</view> -->
+				</view>
 				<view class="tui-list-cell" @tap="getOpenLocation">
 					<view class="tui-bold tui-cell-title">送至</view>
 					<view class="tui-addr-box">
@@ -141,7 +140,16 @@
 				</view>
 				<view class="tui-guarantee">
 					<view class="tui-guarantee-item">
-						<text class="tui-pl">联系我们：咨询商品、订单问题请拨打010-69159408。工作时间：9:30~17:30</text>
+						<text class="tui-pl">联系我们：咨询商品、订单问题请拨打 010-69159408。
+						</text>
+						<br/>
+						1、客服时间
+						<br/>
+						工作时间：9:30—17:30（仅法定工作日）
+						<br/>
+						2、自提时间
+						<br/>
+						营业时间：9:30—17:00（仅法定工作日）
 					</view>
 				</view>
 				<!-- <view class="tui-list-cell tui-last">
@@ -225,12 +233,12 @@
 				</view>
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
-			<!-- 	<view class="tui-flex-1">
-					<tui-button height="68rpx" :size="26" type="danger" shape="circle" @click="showPopup">加入购物车</tui-button>
-				</view> -->
 				<view class="tui-flex-1">
-					<tui-button height="68rpx" :size="26" type="warning" shape="circle" @click="submit">立即购买</tui-button>
+					<tui-button height="68rpx" :size="26" type="danger" shape="circle" @click="showPopup">加入购物车</tui-button>
 				</view>
+				<!-- <view class="tui-flex-1">
+					<tui-button height="68rpx" :size="26" type="warning" shape="circle" @click="submit">立即购买</tui-button>
+				</view> -->
 			</view>
 		</view>
 
@@ -363,15 +371,17 @@
 					</div>
 					<div class="right">
 						<p class="tips">
-							共有两个门店支持自提：
+							共有{{shopaddressList.length}}个门店支持自提：
 						</p>
-						<div class="box" v-for="(item,index) in shopaddressList" :key="index">							
-							<p class="local">
-								{{item.address1}}
-							</p>
-							<p class="local" @click="handlePhone(1)">电话：{{item.phoneNumber}}</p>
-							<p class="local">营业时间：{{item.openTime}}</p>
-							<p class="local">备注：{{item.description}}</p>
+						<div class="box" v-for="(item,index) in shopaddressList" :key="index">
+							<div v-if="!item.deleted">								
+								<p class="local">
+									{{item.address1}}
+								</p>
+								<p class="local" @click="handlePhone(1)">电话：{{item.phoneNumber}}</p>
+								<p class="local">营业时间：{{item.openTime}}</p>
+								<p class="local">备注：{{item.description}}</p>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -380,7 +390,6 @@
 				</div>
 			</div>
 		</tui-bottom-popup>
-		<tui-modal :show="loginPopup"  title="提示" content="您还未登录,请点击确定去登录!" @cancel="handleCanel" @click="handleLoginBtn"></tui-modal>
 	</view>
 </template>
 
@@ -469,7 +478,7 @@
 				shopaddressList:[],
 				paramsAddress:{},
 				ShippingFee:0, // 运费
-				loginPopup:false // 去登陆弹框
+				isDecimalPoint: false
 			};
 		},
 		computed:{
@@ -523,6 +532,7 @@
 			shopaddress(){
 				this.$http.shopaddress().then(res=>{
 					this.shopaddressList = res.returnValue;
+					this.shopaddressList = this.shopaddressList.filter(item=>item.deleted==false)
 				})
 			},
 			// 拨打电话
@@ -549,6 +559,7 @@
 					}
 				).then(res=>{
 					this.shopDetail = res.returnValue;
+					this.isDecimalPoint = String(this.shopDetail.productPrice.priceValue).indexOf('.')!=-1?false:true;
 					this.banner = this.shopDetail.pictureModels;
 					this.defaultAttribute.num = 0;
 					// this.defaultAttribute.price = this.shopDetail.productAttributes[0].values[0].priceAdjustment;
@@ -654,8 +665,10 @@
 								duration:2000,
 								icon:'success',
 								success:res=>{
-									that.popupShow = false;
-									that.getCartNumTotal();
+									setTimeout(()=>{										
+										that.popupShow = false;
+										that.getCartNumTotal();
+									},500)
 								}
 							})
 						}else {
@@ -708,17 +721,6 @@
 					})
 				}
 			},
-			handleLoginBtn(e){
-				console.log(e)
-				if(e.index==0){
-					this.loginPopup = false;
-				}else {
-					uni.navigateTo({
-						url:'../login/login?sign='+'qrCode'+'&id='+this.id
-					})
-					this.loginPopup = false;
-				}
-			},
 			getOpenLocation(){
 				this.isExpress = true;
 			},
@@ -766,14 +768,10 @@
 				}
 			},
 			submit() {
-				// this.popupShow = true;
-				if(this.isLogin){
-					uni.navigateTo({
-						url: '/pages/order/submitOrder/submitOrder'
-					});
-				}else {
-					this.loginPopup = true;
-				}
+				this.popupShow = false;
+				uni.navigateTo({
+					url: '/pages/order/submitOrder/submitOrder'
+				});
 			},
 			coupon() {
 				uni.navigateTo({
