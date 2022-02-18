@@ -198,7 +198,11 @@
 				}else if(this.setRowData.phone == ''){
 					this.tui.toast('请输入手机号');
 					return false;
-				}else{
+				}else if(!/^1[34578]\d{9}$/.test(this.setRowData.phone)){
+					this.tui.toast('请输入正确的手机号');
+					return false;
+				}
+				else{
 					this.$http.setAddress(
 						{
 							customerId:this.userId,
