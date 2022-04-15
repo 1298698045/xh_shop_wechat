@@ -132,10 +132,11 @@
 		computed:{
 			tipsText(){
 				if(this.productList.length>0){
-					return '顾客您好本店定于1.30（腊月二十八）-2.7（正月初七）期间暂停发货。春节期间请顾客自助下单，春节前最晚发货时间为1月29日12:00，春节期间订单将于2月8日起陆续发出，请您耐心等待。'
+					// return '顾客您好本店定于1.30（腊月二十八）-2.7（正月初七）期间暂停发货。春节期间请顾客自助下单，春节前最晚发货时间为1月29日12:00，春节期间订单将于2月8日起陆续发出，请您耐心等待。'
+					return '欢迎选购协和文创纪念品'
 				}else {
-					// return '本商城营业时间06:00开始'
-					return '系统正在维护中!'
+					return '本商城营业时间06:00开始'
+					// return '系统正在维护中!'
 				}
 			}
 		},
@@ -237,7 +238,20 @@
 				this.opacity = 1
 			}
 			// #endif
-		}
+		},
+		onShareAppMessage() {
+			return {
+				title: '分享给好友',
+				path: 'pages/tabbar/index/index'
+			}
+		},
+		onShareTimeline() {
+		    return {
+		      title: '分享给好友',
+		      path: 'pages/tabbar/index/index',
+		      // imageUrl: 'xxx.jpg'
+		    }
+		}	
 	};
 </script>
 

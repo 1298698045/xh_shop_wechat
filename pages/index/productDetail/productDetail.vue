@@ -883,7 +883,20 @@
 			}
 			this.opcity = opcity;
 			this.iconOpcity = 0.5 * (1 - opcity < 0 ? 0 : 1 - opcity);
-		}
+		},
+		onShareAppMessage() {
+			return {
+				title: '分享给好友',
+				path: 'pages/index/productDetail/productDetail?id='+this.id
+			}
+		},
+		onShareTimeline() {
+		    return {
+		      title: '分享给好友',
+		      path: 'pages/index/productDetail/productDetail?id='+this.id,
+		      // imageUrl: 'xxx.jpg'
+		    }
+		}	
 	};
 </script>
 
